@@ -1,0 +1,22 @@
+# ── Bloom Log Caddy 設定 ──
+# VPS の /etc/caddy/Caddyfile にコピーして使用
+
+bloom-log.com {
+	reverse_proxy localhost:3001
+
+	# セキュリティヘッダー
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+	}
+
+	# gzip 圧縮
+	encode gzip
+
+	# ログ
+	log {
+		output file /var/log/caddy/bloomlog.log
+	}
+}
