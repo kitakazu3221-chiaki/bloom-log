@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import rateLimit from "express-rate-limit";
+import Stripe from "stripe";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import { readFile, writeFile, mkdir } from "fs/promises";
 import { resolve, dirname, join } from "path";
@@ -21,6 +22,15 @@ const JWT_SECRET =
 const BCRYPT_ROUNDS = 10;
 const PORT = Number(process.env.PORT ?? 3001);
 const IS_PROD = process.env.NODE_ENV === "production";
+const TRIAL_DAYS = 3;
+
+// ── Stripe ──────────────────────────────────────────────────────────────────
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
+  apiVersion: "2025-02-24.acacia",
+});
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET ?? "";
+const STRIPE_PRICE_ID = process.env.STRIPE_PRICE_ID ?? "";
 
 // Ensure data directories exist
 for (const dir of [DATA_DIR, PHOTOS_DIR, RECORDS_DIR]) {
@@ -30,6 +40,21 @@ if (!existsSync(USERS_FILE)) {
   writeFileSync(USERS_FILE, JSON.stringify({ users: [] }, null, 2), "utf-8");
 }
 
+// Migrate existing users: add trialEndsAt if missing
+{
+  const store = JSON.parse(readFileSync(USERS_FILE, "utf-8")) as { users: User[] };
+  let changed = false;
+  for (const user of store.users) {
+    if (!user.trialEndsAt) {
+      const created = new Date(user.createdAt);
+      user.trialEndsAt = new Date(created.getTime() + TRIAL_DAYS * 24 * 60 * 60 * 1000).toISOString();
+      user.subscriptionStatus = "none";
+      changed = true;
+    }
+  }
+  if (changed) writeFileSync(USERS_FILE, JSON.stringify(store, null, 2), "utf-8");
+}
+
 // ── Types ────────────────────────────────────────────────────────────────────
 
 interface User {
@@ -37,6 +62,11 @@ interface User {
   username: string;
   passwordHash: string;
   createdAt: string;
+  trialEndsAt: string;
+  stripeCustomerId?: string;
+  subscriptionStatus?: "trialing" | "active" | "canceled" | "past_due" | "none";
+  subscriptionId?: string;
+  currentPeriodEnd?: string;
 }
 interface UsersStore {
   users: User[];
@@ -125,6 +155,32 @@ function requireAuth(
   next();
 }
 
+// ── Subscription helpers ─────────────────────────────────────────────────────
+
+function getUserSubscriptionState(user: User): "trialing" | "active" | "expired" {
+  if (user.subscriptionStatus === "active") return "active";
+  const trialEnd = new Date(user.trialEndsAt);
+  if (Date.now() < trialEnd.getTime()) return "trialing";
+  return "expired";
+}
+
+function requireSubscription(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+): void {
+  const { userId } = (req as AuthRequest).authUser;
+  const store = readUsers();
+  const user = store.users.find((u) => u.id === userId);
+  if (!user) { res.status(401).json({ error: "User not found" }); return; }
+  const state = getUserSubscriptionState(user);
+  if (state === "expired") {
+    res.status(403).json({ error: "subscription_required" });
+    return;
+  }
+  next();
+}
+
 // ── Records helpers ───────────────────────────────────────────────────────────
 
 async function readRecords(userId: string): Promise<PhotoRecord[]> {
@@ -186,6 +242,60 @@ const uploadLimiter = rateLimit({
 // ── Express app ───────────────────────────────────────────────────────────────
 
 const app = express();
+
+// ── Stripe webhook (must be before express.json) ─────────────────────────────
+
+app.post("/api/stripe/webhook", express.raw({ type: "application/json" }), async (req, res) => {
+  if (!STRIPE_WEBHOOK_SECRET) { res.status(500).send("Webhook not configured"); return; }
+  let event: Stripe.Event;
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body as Buffer,
+      req.headers["stripe-signature"]!,
+      STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    console.error("[stripe] Webhook signature verification failed:", err);
+    res.status(400).send("Webhook signature verification failed");
+    return;
+  }
+
+  const store = readUsers();
+
+  switch (event.type) {
+    case "customer.subscription.created":
+    case "customer.subscription.updated": {
+      const sub = event.data.object as Stripe.Subscription;
+      const user = store.users.find((u) => u.stripeCustomerId === sub.customer);
+      if (user) {
+        user.subscriptionId = sub.id;
+        user.subscriptionStatus = sub.status === "active" ? "active"
+          : sub.status === "past_due" ? "past_due"
+          : sub.status === "canceled" ? "canceled"
+          : "none";
+        user.currentPeriodEnd = new Date(sub.current_period_end * 1000).toISOString();
+        writeUsers(store);
+        console.log(`[stripe] Subscription ${sub.status} for user ${user.username}`);
+      }
+      break;
+    }
+    case "customer.subscription.deleted": {
+      const sub = event.data.object as Stripe.Subscription;
+      const user = store.users.find((u) => u.stripeCustomerId === sub.customer);
+      if (user) {
+        user.subscriptionStatus = "canceled";
+        user.subscriptionId = undefined;
+        user.currentPeriodEnd = undefined;
+        writeUsers(store);
+        console.log(`[stripe] Subscription canceled for user ${user.username}`);
+      }
+      break;
+    }
+  }
+
+  res.json({ received: true });
+});
+
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
 
@@ -202,7 +312,14 @@ app.post("/api/auth/register", authLimiter, async (req, res) => {
     res.status(409).json({ error: "そのユーザー名は既に使用されています" }); return;
   }
   const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
-  const user: User = { id: crypto.randomUUID(), username, passwordHash, createdAt: new Date().toISOString() };
+  const now = new Date();
+  const trialEnd = new Date(now.getTime() + TRIAL_DAYS * 24 * 60 * 60 * 1000);
+  const user: User = {
+    id: crypto.randomUUID(), username, passwordHash,
+    createdAt: now.toISOString(),
+    trialEndsAt: trialEnd.toISOString(),
+    subscriptionStatus: "none",
+  };
   store.users.push(user);
   writeUsers(store);
   setCookieToken(res, user.id, user.username);
@@ -231,7 +348,14 @@ app.get("/api/auth/me", (req, res) => {
   if (!token) { res.status(401).json({ error: "Not authenticated" }); return; }
   const payload = verifyToken(token);
   if (!payload) { res.status(401).json({ error: "Invalid token" }); return; }
-  res.json({ username: payload.username });
+  const store = readUsers();
+  const user = store.users.find((u) => u.id === payload.userId);
+  if (!user) { res.status(401).json({ error: "User not found" }); return; }
+  const subscription = getUserSubscriptionState(user);
+  const trialDaysLeft = Math.max(0, Math.ceil(
+    (new Date(user.trialEndsAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+  ));
+  res.json({ username: payload.username, subscription, trialDaysLeft });
 });
 
 // ── Signaling routes ──────────────────────────────────────────────────────────
@@ -292,9 +416,82 @@ app.get("/api/session/events", (req, res) => {
   });
 });
 
+// ── Subscription routes ──────────────────────────────────────────────────────
+
+app.post("/api/subscription/checkout", requireAuth, async (req, res) => {
+  if (!STRIPE_PRICE_ID) { res.status(500).json({ error: "Stripe not configured" }); return; }
+  const { userId, username } = (req as AuthRequest).authUser;
+  const store = readUsers();
+  const user = store.users.find((u) => u.id === userId);
+  if (!user) { res.status(404).json({ error: "User not found" }); return; }
+
+  try {
+    let customerId = user.stripeCustomerId;
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        metadata: { userId, username },
+      });
+      customerId = customer.id;
+      user.stripeCustomerId = customerId;
+      writeUsers(store);
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      customer: customerId,
+      mode: "subscription",
+      line_items: [{ price: STRIPE_PRICE_ID, quantity: 1 }],
+      success_url: `${req.headers.origin ?? "https://bloom-log.com"}/?checkout=success`,
+      cancel_url: `${req.headers.origin ?? "https://bloom-log.com"}/?checkout=cancel`,
+    });
+
+    res.json({ url: session.url });
+  } catch (err) {
+    console.error("[stripe] checkout error:", err);
+    res.status(500).json({ error: "チェックアウトの作成に失敗しました" });
+  }
+});
+
+app.post("/api/subscription/portal", requireAuth, async (req, res) => {
+  const { userId } = (req as AuthRequest).authUser;
+  const store = readUsers();
+  const user = store.users.find((u) => u.id === userId);
+  if (!user?.stripeCustomerId) {
+    res.status(400).json({ error: "サブスクリプションが見つかりません" });
+    return;
+  }
+
+  try {
+    const session = await stripe.billingPortal.sessions.create({
+      customer: user.stripeCustomerId,
+      return_url: `${req.headers.origin ?? "https://bloom-log.com"}/`,
+    });
+    res.json({ url: session.url });
+  } catch (err) {
+    console.error("[stripe] portal error:", err);
+    res.status(500).json({ error: "ポータルの作成に失敗しました" });
+  }
+});
+
+app.get("/api/subscription/status", requireAuth, (req, res) => {
+  const { userId } = (req as AuthRequest).authUser;
+  const store = readUsers();
+  const user = store.users.find((u) => u.id === userId);
+  if (!user) { res.status(404).json({ error: "User not found" }); return; }
+  const state = getUserSubscriptionState(user);
+  const trialDaysLeft = Math.max(0, Math.ceil(
+    (new Date(user.trialEndsAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+  ));
+  res.json({
+    state,
+    trialDaysLeft,
+    subscriptionStatus: user.subscriptionStatus ?? "none",
+    currentPeriodEnd: user.currentPeriodEnd ?? null,
+  });
+});
+
 // ── Photo routes ──────────────────────────────────────────────────────────────
 
-app.post("/api/photos/upload", uploadLimiter, requireAuth, async (req, res) => {
+app.post("/api/photos/upload", uploadLimiter, requireAuth, requireSubscription, async (req, res) => {
   const { userId } = (req as AuthRequest).authUser;
   const { dataUrl, area, notes } = req.body as {
     dataUrl?: string; area?: ScalpArea; notes?: NoteData;
@@ -328,12 +525,12 @@ app.post("/api/photos/upload", uploadLimiter, requireAuth, async (req, res) => {
   }
 });
 
-app.get("/api/photos/records", requireAuth, async (req, res) => {
+app.get("/api/photos/records", requireAuth, requireSubscription, async (req, res) => {
   const { userId } = (req as AuthRequest).authUser;
   res.json({ records: await readRecords(userId) });
 });
 
-app.get("/api/photos/file/:area/:filename", requireAuth, async (req, res) => {
+app.get("/api/photos/file/:area/:filename", requireAuth, requireSubscription, async (req, res) => {
   const { userId } = (req as AuthRequest).authUser;
   const { area, filename } = req.params as { area: string; filename: string };
   if (filename.includes("..") || area.includes("..")) { res.status(400).end(); return; }

@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 
-interface AuthUser {
+export interface AuthUser {
   username: string;
+  subscription: "trialing" | "active" | "expired";
+  trialDaysLeft: number;
 }
 
 interface UseAuthReturn {
@@ -10,20 +12,34 @@ interface UseAuthReturn {
   login: (username: string, password: string) => Promise<void>;
   register: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 export function useAuth(): UseAuthReturn {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchMe = useCallback(async (): Promise<AuthUser | null> => {
+    try {
+      const r = await fetch("/api/auth/me", { credentials: "include" });
+      if (!r.ok) return null;
+      return (await r.json()) as AuthUser;
+    } catch {
+      return null;
+    }
+  }, []);
+
   // Check login status on mount
   useEffect(() => {
-    fetch("/api/auth/me", { credentials: "include" })
-      .then((r) => (r.ok ? (r.json() as Promise<AuthUser>) : null))
-      .catch(() => null)
+    fetchMe()
       .then((data) => setUser(data))
       .finally(() => setLoading(false));
-  }, []);
+  }, [fetchMe]);
+
+  const refreshUser = useCallback(async () => {
+    const data = await fetchMe();
+    setUser(data);
+  }, [fetchMe]);
 
   const login = useCallback(async (username: string, password: string) => {
     const r = await fetch("/api/auth/login", {
@@ -32,10 +48,11 @@ export function useAuth(): UseAuthReturn {
       body: JSON.stringify({ username, password }),
       credentials: "include",
     });
-    const data = (await r.json()) as AuthUser & { error?: string };
+    const data = (await r.json()) as { error?: string };
     if (!r.ok) throw new Error(data.error ?? "ログインに失敗しました");
-    setUser({ username: data.username });
-  }, []);
+    const me = await fetchMe();
+    setUser(me);
+  }, [fetchMe]);
 
   const register = useCallback(async (username: string, password: string) => {
     const r = await fetch("/api/auth/register", {
@@ -44,10 +61,11 @@ export function useAuth(): UseAuthReturn {
       body: JSON.stringify({ username, password }),
       credentials: "include",
     });
-    const data = (await r.json()) as AuthUser & { error?: string };
+    const data = (await r.json()) as { error?: string };
     if (!r.ok) throw new Error(data.error ?? "登録に失敗しました");
-    setUser({ username: data.username });
-  }, []);
+    const me = await fetchMe();
+    setUser(me);
+  }, [fetchMe]);
 
   const logout = useCallback(async () => {
     await fetch("/api/auth/logout", {
@@ -57,5 +75,5 @@ export function useAuth(): UseAuthReturn {
     setUser(null);
   }, []);
 
-  return { user, loading, login, register, logout };
+  return { user, loading, login, register, logout, refreshUser };
 }

@@ -1,9 +1,10 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "./hooks/useAuth";
 import { PCPage } from "./pages/PCPage";
 import { PhonePage } from "./pages/PhonePage";
 import { HistoryPage } from "./pages/HistoryPage";
 import { AuthPage } from "./pages/AuthPage";
+import { PaywallPage } from "./pages/PaywallPage";
 
 function App() {
   const url = new URL(window.location.href);
@@ -18,14 +19,23 @@ function App() {
 }
 
 function AuthGate({ pathname }: { pathname: string }) {
-  // Single useAuth instance — auth state is shared with AuthPage via props
-  const { user, loading, login, register, logout } = useAuth();
+  const { user, loading, login, register, logout, refreshUser } = useAuth();
   const [toast, setToast] = useState<string | null>(null);
+
+  // Handle Stripe checkout redirect
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("checkout") === "success") {
+      window.history.replaceState({}, "", window.location.pathname);
+      refreshUser();
+      setToast("サブスクリプションを開始しました！");
+      setTimeout(() => setToast(null), 4000);
+    }
+  }, [refreshUser]);
 
   const handleRegister = useCallback(
     async (username: string, password: string) => {
       await register(username, password);
-      // After register, user becomes non-null → main app is shown with this toast
       setToast(`ようこそ、${username} さん！アカウントを作成しました`);
       setTimeout(() => setToast(null), 4000);
     },
@@ -46,15 +56,33 @@ function AuthGate({ pathname }: { pathname: string }) {
   }
 
   if (!user) {
-    // Pass login/register from this hook so state updates here when called
     return <AuthPage onLogin={login} onRegister={handleRegister} />;
+  }
+
+  if (user.subscription === "expired") {
+    return (
+      <PaywallPage
+        username={user.username}
+        onLogout={logout}
+      />
+    );
   }
 
   const mainPage =
     pathname === "/history" ? (
-      <HistoryPage username={user.username} onLogout={logout} />
+      <HistoryPage
+        username={user.username}
+        onLogout={logout}
+        subscription={user.subscription}
+        trialDaysLeft={user.trialDaysLeft}
+      />
     ) : (
-      <PCPage username={user.username} onLogout={logout} />
+      <PCPage
+        username={user.username}
+        onLogout={logout}
+        subscription={user.subscription}
+        trialDaysLeft={user.trialDaysLeft}
+      />
     );
 
   return (

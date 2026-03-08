@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useStorage } from "../hooks/useStorage";
+import { TrialBanner } from "../components/TrialBanner";
 import { SCALP_AREA_LABELS, type ScalpArea, type PhotoRecord } from "../types";
 
 const AREAS: ScalpArea[] = ["top", "front", "side"];
@@ -216,9 +217,11 @@ function CompareSlider({ beforeUrl, afterUrl }: { beforeUrl: string; afterUrl: s
 interface HistoryPageProps {
   username: string;
   onLogout: () => void;
+  subscription: "trialing" | "active";
+  trialDaysLeft: number;
 }
 
-export function HistoryPage({ username, onLogout }: HistoryPageProps) {
+export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }: HistoryPageProps) {
   const storage = useStorage();
   const [records, setRecords] = useState<PhotoRecord[]>([]);
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
@@ -313,6 +316,13 @@ export function HistoryPage({ username, onLogout }: HistoryPageProps) {
           </div>
         </div>
       </header>
+
+      {/* Trial banner */}
+      {subscription === "trialing" && (
+        <div className="px-6 pt-3 max-w-3xl mx-auto w-full">
+          <TrialBanner daysLeft={trialDaysLeft} />
+        </div>
+      )}
 
       <main className="flex-1 p-6 max-w-3xl mx-auto w-full space-y-5">
         {records.length === 0 ? (

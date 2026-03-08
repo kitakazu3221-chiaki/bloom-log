@@ -15,6 +15,7 @@ import { AreaSelector } from "../components/AreaSelector";
 import { CaptureButton } from "../components/CaptureButton";
 import { PhotoSaveDialog } from "../components/PhotoSaveDialog";
 import { PreviousPhotoOverlay } from "../components/PreviousPhotoOverlay";
+import { TrialBanner } from "../components/TrialBanner";
 import {
   type ScalpArea,
   type SignalingMessage,
@@ -27,9 +28,11 @@ type CameraMode = "phone" | "pc";
 interface PCPageProps {
   username: string;
   onLogout: () => void;
+  subscription: "trialing" | "active";
+  trialDaysLeft: number;
 }
 
-export function PCPage({ username, onLogout }: PCPageProps) {
+export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPageProps) {
   const [cameraMode, setCameraMode] = useState<CameraMode>("phone");
   const [selectedArea, setSelectedArea] = useState<ScalpArea>("top");
   const [pendingPhoto, setPendingPhoto] = useState<CapturedPhoto | null>(null);
@@ -215,6 +218,13 @@ export function PCPage({ username, onLogout }: PCPageProps) {
           </div>
         </div>
       </header>
+
+      {/* Trial banner */}
+      {subscription === "trialing" && (
+        <div className="px-6 pt-3">
+          <TrialBanner daysLeft={trialDaysLeft} />
+        </div>
+      )}
 
       {/* Main content */}
       <main className="flex-1 flex flex-col items-center gap-5 p-6">
