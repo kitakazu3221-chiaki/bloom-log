@@ -32,22 +32,22 @@ export function PhotoSaveDialog({
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"
+        className="absolute inset-0 bg-black/70 backdrop-blur-md animate-fade-in"
         onClick={onCancel}
       />
 
       {/* Sheet / Card */}
-      <div className="relative w-full sm:max-w-md bg-white sm:rounded-3xl rounded-t-3xl shadow-2xl animate-fade-in-up overflow-hidden">
+      <div className="relative w-full sm:max-w-md glass-card sm:rounded-3xl rounded-t-3xl shadow-2xl animate-fade-in-up overflow-hidden border-t border-white/[0.1]">
         {/* Drag handle (mobile) */}
         <div className="flex justify-center pt-3 pb-1 sm:hidden">
-          <div className="w-10 h-1 rounded-full bg-gray-200" />
+          <div className="w-10 h-1 rounded-full bg-white/[0.15]" />
         </div>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-4 pb-3 border-b border-gray-100">
+        <div className="flex items-center justify-between px-6 pt-4 pb-3 border-b border-white/[0.06]">
           <div>
-            <h2 className="text-base font-bold text-gray-900">写真を保存</h2>
-            <p className="text-xs text-gray-400 mt-0.5">
+            <h2 className="text-base font-bold text-white">写真を保存</h2>
+            <p className="text-xs text-slate-400 mt-0.5">
               {SCALP_AREA_LABELS[photo.area]} &middot;{" "}
               {photo.timestamp.toLocaleString("ja-JP", {
                 month: "numeric",
@@ -60,7 +60,7 @@ export function PhotoSaveDialog({
           <button
             onClick={onCancel}
             disabled={isSaving}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-400 text-lg leading-none transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-white/[0.06] hover:bg-white/[0.1] text-slate-400 text-lg leading-none transition-colors"
           >
             ×
           </button>
@@ -71,13 +71,13 @@ export function PhotoSaveDialog({
           <img
             src={photo.dataUrl}
             alt="撮影した写真"
-            className="w-full rounded-2xl object-cover max-h-44 shadow-sm"
+            className="w-full rounded-2xl object-cover max-h-44 shadow-sm ring-1 ring-white/[0.08]"
           />
         </div>
 
         {/* Notes */}
         <div className="px-6 pt-4 pb-2 space-y-3">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
             補助データ（任意）
           </p>
           <div className="grid grid-cols-2 gap-2.5">
@@ -88,7 +88,7 @@ export function PhotoSaveDialog({
               { label: "ストレス（1〜5）", placeholder: "3", value: stress, setValue: setStress, type: "number" },
             ].map(({ label, placeholder, value, setValue, type }) => (
               <div key={label}>
-                <label className="block text-xs text-gray-400 mb-1">{label}</label>
+                <label className="block text-xs text-slate-500 mb-1">{label}</label>
                 <input
                   type={type}
                   value={value}
@@ -97,7 +97,7 @@ export function PhotoSaveDialog({
                   min={type === "number" ? (label.includes("睡") ? "0" : "1") : undefined}
                   max={type === "number" ? (label.includes("睡") ? "24" : "5") : undefined}
                   step={type === "number" && label.includes("睡") ? "0.5" : undefined}
-                  className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent placeholder-gray-300 transition-shadow"
+                  className="w-full text-sm bg-white/[0.04] border border-white/[0.08] rounded-xl px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/30 placeholder-slate-600 transition-all"
                 />
               </div>
             ))}
@@ -109,14 +109,14 @@ export function PhotoSaveDialog({
           <button
             onClick={onCancel}
             disabled={isSaving}
-            className="flex-1 py-3 rounded-xl bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 disabled:opacity-50 transition-colors"
+            className="flex-1 py-3 rounded-xl bg-white/[0.06] text-slate-400 text-sm font-medium hover:bg-white/[0.1] border border-white/[0.06] disabled:opacity-50 transition-colors"
           >
             キャンセル
           </button>
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="flex-1 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 text-white text-sm font-semibold shadow-md shadow-emerald-200 hover:from-emerald-400 hover:to-green-500 disabled:opacity-50 transition-all active:scale-[0.98]"
+            className="flex-1 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 text-[#0A1F14] text-sm font-bold shadow-lg shadow-emerald-500/20 hover:from-emerald-400 hover:to-emerald-300 disabled:opacity-50 transition-all active:scale-[0.98]"
           >
             {isSaving ? "保存中..." : "保存"}
           </button>

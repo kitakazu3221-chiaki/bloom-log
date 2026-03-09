@@ -6,15 +6,15 @@ import { SCALP_AREA_LABELS, type ScalpArea, type PhotoRecord } from "../types";
 const AREAS: ScalpArea[] = ["top", "front", "side"];
 
 const AREA_DOT_COLORS: Record<ScalpArea, string> = {
-  top: "bg-emerald-500",
-  front: "bg-blue-500",
-  side: "bg-amber-500",
+  top: "bg-emerald-400",
+  front: "bg-sky-400",
+  side: "bg-amber-400",
 };
 
 const AREA_PILL_COLORS: Record<ScalpArea, string> = {
-  top: "bg-emerald-500 text-white shadow-emerald-200",
-  front: "bg-blue-500 text-white shadow-blue-200",
-  side: "bg-amber-500 text-white shadow-amber-200",
+  top: "bg-emerald-400/20 text-emerald-400 border border-emerald-400/30",
+  front: "bg-sky-400/20 text-sky-400 border border-sky-400/30",
+  side: "bg-amber-400/20 text-amber-400 border border-amber-400/30",
 };
 
 function groupByDate(records: PhotoRecord[]): Map<string, PhotoRecord[]> {
@@ -73,21 +73,21 @@ function PhotoCalendar({
   };
 
   return (
-    <div className="bg-white rounded-2xl p-5 shadow-sm ring-1 ring-gray-100">
+    <div className="glass-card rounded-2xl p-5">
       {/* Month nav */}
       <div className="flex items-center justify-between mb-5">
         <button
           onClick={goToPrev}
-          className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-500 text-xl font-light transition-colors"
+          className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/[0.06] text-slate-400 text-xl font-light transition-colors"
         >
           ‹
         </button>
-        <span className="text-sm font-bold text-gray-800">
+        <span className="text-sm font-bold text-white">
           {year}年{month + 1}月
         </span>
         <button
           onClick={goToNext}
-          className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-500 text-xl font-light transition-colors"
+          className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/[0.06] text-slate-400 text-xl font-light transition-colors"
         >
           ›
         </button>
@@ -99,7 +99,7 @@ function PhotoCalendar({
           <div
             key={d}
             className={`text-center text-xs font-semibold py-1 ${
-              i === 0 ? "text-red-400" : i === 6 ? "text-blue-400" : "text-gray-300"
+              i === 0 ? "text-red-400/70" : i === 6 ? "text-sky-400/70" : "text-slate-600"
             }`}
           >
             {d}
@@ -120,14 +120,14 @@ function PhotoCalendar({
           const dow = new Date(year, month, day).getDay();
 
           const textColor = !hasPhotos
-            ? "text-gray-200"
+            ? "text-slate-700"
             : isSelected
-            ? "text-emerald-700"
+            ? "text-emerald-400"
             : dow === 0
-            ? "text-red-400"
+            ? "text-red-400/70"
             : dow === 6
-            ? "text-blue-400"
-            : "text-gray-700";
+            ? "text-sky-400/70"
+            : "text-slate-300";
 
           return (
             <button
@@ -136,9 +136,9 @@ function PhotoCalendar({
               disabled={!hasPhotos}
               className={`flex flex-col items-center py-1.5 rounded-xl text-xs transition-all ${
                 isSelected
-                  ? "bg-emerald-50 ring-1 ring-emerald-200"
+                  ? "bg-emerald-400/10 ring-1 ring-emerald-400/30"
                   : hasPhotos
-                  ? "hover:bg-gray-50"
+                  ? "hover:bg-white/[0.04]"
                   : "cursor-default"
               }`}
             >
@@ -160,9 +160,9 @@ function PhotoCalendar({
       </div>
 
       {/* Legend */}
-      <div className="flex gap-4 mt-4 pt-4 border-t border-gray-100 justify-center">
+      <div className="flex gap-4 mt-4 pt-4 border-t border-white/[0.06] justify-center">
         {(["top", "front", "side"] as ScalpArea[]).map((area) => (
-          <span key={area} className="flex items-center gap-1.5 text-xs text-gray-400">
+          <span key={area} className="flex items-center gap-1.5 text-xs text-slate-500">
             <span className={`w-2 h-2 rounded-full ${AREA_DOT_COLORS[area]}`} />
             {SCALP_AREA_LABELS[area]}
           </span>
@@ -291,26 +291,26 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
   const calendarDateRecords = calendarDate ? records.filter((r) => r.date === calendarDate) : [];
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-[#0A1F14] flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-10 flex items-center gap-3 px-6 py-3.5 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
+      <header className="sticky top-0 z-10 flex items-center gap-3 px-6 py-3.5 bg-[#0A1F14]/90 backdrop-blur-xl border-b border-white/[0.06]">
         <a
           href="/"
-          className="w-8 h-8 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors text-sm"
+          className="w-8 h-8 flex items-center justify-center rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-slate-400 border border-white/[0.06] transition-colors text-sm"
           aria-label="戻る"
         >
           ←
         </a>
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-sm">
+          <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-400/20 to-emerald-600/20 border border-emerald-400/30 flex items-center justify-center">
             <span className="text-xs">🌱</span>
           </div>
-          <h1 className="text-base font-bold text-gray-900 tracking-tight">撮影履歴</h1>
+          <h1 className="text-base font-bold text-white tracking-tight">撮影履歴</h1>
         </div>
         <div className="ml-auto flex items-center gap-3">
-          <div className="flex items-center gap-2 pl-2 border-l border-gray-100">
-            <span className="text-xs text-gray-400">{username}</span>
-            <button onClick={onLogout} className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
+          <div className="flex items-center gap-2 pl-2 border-l border-white/[0.06]">
+            <span className="text-xs text-slate-500">{username}</span>
+            <button onClick={onLogout} className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
               ログアウト
             </button>
           </div>
@@ -328,16 +328,16 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
         {records.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-4xl mb-4">📷</p>
-            <p className="text-gray-400 text-sm">撮影記録がありません</p>
+            <p className="text-slate-500 text-sm">撮影記録がありません</p>
           </div>
         ) : (
           <>
             {/* View mode toggle */}
-            <div className="flex items-center gap-1 bg-gray-100/80 rounded-2xl p-1 text-xs self-start">
+            <div className="flex items-center gap-1 bg-white/[0.04] border border-white/[0.06] rounded-2xl p-1 text-xs self-start">
               <button
                 onClick={() => setViewMode("calendar")}
                 className={`px-4 py-2 rounded-xl font-medium transition-all ${
-                  viewMode === "calendar" ? "bg-white shadow-sm text-gray-800" : "text-gray-400 hover:text-gray-600"
+                  viewMode === "calendar" ? "bg-white/[0.1] text-white shadow-sm shadow-black/20" : "text-slate-500 hover:text-slate-300"
                 }`}
               >
                 📅 カレンダー
@@ -345,7 +345,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
               <button
                 onClick={() => setViewMode("list")}
                 className={`px-4 py-2 rounded-xl font-medium transition-all ${
-                  viewMode === "list" ? "bg-white shadow-sm text-gray-800" : "text-gray-400 hover:text-gray-600"
+                  viewMode === "list" ? "bg-white/[0.1] text-white shadow-sm shadow-black/20" : "text-slate-500 hover:text-slate-300"
                 }`}
               >
                 🗂 一覧
@@ -361,8 +361,8 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
                 />
 
                 {calendarDate && calendarDateRecords.length > 0 && (
-                  <div className="bg-white rounded-2xl p-5 shadow-sm ring-1 ring-gray-100 animate-fade-in-up">
-                    <h2 className="text-sm font-bold text-gray-800 mb-4">
+                  <div className="glass-card rounded-2xl p-5 animate-fade-in-up">
+                    <h2 className="text-sm font-bold text-white mb-4">
                       {new Date(calendarDate + "T00:00:00").toLocaleDateString("ja-JP", {
                         year: "numeric", month: "long", day: "numeric",
                       })}
@@ -370,12 +370,12 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
                     <div className="flex gap-4 flex-wrap">
                       {calendarDateRecords.map((r) => (
                         <div key={r.id} className="flex flex-col items-center gap-2">
-                          <div className="w-32 h-32 rounded-2xl overflow-hidden bg-gray-100 shadow-sm">
+                          <div className="w-32 h-32 rounded-2xl overflow-hidden bg-white/[0.04] border border-white/[0.06]">
                             {photoUrls[r.id] ? (
                               <img src={photoUrls[r.id]} alt={SCALP_AREA_LABELS[r.area]} className="w-full h-full object-cover" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
-                                <div className="w-5 h-5 border-2 border-gray-300 border-t-transparent rounded-full animate-spin" />
+                                <div className="w-5 h-5 border-2 border-emerald-400/30 border-t-emerald-400 rounded-full animate-spin" />
                               </div>
                             )}
                           </div>
@@ -383,14 +383,14 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
                             {SCALP_AREA_LABELS[r.area]}
                           </span>
                           {(r.notes.sleep !== undefined || r.notes.stress !== undefined) && (
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs text-slate-500">
                               {r.notes.sleep !== undefined && `睡眠${r.notes.sleep}h`}
                               {r.notes.sleep !== undefined && r.notes.stress !== undefined && " · "}
                               {r.notes.stress !== undefined && `ストレス${r.notes.stress}`}
                             </span>
                           )}
                           {(r.notes.shampoo || r.notes.treatment) && (
-                            <span className="text-xs text-gray-400 text-center max-w-[8rem] leading-relaxed">
+                            <span className="text-xs text-slate-500 text-center max-w-[8rem] leading-relaxed">
                               {[r.notes.shampoo, r.notes.treatment].filter(Boolean).join(" / ")}
                             </span>
                           )}
@@ -410,8 +410,8 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
                       onClick={() => { setSelectedArea(area); setCompareIds(null); }}
                       className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                         selectedArea === area
-                          ? `${AREA_PILL_COLORS[area]} shadow-md scale-105`
-                          : "bg-white text-gray-500 ring-1 ring-gray-200 hover:ring-gray-300"
+                          ? `${AREA_PILL_COLORS[area]} scale-105`
+                          : "bg-white/[0.04] text-slate-500 border border-white/[0.08] hover:border-white/[0.15]"
                       }`}
                     >
                       {SCALP_AREA_LABELS[area]}
@@ -424,15 +424,15 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
 
                 {/* Before/After compare */}
                 {compareIds && compareBeforeUrl && compareAfterUrl && compareIds[0] !== compareIds[1] && (
-                  <section className="bg-white rounded-2xl p-4 shadow-sm ring-1 ring-gray-100">
+                  <section className="glass-card rounded-2xl p-4">
                     <div className="flex items-center justify-between mb-3">
-                      <h2 className="text-sm font-bold text-gray-800">Before / After 比較</h2>
-                      <button onClick={() => setCompareIds(null)} className="text-xs text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg transition-colors">
+                      <h2 className="text-sm font-bold text-white">Before / After 比較</h2>
+                      <button onClick={() => setCompareIds(null)} className="text-xs text-slate-400 hover:text-slate-200 bg-white/[0.06] hover:bg-white/[0.1] px-2.5 py-1 rounded-lg transition-colors">
                         閉じる
                       </button>
                     </div>
                     <CompareSlider beforeUrl={compareBeforeUrl} afterUrl={compareAfterUrl} />
-                    <p className="text-xs text-center text-gray-400 mt-2">スライダーを左右にドラッグして比較</p>
+                    <p className="text-xs text-center text-slate-500 mt-2">スライダーを左右にドラッグして比較</p>
                   </section>
                 )}
 
@@ -440,14 +440,14 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
                 {areaRecords.length === 0 ? (
                   <div className="text-center py-12">
                     <p className="text-3xl mb-3">📷</p>
-                    <p className="text-sm text-gray-400">{SCALP_AREA_LABELS[selectedArea]}の記録はありません</p>
+                    <p className="text-sm text-slate-500">{SCALP_AREA_LABELS[selectedArea]}の記録はありません</p>
                   </div>
                 ) : (
                   <section>
                     <div className="flex items-center justify-between mb-3">
-                      <h2 className="text-sm font-bold text-gray-800">{SCALP_AREA_LABELS[selectedArea]}</h2>
+                      <h2 className="text-sm font-bold text-white">{SCALP_AREA_LABELS[selectedArea]}</h2>
                       {areaRecords.length >= 2 && (
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-slate-500">
                           2枚選んで比較（{compareIds
                             ? `${compareIds.filter((id, i, arr) => arr.indexOf(id) === i).length}枚選択中`
                             : "未選択"})
@@ -464,22 +464,22 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
                             onClick={() => toggleCompare(record.id)}
                             className={`relative aspect-square rounded-2xl overflow-hidden border-2 transition-all ${
                               isSelected
-                                ? "border-emerald-500 ring-2 ring-emerald-300 scale-[1.02]"
-                                : "border-transparent hover:border-gray-200"
+                                ? "border-emerald-400 ring-2 ring-emerald-400/30 scale-[1.02]"
+                                : "border-white/[0.06] hover:border-white/[0.15]"
                             }`}
                           >
                             {url ? (
                               <img src={url} alt={record.date} className="w-full h-full object-cover" />
                             ) : (
-                              <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                                <div className="w-5 h-5 border-2 border-gray-300 border-t-transparent rounded-full animate-spin" />
+                              <div className="w-full h-full bg-white/[0.04] flex items-center justify-center">
+                                <div className="w-5 h-5 border-2 border-emerald-400/30 border-t-emerald-400 rounded-full animate-spin" />
                               </div>
                             )}
                             <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-2">
                               <p className="text-xs text-white/90">{record.date}</p>
                             </div>
                             {isSelected && (
-                              <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center shadow-md">
+                              <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-emerald-400 flex items-center justify-center shadow-md shadow-emerald-400/30">
                                 <span className="text-white text-xs font-bold">✓</span>
                               </div>
                             )}
@@ -492,13 +492,13 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
 
                 {/* Timeline */}
                 <section>
-                  <h2 className="text-sm font-bold text-gray-800 mb-3">タイムライン</h2>
+                  <h2 className="text-sm font-bold text-white mb-3">タイムライン</h2>
                   <div className="space-y-3">
                     {Array.from(byDate.entries())
                       .sort(([a], [b]) => b.localeCompare(a))
                       .map(([date, dayRecords]) => (
-                        <div key={date} className="bg-white rounded-2xl p-4 shadow-sm ring-1 ring-gray-100">
-                          <p className="text-xs font-semibold text-gray-500 mb-3">
+                        <div key={date} className="glass-card rounded-2xl p-4">
+                          <p className="text-xs font-semibold text-slate-400 mb-3">
                             {new Date(date + "T00:00:00").toLocaleDateString("ja-JP", {
                               year: "numeric", month: "long", day: "numeric",
                             })}
@@ -506,12 +506,12 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
                           <div className="flex gap-3 flex-wrap">
                             {dayRecords.map((r) => (
                               <div key={r.id} className="flex flex-col items-center gap-1.5">
-                                <div className="w-20 h-20 rounded-xl overflow-hidden bg-gray-100 shadow-sm">
+                                <div className="w-20 h-20 rounded-xl overflow-hidden bg-white/[0.04] border border-white/[0.06]">
                                   {photoUrls[r.id] ? (
                                     <img src={photoUrls[r.id]} alt={r.area} className="w-full h-full object-cover" />
                                   ) : (
                                     <div className="w-full h-full flex items-center justify-center">
-                                      <div className="w-4 h-4 border-2 border-gray-300 border-t-transparent rounded-full animate-spin" />
+                                      <div className="w-4 h-4 border-2 border-emerald-400/30 border-t-emerald-400 rounded-full animate-spin" />
                                     </div>
                                   )}
                                 </div>
@@ -519,7 +519,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
                                   {SCALP_AREA_LABELS[r.area]}
                                 </span>
                                 {(r.notes.sleep !== undefined || r.notes.stress !== undefined) && (
-                                  <span className="text-xs text-gray-400">
+                                  <span className="text-xs text-slate-500">
                                     {r.notes.sleep !== undefined && `睡眠${r.notes.sleep}h`}
                                     {r.notes.sleep !== undefined && r.notes.stress !== undefined && " · "}
                                     {r.notes.stress !== undefined && `ストレス${r.notes.stress}`}

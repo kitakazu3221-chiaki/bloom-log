@@ -41,9 +41,9 @@ export function CaptureButton({
         <span
           className={`absolute inset-0 rounded-full border-4 ${
             isCounting
-              ? "border-orange-400 pulse-orange"
+              ? "border-amber-400 pulse-orange"
               : disabled
-              ? "border-gray-300"
+              ? "border-slate-700"
               : "border-emerald-400 pulse-green"
           }`}
         />
@@ -52,10 +52,10 @@ export function CaptureButton({
         <span
           className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${
             isCounting
-              ? "bg-orange-400"
+              ? "bg-amber-400"
               : disabled
-              ? "bg-gray-200"
-              : "bg-gradient-to-br from-emerald-400 to-green-600 shadow-lg shadow-emerald-300/50"
+              ? "bg-slate-800"
+              : "bg-gradient-to-br from-emerald-400 to-emerald-500 shadow-lg shadow-emerald-400/30"
           }`}
         >
           {isCounting ? (
@@ -68,7 +68,7 @@ export function CaptureButton({
         </span>
       </button>
 
-      <span className="text-xs text-gray-400 h-4 transition-all">
+      <span className="text-xs text-slate-500 h-4 transition-all">
         {isCounting ? "タップでキャンセル" : disabled ? "" : "タップで撮影"}
       </span>
     </div>

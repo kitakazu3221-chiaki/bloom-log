@@ -59,21 +59,21 @@ export function PhonePage({ sessionId }: PhonePageProps) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col">
+    <div className="min-h-screen bg-[#0A1F14] flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-gray-800">
+      <div className="flex items-center justify-between px-4 py-3 bg-[#112B1D] border-b border-white/[0.06]">
         <h1 className="text-white font-bold">Bloom Log</h1>
         <div className="flex items-center gap-2">
           <div
             className={`w-2.5 h-2.5 rounded-full ${
               rtc.connectionState === "connected"
-                ? "bg-green-500"
+                ? "bg-emerald-400"
                 : ws.connectionState === "connected"
-                  ? "bg-yellow-500"
-                  : "bg-red-500"
+                  ? "bg-amber-400"
+                  : "bg-red-400"
             }`}
           />
-          <span className="text-gray-300 text-sm">
+          <span className="text-slate-300 text-sm">
             {rtc.connectionState === "connected"
               ? "配信中"
               : ws.connectionState === "connected"
@@ -89,7 +89,7 @@ export function PhonePage({ sessionId }: PhonePageProps) {
           <VideoPreview stream={rtc.localStream} />
         ) : (
           <div className="flex-1 flex items-center justify-center h-full">
-            <div className="text-center text-gray-400 p-8">
+            <div className="text-center text-slate-400 p-8">
               <p className="text-lg mb-2">カメラを起動中...</p>
               <p className="text-sm">カメラへのアクセスを許可してください</p>
             </div>
@@ -98,11 +98,11 @@ export function PhonePage({ sessionId }: PhonePageProps) {
       </div>
 
       {/* Debug info + Instructions */}
-      <div className="px-4 py-6 bg-gray-800 text-center space-y-2">
-        <p className="text-gray-300 text-sm">
+      <div className="px-4 py-6 bg-[#112B1D] border-t border-white/[0.06] text-center space-y-2">
+        <p className="text-slate-300 text-sm">
           PC画面を見ながら位置を合わせてください
         </p>
-        <div className="text-gray-500 text-xs space-y-1">
+        <div className="text-slate-600 text-xs space-y-1">
           <p>WS: {ws.connectionState} | Peer: {ws.peerJoined ? "Yes" : "No"}</p>
           <p>RTC: {rtc.connectionState}</p>
           <p>Session: {sessionId.substring(0, 8)}...</p>
