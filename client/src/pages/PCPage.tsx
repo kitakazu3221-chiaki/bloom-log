@@ -238,7 +238,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
                 : "text-slate-500 hover:text-slate-300"
             }`}
           >
-            📱 スマホカメラ
+            スマホカメラ
           </button>
           <button
             onClick={() => setCameraMode("pc")}
@@ -248,7 +248,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
                 : "text-slate-500 hover:text-slate-300"
             }`}
           >
-            💻 PCカメラ
+            PCカメラ
           </button>
         </div>
 
