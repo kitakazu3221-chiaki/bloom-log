@@ -45,6 +45,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
   const [overlayOpacity, setOverlayOpacity] = useState(40);
   const [showOverlay, setShowOverlay] = useState(true);
   const [countdown, setCountdown] = useState<number | null>(null);
+  const [showStorageConfirm, setShowStorageConfirm] = useState(false);
   const videoPreviewRef = useRef<VideoPreviewHandle>(null);
   const prevOverlayUrl = useRef<string | null>(null);
 
@@ -203,7 +204,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => onStorageModeChange(storageMode === "cloud" ? "local" : "cloud")}
+            onClick={() => setShowStorageConfirm(true)}
             className="text-sm text-gray-400 flex items-center gap-1.5 hover:text-gray-600 transition-colors"
             title="保存先を切替"
           >
@@ -398,6 +399,48 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
           isSaving={isSaving}
         />
       )}
+
+      {/* Storage mode confirm dialog */}
+      {showStorageConfirm && (() => {
+        const nextMode = storageMode === "cloud" ? "local" : "cloud";
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowStorageConfirm(false)} />
+            <div className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 space-y-4">
+              <h3 className="text-lg font-bold text-gray-800">
+                {nextMode === "local" ? "ローカル保存に切替" : "クラウド保存に切替"}
+              </h3>
+              <div className="text-base text-gray-500 space-y-2">
+                {nextMode === "local" ? (
+                  <>
+                    <p>写真はこの端末のブラウザにのみ保存されます。</p>
+                    <p className="text-amber-600 font-medium">注意: ブラウザのデータを消去すると写真も失われます。既存のクラウド写真はクラウドに残ります。</p>
+                  </>
+                ) : (
+                  <>
+                    <p>写真はサーバーに安全に保存されます。</p>
+                    <p className="text-gray-400">既存のローカル写真はこの端末に残ります。</p>
+                  </>
+                )}
+              </div>
+              <div className="flex gap-2.5">
+                <button
+                  onClick={() => setShowStorageConfirm(false)}
+                  className="flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-500 text-base font-medium border border-gray-200"
+                >
+                  キャンセル
+                </button>
+                <button
+                  onClick={() => { onStorageModeChange(nextMode); setShowStorageConfirm(false); }}
+                  className="flex-1 py-2.5 rounded-xl bg-emerald-600 text-white text-base font-bold shadow-md"
+                >
+                  切替
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
