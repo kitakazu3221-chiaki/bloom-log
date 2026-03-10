@@ -62,7 +62,7 @@ export function PhonePage({ sessionId }: PhonePageProps) {
     <div className="min-h-screen bg-[#F8FAF8] flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200">
-        <h1 className="text-gray-800 font-bold">Bloom Log</h1>
+        <h1 className="text-gray-800 font-bold text-lg">Bloom Log</h1>
         <div className="flex items-center gap-2">
           <div
             className={`w-2.5 h-2.5 rounded-full ${
@@ -73,7 +73,7 @@ export function PhonePage({ sessionId }: PhonePageProps) {
                   : "bg-red-400"
             }`}
           />
-          <span className="text-gray-500 text-sm">
+          <span className="text-gray-500 text-base">
             {rtc.connectionState === "connected"
               ? "配信中"
               : ws.connectionState === "connected"
@@ -90,8 +90,8 @@ export function PhonePage({ sessionId }: PhonePageProps) {
         ) : (
           <div className="flex-1 flex items-center justify-center h-full">
             <div className="text-center text-gray-400 p-8">
-              <p className="text-lg mb-2">カメラを起動中...</p>
-              <p className="text-sm">カメラへのアクセスを許可してください</p>
+              <p className="text-xl mb-2">カメラを起動中...</p>
+              <p className="text-base">カメラへのアクセスを許可してください</p>
             </div>
           </div>
         )}
@@ -99,10 +99,10 @@ export function PhonePage({ sessionId }: PhonePageProps) {
 
       {/* Debug info + Instructions */}
       <div className="px-4 py-6 bg-white border-t border-gray-200 text-center space-y-2">
-        <p className="text-gray-600 text-sm">
+        <p className="text-gray-600 text-base">
           PC画面を見ながら位置を合わせてください
         </p>
-        <div className="text-gray-300 text-xs space-y-1">
+        <div className="text-gray-300 text-sm space-y-1">
           <p>WS: {ws.connectionState} | Peer: {ws.peerJoined ? "Yes" : "No"}</p>
           <p>RTC: {rtc.connectionState}</p>
           <p>Session: {sessionId.substring(0, 8)}...</p>

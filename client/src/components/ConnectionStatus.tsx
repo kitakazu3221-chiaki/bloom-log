@@ -37,7 +37,7 @@ export function ConnectionStatus({
   return (
     <div className="flex items-center gap-2">
       <div className={`w-2.5 h-2.5 rounded-full ${color}`} />
-      <span className="text-sm text-gray-500">{label}</span>
+      <span className="text-base text-gray-500">{label}</span>
     </div>
   );
 }

@@ -57,7 +57,7 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200 mb-4 animate-float">
               <span className="text-3xl">🌱</span>
             </div>
-            <h1 className="text-2xl font-bold text-gray-800 tracking-tight">
+            <h1 className="text-3xl font-bold text-gray-800 tracking-tight">
               Bloom Log
             </h1>
           </div>
@@ -66,7 +66,7 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
           <div className="flex mx-6 mb-1 bg-gray-100 rounded-xl p-1">
             <button
               onClick={() => handleTabChange("login")}
-              className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${
+              className={`flex-1 py-2.5 text-base font-medium rounded-lg transition-all ${
                 tab === "login"
                   ? "bg-white text-gray-800 shadow-sm"
                   : "text-gray-400 hover:text-gray-600"
@@ -76,7 +76,7 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
             </button>
             <button
               onClick={() => handleTabChange("register")}
-              className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${
+              className={`flex-1 py-2.5 text-base font-medium rounded-lg transition-all ${
                 tab === "register"
                   ? "bg-white text-gray-800 shadow-sm"
                   : "text-gray-400 hover:text-gray-600"
@@ -89,7 +89,7 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
           {/* Form */}
           <form onSubmit={handleSubmit} className="px-6 pt-4 pb-6 space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+              <label className="block text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
                 ユーザー名
               </label>
               <input
@@ -99,12 +99,12 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
                 placeholder="例: yamada_taro"
                 autoComplete="username"
                 required
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all"
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+              <label className="block text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
                 パスワード
               </label>
               <input
@@ -114,13 +114,13 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
                 placeholder={tab === "register" ? "8文字以上" : ""}
                 autoComplete={tab === "login" ? "current-password" : "new-password"}
                 required
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all"
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all"
               />
             </div>
 
             {tab === "register" && (
               <div className="animate-fade-in">
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+                <label className="block text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
                   パスワード（確認）
                 </label>
                 <input
@@ -129,22 +129,22 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   autoComplete="new-password"
                   required
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all"
                 />
               </div>
             )}
 
             {error && (
               <div className="flex items-start gap-2 bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3">
-                <span className="text-base leading-none mt-0.5">⚠</span>
-                <p className="text-sm">{error}</p>
+                <span className="text-lg leading-none mt-0.5">⚠</span>
+                <p className="text-base">{error}</p>
               </div>
             )}
 
             <button
               type="submit"
               disabled={submitting}
-              className="w-full mt-1 py-3.5 rounded-xl bg-emerald-600 text-white font-bold text-sm shadow-md shadow-emerald-600/20 hover:bg-emerald-500 disabled:opacity-60 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
+              className="w-full mt-1 py-3.5 rounded-xl bg-emerald-600 text-white font-bold text-base shadow-md shadow-emerald-600/20 hover:bg-emerald-500 disabled:opacity-60 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
             >
               {submitting
                 ? "処理中..."

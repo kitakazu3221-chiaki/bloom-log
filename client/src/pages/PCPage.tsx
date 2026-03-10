@@ -184,19 +184,19 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
             <div className="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center">
               <span className="text-sm">🌱</span>
             </div>
-            <h1 className="text-base font-bold text-gray-800 tracking-tight">
+            <h1 className="text-lg font-bold text-gray-800 tracking-tight">
               Bloom Log
             </h1>
           </div>
           <a
             href="/history"
-            className="text-xs font-medium text-gray-500 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
+            className="text-sm font-medium text-gray-500 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
           >
             履歴
           </a>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-gray-400 flex items-center gap-1.5">
+          <span className="text-sm text-gray-400 flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
             クラウド保存
           </span>
@@ -208,10 +208,10 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
             />
           )}
           <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
-            <span className="text-xs text-gray-400">{username}</span>
+            <span className="text-sm text-gray-400">{username}</span>
             <button
               onClick={onLogout}
-              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
             >
               ログアウト
             </button>
@@ -229,10 +229,10 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
       {/* Main content */}
       <main className="flex-1 flex flex-col items-center gap-5 p-6">
         {/* Camera mode toggle */}
-        <div className="flex items-center gap-1 bg-gray-100 border border-gray-200 rounded-2xl p-1 text-xs self-start">
+        <div className="flex items-center gap-1 bg-gray-100 border border-gray-200 rounded-2xl p-1 text-sm self-start">
           <button
             onClick={() => setCameraMode("phone")}
-            className={`px-4 py-2 rounded-xl font-medium transition-all ${
+            className={`px-4 py-2.5 rounded-xl font-medium transition-all ${
               cameraMode === "phone"
                 ? "bg-white text-gray-800 shadow-sm"
                 : "text-gray-400 hover:text-gray-600"
@@ -242,7 +242,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
           </button>
           <button
             onClick={() => setCameraMode("pc")}
-            className={`px-4 py-2 rounded-xl font-medium transition-all ${
+            className={`px-4 py-2.5 rounded-xl font-medium transition-all ${
               cameraMode === "pc"
                 ? "bg-white text-gray-800 shadow-sm"
                 : "text-gray-400 hover:text-gray-600"
@@ -263,8 +263,8 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
               <GuideOverlay />
               {/* Brightness warning */}
               {(brightness === "dark" || brightness === "bright") && (
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/75 backdrop-blur-sm text-white text-xs px-4 py-2.5 rounded-full pointer-events-none shadow-lg">
-                  <span className="text-sm">
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/75 backdrop-blur-sm text-white text-sm px-4 py-2.5 rounded-full pointer-events-none shadow-lg">
+                  <span className="text-base">
                     {brightness === "dark" ? "🌑" : "☀️"}
                   </span>
                   <span>
@@ -297,16 +297,16 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
               {localCamera.error ? (
                 <div className="text-center text-red-400 px-6">
                   <p className="text-4xl mb-3">📷</p>
-                  <p className="font-medium">カメラを起動できませんでした</p>
-                  <p className="text-sm mt-1 opacity-70">{localCamera.error}</p>
-                  <p className="text-xs mt-2 opacity-50">
+                  <p className="font-medium text-base">カメラを起動できませんでした</p>
+                  <p className="text-base mt-1 opacity-70">{localCamera.error}</p>
+                  <p className="text-sm mt-2 opacity-50">
                     ブラウザのカメラ権限を確認してください
                   </p>
                 </div>
               ) : (
                 <div className="text-center text-gray-400">
                   <div className="animate-spin w-8 h-8 border-2 border-emerald-200 border-t-emerald-500 rounded-full mx-auto mb-3" />
-                  <p className="text-sm">PCカメラを起動中...</p>
+                  <p className="text-base">PCカメラを起動中...</p>
                 </div>
               )}
             </div>
@@ -317,7 +317,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
               ) : (
                 <div className="text-center text-gray-400">
                   <div className="animate-spin w-8 h-8 border-2 border-emerald-200 border-t-emerald-500 rounded-full mx-auto mb-3" />
-                  <p className="text-sm">映像接続を確立中...</p>
+                  <p className="text-base">映像接続を確立中...</p>
                 </div>
               )}
             </div>
@@ -325,7 +325,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center text-gray-400">
                 <div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-transparent rounded-full mx-auto mb-3" />
-                <p className="text-sm">サーバーに接続中...</p>
+                <p className="text-base">サーバーに接続中...</p>
               </div>
             </div>
           )}
@@ -336,17 +336,17 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
           {/* Overlay controls */}
           {isStreamReady && overlayUrl && (
             <div className="flex items-center gap-4 text-sm w-full pb-4 border-b border-gray-200">
-              <label className="flex items-center gap-2 cursor-pointer select-none text-xs text-gray-500">
+              <label className="flex items-center gap-2 cursor-pointer select-none text-sm text-gray-500">
                 <input
                   type="checkbox"
                   checked={showOverlay}
                   onChange={(e) => setShowOverlay(e.target.checked)}
-                  className="accent-emerald-600 w-3.5 h-3.5"
+                  className="accent-emerald-600 w-4 h-4"
                 />
                 前回写真オーバーレイ
               </label>
               {showOverlay && (
-                <label className="flex items-center gap-2 text-xs text-gray-500 ml-auto">
+                <label className="flex items-center gap-2 text-sm text-gray-500 ml-auto">
                   透明度
                   <input
                     type="range"
@@ -372,7 +372,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
           />
 
           {saveError && (
-            <p className="text-xs text-red-600 bg-red-50 border border-red-200 px-4 py-2 rounded-xl">
+            <p className="text-sm text-red-600 bg-red-50 border border-red-200 px-4 py-2 rounded-xl">
               {saveError}
             </p>
           )}

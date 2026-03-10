@@ -11,10 +11,10 @@ export function LandingPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200 mb-4 animate-float">
             <span className="text-3xl">🌱</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-800 tracking-tight mb-2">
+          <h1 className="text-4xl font-bold text-gray-800 tracking-tight mb-2">
             Bloom Log
           </h1>
-          <p className="text-base text-gray-500">
+          <p className="text-lg text-gray-500">
             変化は、記録から見えてくる。
           </p>
         </div>
@@ -39,15 +39,15 @@ export function LandingPage() {
               key={f.title}
               className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4 text-center"
             >
-              <h3 className="text-sm font-bold text-gray-800 mb-1">{f.title}</h3>
-              <p className="text-xs text-gray-400 leading-relaxed">{f.desc}</p>
+              <h3 className="text-base font-bold text-gray-800 mb-1">{f.title}</h3>
+              <p className="text-sm text-gray-400 leading-relaxed">{f.desc}</p>
             </div>
           ))}
         </div>
 
         {/* Steps */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-5 mb-8">
-          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-4 text-center">
+          <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wide mb-4 text-center">
             使い方
           </h2>
           <div className="flex items-center justify-center gap-6 sm:gap-10">
@@ -58,10 +58,10 @@ export function LandingPage() {
             ].map((s, i) => (
               <div key={s.num} className="flex items-center gap-2">
                 {i > 0 && <span className="text-gray-200 mr-2 hidden sm:block">→</span>}
-                <span className="w-7 h-7 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700 text-xs font-bold shrink-0">
+                <span className="w-8 h-8 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700 text-sm font-bold shrink-0">
                   {s.num}
                 </span>
-                <p className="text-xs text-gray-600">{s.text}</p>
+                <p className="text-sm text-gray-600">{s.text}</p>
               </div>
             ))}
           </div>
@@ -71,11 +71,11 @@ export function LandingPage() {
         <div className="text-center">
           <a
             href="/auth"
-            className="inline-block px-8 py-3.5 rounded-xl bg-emerald-600 text-white font-bold text-sm shadow-md shadow-emerald-600/20 hover:bg-emerald-500 transition-all active:scale-[0.98]"
+            className="inline-block px-8 py-3.5 rounded-xl bg-emerald-600 text-white font-bold text-base shadow-md shadow-emerald-600/20 hover:bg-emerald-500 transition-all active:scale-[0.98]"
           >
             無料で始める
           </a>
-          <p className="text-gray-400 text-xs mt-3">
+          <p className="text-gray-400 text-sm mt-3">
             まずは無料トライアルからお試しください
           </p>
         </div>

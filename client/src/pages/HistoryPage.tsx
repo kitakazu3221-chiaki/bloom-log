@@ -82,7 +82,7 @@ function PhotoCalendar({
         >
           ‹
         </button>
-        <span className="text-sm font-bold text-gray-800">
+        <span className="text-base font-bold text-gray-800">
           {year}年{month + 1}月
         </span>
         <button
@@ -98,7 +98,7 @@ function PhotoCalendar({
         {["日", "月", "火", "水", "木", "金", "土"].map((d, i) => (
           <div
             key={d}
-            className={`text-center text-xs font-semibold py-1 ${
+            className={`text-center text-sm font-semibold py-1 ${
               i === 0 ? "text-red-400" : i === 6 ? "text-sky-400" : "text-gray-400"
             }`}
           >
@@ -134,7 +134,7 @@ function PhotoCalendar({
               key={day}
               onClick={() => onSelectDate(isSelected ? null : dateStr)}
               disabled={!hasPhotos}
-              className={`flex flex-col items-center py-1.5 rounded-xl text-xs transition-all ${
+              className={`flex flex-col items-center py-1.5 rounded-xl text-sm transition-all ${
                 isSelected
                   ? "bg-emerald-50 ring-1 ring-emerald-300"
                   : hasPhotos
@@ -162,7 +162,7 @@ function PhotoCalendar({
       {/* Legend */}
       <div className="flex gap-4 mt-4 pt-4 border-t border-gray-200 justify-center">
         {(["top", "front", "side"] as ScalpArea[]).map((area) => (
-          <span key={area} className="flex items-center gap-1.5 text-xs text-gray-500">
+          <span key={area} className="flex items-center gap-1.5 text-sm text-gray-500">
             <span className={`w-2 h-2 rounded-full ${AREA_DOT_COLORS[area]}`} />
             {SCALP_AREA_LABELS[area]}
           </span>
@@ -204,11 +204,11 @@ function CompareSlider({ beforeUrl, afterUrl }: { beforeUrl: string; afterUrl: s
       {/* Divider */}
       <div className="absolute inset-y-0 w-0.5 bg-white/80 shadow-xl pointer-events-none" style={{ left: `${pos}%` }}>
         <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-white shadow-lg flex items-center justify-center">
-          <span className="text-gray-500 text-xs font-bold">⇔</span>
+          <span className="text-gray-500 text-sm font-bold">⇔</span>
         </div>
       </div>
-      <span className="absolute top-3 left-3 text-xs bg-black/50 backdrop-blur-sm text-white px-2.5 py-1 rounded-full">Before</span>
-      <span className="absolute top-3 right-3 text-xs bg-black/50 backdrop-blur-sm text-white px-2.5 py-1 rounded-full">After</span>
+      <span className="absolute top-3 left-3 text-sm bg-black/50 backdrop-blur-sm text-white px-2.5 py-1 rounded-full">Before</span>
+      <span className="absolute top-3 right-3 text-sm bg-black/50 backdrop-blur-sm text-white px-2.5 py-1 rounded-full">After</span>
     </div>
   );
 }
@@ -296,7 +296,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
       <header className="sticky top-0 z-10 flex items-center gap-3 px-6 py-3.5 bg-white/90 backdrop-blur-sm border-b border-gray-200">
         <a
           href="/"
-          className="w-8 h-8 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-500 border border-gray-200 transition-colors text-sm"
+          className="w-8 h-8 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-500 border border-gray-200 transition-colors text-base"
           aria-label="戻る"
         >
           ←
@@ -305,12 +305,12 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
           <div className="w-6 h-6 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center">
             <span className="text-xs">🌱</span>
           </div>
-          <h1 className="text-base font-bold text-gray-800 tracking-tight">撮影履歴</h1>
+          <h1 className="text-lg font-bold text-gray-800 tracking-tight">撮影履歴</h1>
         </div>
         <div className="ml-auto flex items-center gap-3">
           <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
-            <span className="text-xs text-gray-400">{username}</span>
-            <button onClick={onLogout} className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
+            <span className="text-sm text-gray-400">{username}</span>
+            <button onClick={onLogout} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
               ログアウト
             </button>
           </div>
@@ -328,15 +328,15 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
         {records.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-4xl mb-4">📷</p>
-            <p className="text-gray-400 text-sm">撮影記録がありません</p>
+            <p className="text-gray-400 text-base">撮影記録がありません</p>
           </div>
         ) : (
           <>
             {/* View mode toggle */}
-            <div className="flex items-center gap-1 bg-gray-100 border border-gray-200 rounded-2xl p-1 text-xs self-start">
+            <div className="flex items-center gap-1 bg-gray-100 border border-gray-200 rounded-2xl p-1 text-sm self-start">
               <button
                 onClick={() => setViewMode("calendar")}
-                className={`px-4 py-2 rounded-xl font-medium transition-all ${
+                className={`px-4 py-2.5 rounded-xl font-medium transition-all ${
                   viewMode === "calendar" ? "bg-white text-gray-800 shadow-sm" : "text-gray-400 hover:text-gray-600"
                 }`}
               >
@@ -344,7 +344,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`px-4 py-2 rounded-xl font-medium transition-all ${
+                className={`px-4 py-2.5 rounded-xl font-medium transition-all ${
                   viewMode === "list" ? "bg-white text-gray-800 shadow-sm" : "text-gray-400 hover:text-gray-600"
                 }`}
               >
@@ -362,7 +362,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
 
                 {calendarDate && calendarDateRecords.length > 0 && (
                   <div className="card rounded-2xl p-5 animate-fade-in-up">
-                    <h2 className="text-sm font-bold text-gray-800 mb-4">
+                    <h2 className="text-base font-bold text-gray-800 mb-4">
                       {new Date(calendarDate + "T00:00:00").toLocaleDateString("ja-JP", {
                         year: "numeric", month: "long", day: "numeric",
                       })}
@@ -379,18 +379,18 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
                               </div>
                             )}
                           </div>
-                          <span className={`text-xs font-semibold px-3 py-1 rounded-full shadow-sm ${AREA_PILL_COLORS[r.area]}`}>
+                          <span className={`text-sm font-semibold px-3 py-1 rounded-full shadow-sm ${AREA_PILL_COLORS[r.area]}`}>
                             {SCALP_AREA_LABELS[r.area]}
                           </span>
                           {(r.notes.sleep !== undefined || r.notes.stress !== undefined) && (
-                            <span className="text-xs text-gray-400">
+                            <span className="text-sm text-gray-400">
                               {r.notes.sleep !== undefined && `睡眠${r.notes.sleep}h`}
                               {r.notes.sleep !== undefined && r.notes.stress !== undefined && " · "}
                               {r.notes.stress !== undefined && `ストレス${r.notes.stress}`}
                             </span>
                           )}
                           {(r.notes.shampoo || r.notes.treatment) && (
-                            <span className="text-xs text-gray-400 text-center max-w-[8rem] leading-relaxed">
+                            <span className="text-sm text-gray-400 text-center max-w-[8rem] leading-relaxed">
                               {[r.notes.shampoo, r.notes.treatment].filter(Boolean).join(" / ")}
                             </span>
                           )}
@@ -408,14 +408,14 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
                     <button
                       key={area}
                       onClick={() => { setSelectedArea(area); setCompareIds(null); }}
-                      className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                      className={`px-4 py-2.5 rounded-xl text-base font-medium transition-all ${
                         selectedArea === area
                           ? `${AREA_PILL_COLORS[area]} scale-105`
                           : "bg-gray-100 text-gray-400 border border-gray-200 hover:border-gray-300"
                       }`}
                     >
                       {SCALP_AREA_LABELS[area]}
-                      <span className="ml-1.5 text-xs opacity-60">
+                      <span className="ml-1.5 text-sm opacity-60">
                         ({records.filter((r) => r.area === area).length})
                       </span>
                     </button>
@@ -426,13 +426,13 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
                 {compareIds && compareBeforeUrl && compareAfterUrl && compareIds[0] !== compareIds[1] && (
                   <section className="card rounded-2xl p-4">
                     <div className="flex items-center justify-between mb-3">
-                      <h2 className="text-sm font-bold text-gray-800">Before / After 比較</h2>
-                      <button onClick={() => setCompareIds(null)} className="text-xs text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg transition-colors">
+                      <h2 className="text-base font-bold text-gray-800">Before / After 比較</h2>
+                      <button onClick={() => setCompareIds(null)} className="text-sm text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg transition-colors">
                         閉じる
                       </button>
                     </div>
                     <CompareSlider beforeUrl={compareBeforeUrl} afterUrl={compareAfterUrl} />
-                    <p className="text-xs text-center text-gray-400 mt-2">スライダーを左右にドラッグして比較</p>
+                    <p className="text-sm text-center text-gray-400 mt-2">スライダーを左右にドラッグして比較</p>
                   </section>
                 )}
 
@@ -440,14 +440,14 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
                 {areaRecords.length === 0 ? (
                   <div className="text-center py-12">
                     <p className="text-3xl mb-3">📷</p>
-                    <p className="text-sm text-gray-400">{SCALP_AREA_LABELS[selectedArea]}の記録はありません</p>
+                    <p className="text-base text-gray-400">{SCALP_AREA_LABELS[selectedArea]}の記録はありません</p>
                   </div>
                 ) : (
                   <section>
                     <div className="flex items-center justify-between mb-3">
-                      <h2 className="text-sm font-bold text-gray-800">{SCALP_AREA_LABELS[selectedArea]}</h2>
+                      <h2 className="text-base font-bold text-gray-800">{SCALP_AREA_LABELS[selectedArea]}</h2>
                       {areaRecords.length >= 2 && (
-                        <p className="text-xs text-gray-400">
+                        <p className="text-sm text-gray-400">
                           2枚選んで比較（{compareIds
                             ? `${compareIds.filter((id, i, arr) => arr.indexOf(id) === i).length}枚選択中`
                             : "未選択"})
@@ -476,11 +476,11 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
                               </div>
                             )}
                             <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-2">
-                              <p className="text-xs text-white/90">{record.date}</p>
+                              <p className="text-sm text-white/90">{record.date}</p>
                             </div>
                             {isSelected && (
                               <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center shadow-md">
-                                <span className="text-white text-xs font-bold">✓</span>
+                                <span className="text-white text-sm font-bold">✓</span>
                               </div>
                             )}
                           </button>
@@ -492,13 +492,13 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
 
                 {/* Timeline */}
                 <section>
-                  <h2 className="text-sm font-bold text-gray-800 mb-3">タイムライン</h2>
+                  <h2 className="text-base font-bold text-gray-800 mb-3">タイムライン</h2>
                   <div className="space-y-3">
                     {Array.from(byDate.entries())
                       .sort(([a], [b]) => b.localeCompare(a))
                       .map(([date, dayRecords]) => (
                         <div key={date} className="card rounded-2xl p-4">
-                          <p className="text-xs font-semibold text-gray-400 mb-3">
+                          <p className="text-sm font-semibold text-gray-400 mb-3">
                             {new Date(date + "T00:00:00").toLocaleDateString("ja-JP", {
                               year: "numeric", month: "long", day: "numeric",
                             })}
@@ -506,7 +506,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
                           <div className="flex gap-3 flex-wrap">
                             {dayRecords.map((r) => (
                               <div key={r.id} className="flex flex-col items-center gap-1.5">
-                                <div className="w-20 h-20 rounded-xl overflow-hidden bg-gray-50 border border-gray-200">
+                                <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-50 border border-gray-200">
                                   {photoUrls[r.id] ? (
                                     <img src={photoUrls[r.id]} alt={r.area} className="w-full h-full object-cover" />
                                   ) : (
@@ -515,11 +515,11 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
                                     </div>
                                   )}
                                 </div>
-                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${AREA_PILL_COLORS[r.area]}`}>
+                                <span className={`text-sm px-2 py-0.5 rounded-full font-medium ${AREA_PILL_COLORS[r.area]}`}>
                                   {SCALP_AREA_LABELS[r.area]}
                                 </span>
                                 {(r.notes.sleep !== undefined || r.notes.stress !== undefined) && (
-                                  <span className="text-xs text-gray-400">
+                                  <span className="text-sm text-gray-400">
                                     {r.notes.sleep !== undefined && `睡眠${r.notes.sleep}h`}
                                     {r.notes.sleep !== undefined && r.notes.stress !== undefined && " · "}
                                     {r.notes.stress !== undefined && `ストレス${r.notes.stress}`}

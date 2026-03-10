@@ -52,16 +52,16 @@ export function CaptureButton({
           }`}
         >
           {isCounting ? (
-            <span className="text-white text-2xl font-bold leading-none tabular-nums">
+            <span className="text-white text-3xl font-bold leading-none tabular-nums">
               {countdown}
             </span>
           ) : (
-            <span className="text-white text-xl">📷</span>
+            <span className="text-white text-2xl">📷</span>
           )}
         </span>
       </button>
 
-      <span className="text-xs text-gray-400 h-4 transition-all">
+      <span className="text-sm text-gray-400 h-5 transition-all">
         {isCounting ? "タップでキャンセル" : disabled ? "" : "タップで撮影"}
       </span>
     </div>
