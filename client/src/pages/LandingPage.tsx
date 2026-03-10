@@ -52,7 +52,7 @@ export function LandingPage() {
           </h2>
           <div className="flex items-center justify-center gap-6 sm:gap-10">
             {[
-              { num: "1", text: "スマホで撮影" },
+              { num: "1", text: "パソコン・スマホで撮影" },
               { num: "2", text: "自動で整理" },
               { num: "3", text: "変化を確認" },
             ].map((s, i) => (
