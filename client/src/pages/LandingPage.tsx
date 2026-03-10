@@ -34,7 +34,7 @@ export function LandingPage() {
           <h1 className="text-4xl lg:text-5xl font-bold text-gray-800 tracking-tight mb-0.5">
             Bloom Log
           </h1>
-          <p className="text-lg lg:text-xl text-gray-500">
+          <p className="text-lg lg:text-xl text-gray-600">
             {t["landing.tagline"]}
           </p>
         </div>
@@ -53,14 +53,14 @@ export function LandingPage() {
                 className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-3 lg:py-2.5 text-center lg:text-left lg:flex lg:items-center lg:gap-4"
               >
                 <h3 className="text-base lg:text-lg font-bold text-gray-800 lg:shrink-0">{f.title}</h3>
-                <p className="text-sm text-gray-400 leading-relaxed">{f.desc}</p>
+                <p className="text-sm text-gray-500 leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
 
           {/* Strengths */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-2.5">
-            <h2 className="text-sm lg:text-base font-bold text-gray-400 uppercase tracking-wide mb-1.5 text-center">
+            <h2 className="text-sm lg:text-base font-bold text-gray-500 uppercase tracking-wide mb-1.5 text-center">
               {t["landing.strengthsTitle"]}
             </h2>
             <div className="space-y-1">
@@ -77,7 +77,7 @@ export function LandingPage() {
                   </span>
                   <div className="min-w-0">
                     <h3 className="text-sm lg:text-base font-bold text-gray-800">{s.title}</h3>
-                    <p className="text-sm text-gray-400 leading-snug">{s.desc}</p>
+                    <p className="text-sm text-gray-500 leading-snug">{s.desc}</p>
                   </div>
                 </div>
               ))}
@@ -87,7 +87,7 @@ export function LandingPage() {
 
         {/* Steps */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-2 mb-2.5">
-          <h2 className="text-sm lg:text-base font-bold text-gray-400 uppercase tracking-wide mb-2 text-center">
+          <h2 className="text-sm lg:text-base font-bold text-gray-500 uppercase tracking-wide mb-2 text-center">
             {t["landing.howToUse"]}
           </h2>
           <div className="flex items-center justify-center gap-6 sm:gap-10">
@@ -115,7 +115,7 @@ export function LandingPage() {
           >
             {t["landing.cta"]}
           </a>
-          <p className="text-gray-400 text-sm lg:text-base mt-1.5">
+          <p className="text-gray-500 text-sm lg:text-base mt-1.5">
             {t["landing.ctaSub"]}
           </p>
           <a href="/legal" className="text-gray-300 hover:text-gray-400 text-xs mt-1 inline-block transition-colors">
