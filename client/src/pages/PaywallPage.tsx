@@ -18,6 +18,8 @@ export function PaywallPage({ username, onLogout }: PaywallPageProps) {
       const r = await fetch("/api/subscription/checkout", {
         method: "POST",
         credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ locale }),
       });
       const data = (await r.json()) as { url?: string; error?: string };
       if (!r.ok) throw new Error(data.error ?? t["common.error"]);
@@ -80,8 +82,12 @@ export function PaywallPage({ username, onLogout }: PaywallPageProps) {
             <div className="bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4">
               <div className="flex items-baseline justify-between mb-2">
                 <span className="text-base font-semibold text-gray-800">{t["paywall.monthlyPlan"]}</span>
-                <span className="text-sm text-gray-400">{t["paywall.autoRenew"]}</span>
+                <div className="flex items-baseline gap-0.5">
+                  <span className="text-2xl font-bold text-emerald-600">{t["paywall.price"]}</span>
+                  <span className="text-sm text-gray-400">{t["paywall.pricePeriod"]}</span>
+                </div>
               </div>
+              <p className="text-xs text-gray-400 mb-2">{t["paywall.autoRenew"]}</p>
               <ul className="space-y-1.5 text-sm text-gray-500">
                 <li className="flex items-center gap-2">
                   <span className="text-emerald-600">&#10003;</span>

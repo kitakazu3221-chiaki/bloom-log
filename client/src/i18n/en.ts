@@ -112,6 +112,8 @@ export const en: Record<keyof typeof ja, string> = {
   "paywall.trialEnded": "Your free trial has ended",
   "paywall.subscriptionRequired": "A subscription is required to continue using the service",
   "paywall.monthlyPlan": "Monthly Plan",
+  "paywall.price": "$5",
+  "paywall.pricePeriod": "/mo",
   "paywall.autoRenew": "Auto-renewed monthly",
   "paywall.feature1": "Unlimited scalp photo capture & recording",
   "paywall.feature2": "Before/After comparison & timeline",

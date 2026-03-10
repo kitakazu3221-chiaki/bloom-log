@@ -110,6 +110,8 @@ export const ja = {
   "paywall.trialEnded": "無料トライアルが終了しました",
   "paywall.subscriptionRequired": "引き続きご利用いただくにはサブスクリプションの登録が必要です",
   "paywall.monthlyPlan": "月額プラン",
+  "paywall.price": "¥700",
+  "paywall.pricePeriod": "/月",
   "paywall.autoRenew": "毎月自動更新",
   "paywall.feature1": "頭皮写真の撮影・記録（無制限）",
   "paywall.feature2": "Before/After比較・タイムライン",

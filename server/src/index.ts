@@ -30,7 +30,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
   apiVersion: "2025-02-24.acacia",
 });
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET ?? "";
-const STRIPE_PRICE_ID = process.env.STRIPE_PRICE_ID ?? "";
+const STRIPE_PRICE_ID_JPY = process.env.STRIPE_PRICE_ID_JPY ?? process.env.STRIPE_PRICE_ID ?? "";
+const STRIPE_PRICE_ID_USD = process.env.STRIPE_PRICE_ID_USD ?? process.env.STRIPE_PRICE_ID ?? "";
 
 // Ensure data directories exist
 for (const dir of [DATA_DIR, PHOTOS_DIR, RECORDS_DIR]) {
@@ -420,7 +421,9 @@ app.get("/api/session/events", (req, res) => {
 // ── Subscription routes ──────────────────────────────────────────────────────
 
 app.post("/api/subscription/checkout", requireAuth, async (req, res) => {
-  if (!STRIPE_PRICE_ID) { res.status(500).json({ error: "Stripe not configured" }); return; }
+  const { locale } = req.body as { locale?: string };
+  const priceId = locale === "ja" ? STRIPE_PRICE_ID_JPY : STRIPE_PRICE_ID_USD;
+  if (!priceId) { res.status(500).json({ error: "Stripe not configured" }); return; }
   const { userId, username } = (req as AuthRequest).authUser;
   const store = readUsers();
   const user = store.users.find((u) => u.id === userId);
@@ -440,7 +443,7 @@ app.post("/api/subscription/checkout", requireAuth, async (req, res) => {
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: "subscription",
-      line_items: [{ price: STRIPE_PRICE_ID, quantity: 1 }],
+      line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${req.headers.origin ?? "https://bloom-log.com"}/?checkout=success`,
       cancel_url: `${req.headers.origin ?? "https://bloom-log.com"}/?checkout=cancel`,
     });
