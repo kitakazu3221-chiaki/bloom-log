@@ -17,9 +17,9 @@ export const ja = {
   // Landing page
   "landing.tagline": "髪の変化は、記録から見えてくる。",
   "landing.feature1.title": "変化を可視化",
-  "landing.feature1.desc": "毎日の写真で、目では気づきにくい変化を確認",
+  "landing.feature1.desc": "毎日の写真で気づきにくい変化を確認",
   "landing.feature2.title": "Before / After比較",
-  "landing.feature2.desc": "スライダーで過去と今を並べて一目瞭然",
+  "landing.feature2.desc": "過去と今を並べて一目瞭然",
   "landing.feature3.title": "習慣も一緒に記録",
   "landing.feature3.desc": "シャンプーや睡眠など影響情報も管理",
   "landing.howToUse": "使い方",
