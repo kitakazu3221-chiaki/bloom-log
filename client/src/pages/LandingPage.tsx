@@ -30,17 +30,14 @@ export function LandingPage() {
         <div className="grid gap-6 sm:grid-cols-3">
           {[
             {
-              icon: "📸",
               title: "変化を可視化",
               desc: "毎日の写真で、目では気づきにくい変化を確認できます",
             },
             {
-              icon: "🔀",
               title: "Before / After比較",
               desc: "スライダーで過去と今を並べて、一目で違いがわかります",
             },
             {
-              icon: "📝",
               title: "習慣も一緒に記録",
               desc: "シャンプーや睡眠など、頭皮に影響する情報も管理できます",
             },
@@ -49,7 +46,6 @@ export function LandingPage() {
               key={f.title}
               className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 text-center"
             >
-              <span className="text-3xl block mb-3">{f.icon}</span>
               <h3 className="text-sm font-bold text-gray-800 mb-2">{f.title}</h3>
               <p className="text-xs text-gray-400 leading-relaxed">{f.desc}</p>
             </div>
