@@ -34,7 +34,7 @@ export const ja = {
   "landing.strength3.title": "生活習慣の同時記録",
   "landing.strength3.desc": "睡眠・ストレス・シャンプーを写真と紐づけ",
   "landing.strength4.title": "プライバシー重視の設計",
-  "landing.strength4.desc": "クラウドAIに送信しない。データは自分の管理下に",
+  "landing.strength4.desc": "データのローカル保存が選択可能。自分の管理下に",
   "landing.strength5.title": "インストール不要",
   "landing.strength5.desc": "ブラウザだけで使える。ダウンロードなしですぐ開始",
   "landing.cta": "無料で始める",
