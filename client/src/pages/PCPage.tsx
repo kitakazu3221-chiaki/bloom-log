@@ -176,28 +176,28 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0A1F14] flex flex-col">
+    <div className="min-h-screen bg-[#F8FAF8] flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-10 flex items-center justify-between px-6 py-3.5 bg-[#0A1F14]/90 backdrop-blur-xl border-b border-white/[0.06]">
+      <header className="sticky top-0 z-10 flex items-center justify-between px-6 py-3.5 bg-white/90 backdrop-blur-sm border-b border-gray-200">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-400/20 to-emerald-600/20 border border-emerald-400/30 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center">
               <span className="text-sm">🌱</span>
             </div>
-            <h1 className="text-base font-bold text-white tracking-tight">
+            <h1 className="text-base font-bold text-gray-800 tracking-tight">
               Bloom Log
             </h1>
           </div>
           <a
             href="/history"
-            className="text-xs font-medium text-slate-400 bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.06] rounded-lg px-3 py-1.5 transition-colors"
+            className="text-xs font-medium text-gray-500 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
           >
             履歴
           </a>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-slate-500 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block glow-green-sm" />
+          <span className="text-xs text-gray-400 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
             クラウド保存
           </span>
           {cameraMode === "phone" && (
@@ -207,11 +207,11 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
               peerJoined={ws.peerJoined}
             />
           )}
-          <div className="flex items-center gap-2 pl-2 border-l border-white/[0.06]">
-            <span className="text-xs text-slate-500">{username}</span>
+          <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
+            <span className="text-xs text-gray-400">{username}</span>
             <button
               onClick={onLogout}
-              className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
             >
               ログアウト
             </button>
@@ -229,13 +229,13 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
       {/* Main content */}
       <main className="flex-1 flex flex-col items-center gap-5 p-6">
         {/* Camera mode toggle */}
-        <div className="flex items-center gap-1 bg-white/[0.04] border border-white/[0.06] rounded-2xl p-1 text-xs self-start">
+        <div className="flex items-center gap-1 bg-gray-100 border border-gray-200 rounded-2xl p-1 text-xs self-start">
           <button
             onClick={() => setCameraMode("phone")}
             className={`px-4 py-2 rounded-xl font-medium transition-all ${
               cameraMode === "phone"
-                ? "bg-white/[0.1] text-white shadow-sm shadow-black/20"
-                : "text-slate-500 hover:text-slate-300"
+                ? "bg-white text-gray-800 shadow-sm"
+                : "text-gray-400 hover:text-gray-600"
             }`}
           >
             スマホカメラ
@@ -244,8 +244,8 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
             onClick={() => setCameraMode("pc")}
             className={`px-4 py-2 rounded-xl font-medium transition-all ${
               cameraMode === "pc"
-                ? "bg-white/[0.1] text-white shadow-sm shadow-black/20"
-                : "text-slate-500 hover:text-slate-300"
+                ? "bg-white text-gray-800 shadow-sm"
+                : "text-gray-400 hover:text-gray-600"
             }`}
           >
             PCカメラ
@@ -253,7 +253,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
         </div>
 
         {/* Video area */}
-        <div className="relative w-full max-w-2xl aspect-video bg-black/40 rounded-2xl overflow-hidden shadow-2xl shadow-black/40 ring-1 ring-white/[0.08]">
+        <div className="relative w-full max-w-2xl aspect-video bg-gray-900 rounded-2xl overflow-hidden shadow-lg ring-1 ring-gray-200">
           {isStreamReady ? (
             <>
               <VideoPreview ref={videoPreviewRef} stream={activeStream} />
@@ -304,8 +304,8 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
                   </p>
                 </div>
               ) : (
-                <div className="text-center text-slate-500">
-                  <div className="animate-spin w-8 h-8 border-2 border-emerald-400/30 border-t-emerald-400 rounded-full mx-auto mb-3" />
+                <div className="text-center text-gray-400">
+                  <div className="animate-spin w-8 h-8 border-2 border-emerald-200 border-t-emerald-500 rounded-full mx-auto mb-3" />
                   <p className="text-sm">PCカメラを起動中...</p>
                 </div>
               )}
@@ -315,8 +315,8 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
               {!ws.peerJoined ? (
                 <QRCodeDisplay sessionId={ws.sessionId} />
               ) : (
-                <div className="text-center text-slate-500">
-                  <div className="animate-spin w-8 h-8 border-2 border-emerald-400/30 border-t-emerald-400 rounded-full mx-auto mb-3" />
+                <div className="text-center text-gray-400">
+                  <div className="animate-spin w-8 h-8 border-2 border-emerald-200 border-t-emerald-500 rounded-full mx-auto mb-3" />
                   <p className="text-sm">映像接続を確立中...</p>
                 </div>
               )}
@@ -324,7 +324,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center text-gray-400">
-                <div className="animate-spin w-8 h-8 border-2 border-gray-500 border-t-transparent rounded-full mx-auto mb-3" />
+                <div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-transparent rounded-full mx-auto mb-3" />
                 <p className="text-sm">サーバーに接続中...</p>
               </div>
             </div>
@@ -332,21 +332,21 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
         </div>
 
         {/* Controls card */}
-        <div className="w-full max-w-2xl glass-card rounded-2xl p-5 flex flex-col items-center gap-4">
+        <div className="w-full max-w-2xl card rounded-2xl p-5 flex flex-col items-center gap-4">
           {/* Overlay controls */}
           {isStreamReady && overlayUrl && (
-            <div className="flex items-center gap-4 text-sm w-full pb-4 border-b border-white/[0.06]">
-              <label className="flex items-center gap-2 cursor-pointer select-none text-xs text-slate-400">
+            <div className="flex items-center gap-4 text-sm w-full pb-4 border-b border-gray-200">
+              <label className="flex items-center gap-2 cursor-pointer select-none text-xs text-gray-500">
                 <input
                   type="checkbox"
                   checked={showOverlay}
                   onChange={(e) => setShowOverlay(e.target.checked)}
-                  className="accent-emerald-400 w-3.5 h-3.5"
+                  className="accent-emerald-600 w-3.5 h-3.5"
                 />
                 前回写真オーバーレイ
               </label>
               {showOverlay && (
-                <label className="flex items-center gap-2 text-xs text-slate-400 ml-auto">
+                <label className="flex items-center gap-2 text-xs text-gray-500 ml-auto">
                   透明度
                   <input
                     type="range"
@@ -372,7 +372,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
           />
 
           {saveError && (
-            <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 px-4 py-2 rounded-xl">
+            <p className="text-xs text-red-600 bg-red-50 border border-red-200 px-4 py-2 rounded-xl">
               {saveError}
             </p>
           )}

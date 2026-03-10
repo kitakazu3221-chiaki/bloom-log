@@ -22,12 +22,12 @@ export function QRCodeDisplay({ sessionId }: QRCodeDisplayProps) {
       {qrDataUrl ? (
         <img src={qrDataUrl} alt="QR Code" className="w-64 h-64 rounded-xl" />
       ) : (
-        <div className="w-64 h-64 bg-white/[0.04] animate-pulse rounded-xl" />
+        <div className="w-64 h-64 bg-gray-100 animate-pulse rounded-xl" />
       )}
-      <p className="text-slate-300 text-sm text-center">
+      <p className="text-gray-600 text-sm text-center">
         スマホでQRコードを読み取ってください
       </p>
-      <p className="text-slate-600 text-xs text-center break-all max-w-xs">
+      <p className="text-gray-300 text-xs text-center break-all max-w-xs">
         {sessionUrl}
       </p>
     </div>

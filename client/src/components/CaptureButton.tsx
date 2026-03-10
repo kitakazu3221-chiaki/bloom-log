@@ -29,13 +29,6 @@ export function CaptureButton({
         className={`relative w-20 h-20 rounded-full flex items-center justify-center transition-all active:scale-90 focus:outline-none ${
           disabled && !isCounting ? "cursor-not-allowed opacity-40" : ""
         }`}
-        style={{
-          boxShadow: isCounting
-            ? undefined
-            : disabled
-            ? undefined
-            : undefined,
-        }}
       >
         {/* Outer ring */}
         <span
@@ -43,8 +36,8 @@ export function CaptureButton({
             isCounting
               ? "border-amber-400 pulse-orange"
               : disabled
-              ? "border-slate-700"
-              : "border-emerald-400 pulse-green"
+              ? "border-gray-300"
+              : "border-emerald-500 pulse-green"
           }`}
         />
 
@@ -54,8 +47,8 @@ export function CaptureButton({
             isCounting
               ? "bg-amber-400"
               : disabled
-              ? "bg-slate-800"
-              : "bg-gradient-to-br from-emerald-400 to-emerald-500 shadow-lg shadow-emerald-400/30"
+              ? "bg-gray-200"
+              : "bg-emerald-600 shadow-md shadow-emerald-600/20"
           }`}
         >
           {isCounting ? (
@@ -68,7 +61,7 @@ export function CaptureButton({
         </span>
       </button>
 
-      <span className="text-xs text-slate-500 h-4 transition-all">
+      <span className="text-xs text-gray-400 h-4 transition-all">
         {isCounting ? "タップでキャンセル" : disabled ? "" : "タップで撮影"}
       </span>
     </div>

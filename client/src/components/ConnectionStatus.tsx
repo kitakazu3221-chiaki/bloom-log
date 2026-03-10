@@ -18,26 +18,26 @@ export function ConnectionStatus({
     color = "bg-red-400";
     label = "サーバー未接続";
   } else if (!peerJoined) {
-    color = "bg-amber-400";
+    color = "bg-amber-500";
     label = "スマホ待ち";
   } else if (rtcState === "connected") {
-    color = "bg-emerald-400";
+    color = "bg-emerald-500";
     label = "接続中";
   } else if (rtcState === "connecting") {
-    color = "bg-amber-400";
+    color = "bg-amber-500";
     label = "映像接続中...";
   } else if (rtcState === "failed") {
     color = "bg-red-400";
     label = "接続失敗";
   } else {
-    color = "bg-amber-400";
+    color = "bg-amber-500";
     label = "準備中";
   }
 
   return (
     <div className="flex items-center gap-2">
       <div className={`w-2.5 h-2.5 rounded-full ${color}`} />
-      <span className="text-sm text-slate-400">{label}</span>
+      <span className="text-sm text-gray-500">{label}</span>
     </div>
   );
 }
