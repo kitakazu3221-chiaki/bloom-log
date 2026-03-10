@@ -30,7 +30,7 @@ export const ja = {
   "landing.strength1.title": "スマホ × PC の2デバイス連携",
   "landing.strength1.desc": "スマホカメラの映像をPCに中継。大画面で確認しながら頭頂部も正確に撮影",
   "landing.strength2.title": "部位別の体系的管理",
-  "landing.strength2.desc": "頭頂部・前頭部・側頭部を分けて記録、部位ごとの変化を追跡",
+  "landing.strength2.desc": "頭頂部・前頭部・側頭部を分けて記録・追跡",
   "landing.strength3.title": "生活習慣の同時記録",
   "landing.strength3.desc": "睡眠・ストレス・シャンプー・育毛剤を写真と紐づけて管理",
   "landing.strength4.title": "プライバシー重視の設計",

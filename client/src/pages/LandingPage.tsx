@@ -47,7 +47,7 @@ export function LandingPage() {
                 className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-3 lg:py-2.5 text-center lg:text-left lg:flex lg:items-center lg:gap-4"
               >
                 <h3 className="text-base lg:text-lg font-bold text-gray-800 lg:shrink-0">{f.title}</h3>
-                <p className="text-sm lg:text-base text-gray-400 leading-relaxed">{f.desc}</p>
+                <p className="text-sm text-gray-400 leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -71,7 +71,7 @@ export function LandingPage() {
                   </span>
                   <div className="min-w-0">
                     <h3 className="text-sm lg:text-base font-bold text-gray-800">{s.title}</h3>
-                    <p className="text-sm lg:text-base text-gray-400 leading-snug">{s.desc}</p>
+                    <p className="text-sm text-gray-400 leading-snug">{s.desc}</p>
                   </div>
                 </div>
               ))}
