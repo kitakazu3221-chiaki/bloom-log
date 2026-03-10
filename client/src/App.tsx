@@ -5,6 +5,7 @@ import { PhonePage } from "./pages/PhonePage";
 import { HistoryPage } from "./pages/HistoryPage";
 import { AuthPage } from "./pages/AuthPage";
 import { PaywallPage } from "./pages/PaywallPage";
+import { LandingPage } from "./pages/LandingPage";
 
 function App() {
   const url = new URL(window.location.href);
@@ -56,7 +57,10 @@ function AuthGate({ pathname }: { pathname: string }) {
   }
 
   if (!user) {
-    return <AuthPage onLogin={login} onRegister={handleRegister} />;
+    if (pathname === "/auth") {
+      return <AuthPage onLogin={login} onRegister={handleRegister} />;
+    }
+    return <LandingPage />;
   }
 
   if (user.subscription === "expired") {
