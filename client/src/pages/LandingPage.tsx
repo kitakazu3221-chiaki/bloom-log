@@ -28,8 +28,8 @@ export function LandingPage() {
       <div className="relative z-10 w-full max-w-4xl animate-fade-in-up">
         {/* Hero */}
         <div className="text-center mb-3 lg:mb-2">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 mb-1 animate-float">
-            <span className="text-2xl">🌱</span>
+          <div className="inline-flex items-center justify-center mb-1 animate-float">
+            <span className="text-4xl">🌱</span>
           </div>
           <h1 className="text-4xl lg:text-5xl font-bold text-gray-800 tracking-tight mb-0.5">
             Bloom Log
