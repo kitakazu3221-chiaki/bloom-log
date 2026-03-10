@@ -175,31 +175,95 @@ function PhotoCalendar({
 // ── Before/After slider ───────────────────────────────────────────────────────
 function CompareSlider({ beforeUrl, afterUrl }: { beforeUrl: string; afterUrl: string }) {
   const [pos, setPos] = useState(50);
-  const dragging = useRef(false);
+  const [beforeOff, setBeforeOff] = useState({ x: 0, y: 0 });
+  const [afterOff, setAfterOff] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const dragTarget = useRef<"slider" | "before" | "after" | null>(null);
+  const dragStart = useRef({ x: 0, y: 0 });
+  const offsetStart = useRef({ x: 0, y: 0 });
 
-  const updatePos = useCallback((clientX: number) => {
+  const hasMoved = beforeOff.x !== 0 || beforeOff.y !== 0 || afterOff.x !== 0 || afterOff.y !== 0;
+
+  const getClientPos = (e: React.MouseEvent | React.TouchEvent) => {
+    if ("touches" in e) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    return { x: e.clientX, y: e.clientY };
+  };
+
+  const handleDown = (e: React.MouseEvent | React.TouchEvent) => {
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
-    const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-    setPos((x / rect.width) * 100);
+    const { x, y } = getClientPos(e);
+    const relX = x - rect.left;
+    const sliderX = (pos / 100) * rect.width;
+
+    if (Math.abs(relX - sliderX) < 20) {
+      dragTarget.current = "slider";
+    } else if (relX < sliderX) {
+      dragTarget.current = "before";
+      dragStart.current = { x, y };
+      offsetStart.current = { ...beforeOff };
+    } else {
+      dragTarget.current = "after";
+      dragStart.current = { x, y };
+      offsetStart.current = { ...afterOff };
+    }
+  };
+
+  const handleMove = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    if (!dragTarget.current) return;
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const { x, y } = "touches" in e
+      ? { x: e.touches[0].clientX, y: e.touches[0].clientY }
+      : { x: e.clientX, y: e.clientY };
+
+    if (dragTarget.current === "slider") {
+      const relX = Math.max(0, Math.min(x - rect.left, rect.width));
+      setPos((relX / rect.width) * 100);
+    } else {
+      const dx = x - dragStart.current.x;
+      const dy = y - dragStart.current.y;
+      const newOff = { x: offsetStart.current.x + dx, y: offsetStart.current.y + dy };
+      if (dragTarget.current === "before") setBeforeOff(newOff);
+      else setAfterOff(newOff);
+    }
   }, []);
+
+  const handleUp = () => { dragTarget.current = null; };
+
+  const handleDoubleClick = () => {
+    setBeforeOff({ x: 0, y: 0 });
+    setAfterOff({ x: 0, y: 0 });
+  };
+
+  const cursor = dragTarget.current === "slider" ? "cursor-col-resize"
+    : dragTarget.current ? "cursor-grabbing" : "cursor-grab";
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full aspect-video rounded-2xl overflow-hidden cursor-col-resize select-none shadow-md"
-      onMouseDown={(e) => { dragging.current = true; updatePos(e.clientX); }}
-      onMouseMove={(e) => { if (dragging.current) updatePos(e.clientX); }}
-      onMouseUp={() => (dragging.current = false)}
-      onMouseLeave={() => (dragging.current = false)}
-      onTouchStart={(e) => { dragging.current = true; updatePos(e.touches[0].clientX); }}
-      onTouchMove={(e) => { if (dragging.current) updatePos(e.touches[0].clientX); }}
-      onTouchEnd={() => (dragging.current = false)}
+      className={`relative w-full aspect-video rounded-2xl overflow-hidden select-none shadow-md ${cursor}`}
+      onMouseDown={handleDown}
+      onMouseMove={handleMove}
+      onMouseUp={handleUp}
+      onMouseLeave={handleUp}
+      onTouchStart={handleDown}
+      onTouchMove={handleMove}
+      onTouchEnd={handleUp}
+      onDoubleClick={handleDoubleClick}
     >
-      <img src={beforeUrl} alt="Before" className="absolute inset-0 w-full h-full object-cover" draggable={false} />
+      <img
+        src={beforeUrl} alt="Before" draggable={false}
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ objectPosition: `calc(50% + ${beforeOff.x}px) calc(50% + ${beforeOff.y}px)` }}
+      />
       <div className="absolute inset-0 overflow-hidden" style={{ clipPath: `inset(0 0 0 ${pos}%)` }}>
-        <img src={afterUrl} alt="After" className="w-full h-full object-cover" draggable={false} />
+        <img
+          src={afterUrl} alt="After" draggable={false}
+          className="w-full h-full object-cover"
+          style={{ objectPosition: `calc(50% + ${afterOff.x}px) calc(50% + ${afterOff.y}px)` }}
+        />
       </div>
       {/* Divider */}
       <div className="absolute inset-y-0 w-0.5 bg-white/80 shadow-xl pointer-events-none" style={{ left: `${pos}%` }}>
@@ -209,6 +273,14 @@ function CompareSlider({ beforeUrl, afterUrl }: { beforeUrl: string; afterUrl: s
       </div>
       <span className="absolute top-3 left-3 text-sm bg-black/50 backdrop-blur-sm text-white px-2.5 py-1 rounded-full">Before</span>
       <span className="absolute top-3 right-3 text-sm bg-black/50 backdrop-blur-sm text-white px-2.5 py-1 rounded-full">After</span>
+      {hasMoved && (
+        <button
+          onClick={(e) => { e.stopPropagation(); handleDoubleClick(); }}
+          className="absolute bottom-3 left-1/2 -translate-x-1/2 text-sm bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full hover:bg-black/70 transition-colors"
+        >
+          位置リセット
+        </button>
+      )}
     </div>
   );
 }
