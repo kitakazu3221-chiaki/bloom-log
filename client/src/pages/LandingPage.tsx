@@ -15,7 +15,7 @@ export function LandingPage() {
             Bloom Log
           </h1>
           <p className="text-lg text-gray-500">
-            変化は、記録から見えてくる。
+            髪の変化は、記録から見えてくる。
           </p>
         </div>
 
