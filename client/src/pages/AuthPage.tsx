@@ -60,7 +60,6 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
             <h1 className="text-2xl font-bold text-gray-800 tracking-tight">
               Bloom Log
             </h1>
-            <p className="text-sm text-gray-400 mt-1">頭皮記録アプリ</p>
           </div>
 
           {/* Tabs */}
@@ -156,9 +155,6 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
           </form>
         </div>
 
-        <p className="text-center text-xs text-gray-400 mt-6">
-          Bloom Log &middot; 頭皮ケア記録
-        </p>
       </div>
     </div>
   );
