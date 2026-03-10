@@ -76,8 +76,8 @@ export function LandingPage() {
                     <StrengthIcon d={s.icon} />
                   </span>
                   <div className="min-w-0">
-                    <h3 className="text-sm lg:text-base font-bold text-gray-800">{s.title}</h3>
-                    <p className="text-sm text-gray-500 leading-snug">{s.desc}</p>
+                    <h3 className="text-sm font-bold text-gray-800">{s.title}</h3>
+                    <p className="text-xs text-gray-500 leading-snug">{s.desc}</p>
                   </div>
                 </div>
               ))}
