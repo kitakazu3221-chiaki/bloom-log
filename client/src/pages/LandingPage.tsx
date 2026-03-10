@@ -40,9 +40,9 @@ export function LandingPage() {
         </div>
 
         {/* Features + Strengths side by side on lg */}
-        <div className="grid lg:grid-cols-2 gap-3 lg:gap-3 mb-2.5">
+        <div className="grid lg:grid-cols-2 gap-3 lg:gap-4 mb-3">
           {/* Features (3 cards stacked) */}
-          <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 lg:gap-2">
+          <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 lg:gap-3">
             {[
               { title: t["landing.feature1.title"], desc: t["landing.feature1.desc"] },
               { title: t["landing.feature2.title"], desc: t["landing.feature2.desc"] },
@@ -86,7 +86,7 @@ export function LandingPage() {
         </div>
 
         {/* Steps */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-2 mb-2.5">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-2 mb-3">
           <h2 className="text-sm lg:text-base font-bold text-gray-500 uppercase tracking-wide mb-2 text-center">
             {t["landing.howToUse"]}
           </h2>
