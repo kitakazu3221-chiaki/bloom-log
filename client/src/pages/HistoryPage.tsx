@@ -319,7 +319,7 @@ interface HistoryPageProps {
 }
 
 export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, createdAt, storageMode }: HistoryPageProps) {
-  const { t, locale } = useI18n();
+  const { t, locale, setLocale } = useI18n();
   const areaLabels = useAreaLabels();
   const storage = useStorage(storageMode);
   const [records, setRecords] = useState<PhotoRecord[]>([]);
@@ -438,6 +438,12 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
           {locale === "ja" ? `${dayCount}${t["pc.dayCount"]}` : `Day ${dayCount}`}
         </span>
         <div className="ml-auto flex items-center gap-3">
+          <button
+            onClick={() => setLocale(locale === "ja" ? "en" : "ja")}
+            className="text-sm font-medium text-gray-400 hover:text-gray-600 bg-gray-100 border border-gray-200 rounded-lg px-2.5 py-1 transition-colors"
+          >
+            {locale === "ja" ? "EN" : "JA"}
+          </button>
           <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
             <span className="text-sm text-gray-400">{username}</span>
             <button onClick={onLogout} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
