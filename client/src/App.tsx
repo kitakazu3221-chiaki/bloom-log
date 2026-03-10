@@ -54,8 +54,8 @@ function AuthGate({ pathname }: { pathname: string }) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-green-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-200 animate-pulse">
-            <span className="text-xl">🌱</span>
+          <div className="animate-pulse">
+            <span className="text-4xl">🌱</span>
           </div>
           <div className="animate-spin w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full" />
         </div>

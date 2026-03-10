@@ -189,9 +189,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
       <header className="sticky top-0 z-10 flex items-center justify-between px-6 py-3.5 bg-white/90 backdrop-blur-sm border-b border-gray-200">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center">
-              <span className="text-sm">🌱</span>
-            </div>
+            <span className="text-xl">🌱</span>
             <h1 className="text-lg font-bold text-gray-800 tracking-tight">
               Bloom Log
             </h1>

@@ -429,9 +429,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
           ←
         </a>
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center">
-            <span className="text-xs">🌱</span>
-          </div>
+          <span className="text-lg">🌱</span>
           <h1 className="text-lg font-bold text-gray-800 tracking-tight">{t["history.title"]}</h1>
         </div>
         <span className="text-sm font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg px-2.5 py-1">

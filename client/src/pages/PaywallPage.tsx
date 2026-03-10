@@ -59,8 +59,8 @@ export function PaywallPage({ username, onLogout }: PaywallPageProps) {
 
           {/* Logo */}
           <div className="px-8 pt-8 pb-2 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200 mb-4">
-              <span className="text-3xl">🌱</span>
+            <div className="inline-flex items-center justify-center mb-4">
+              <span className="text-4xl">🌱</span>
             </div>
             <h1 className="text-3xl font-bold text-gray-800 tracking-tight">
               Bloom Log
