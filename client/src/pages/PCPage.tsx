@@ -240,23 +240,23 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
       {/* Main content */}
       <main className="flex-1 flex flex-col items-center gap-5 p-6">
         {/* Camera mode toggle */}
-        <div className="flex items-center gap-1 bg-gray-100 border border-gray-200 rounded-2xl p-1 text-sm self-start">
+        <div className="flex items-center gap-1.5 bg-gray-100 border border-gray-200 rounded-2xl p-1.5 text-base">
           <button
             onClick={() => setCameraMode("phone")}
-            className={`px-4 py-2.5 rounded-xl font-medium transition-all ${
+            className={`px-5 py-3 rounded-xl font-bold transition-all ${
               cameraMode === "phone"
-                ? "bg-white text-gray-800 shadow-sm"
-                : "text-gray-400 hover:text-gray-600"
+                ? "bg-emerald-600 text-white shadow-md shadow-emerald-200"
+                : "text-gray-400 hover:text-gray-600 hover:bg-white/50"
             }`}
           >
             スマホカメラ
           </button>
           <button
             onClick={() => setCameraMode("pc")}
-            className={`px-4 py-2.5 rounded-xl font-medium transition-all ${
+            className={`px-5 py-3 rounded-xl font-bold transition-all ${
               cameraMode === "pc"
-                ? "bg-white text-gray-800 shadow-sm"
-                : "text-gray-400 hover:text-gray-600"
+                ? "bg-emerald-600 text-white shadow-md shadow-emerald-200"
+                : "text-gray-400 hover:text-gray-600 hover:bg-white/50"
             }`}
           >
             PCカメラ
