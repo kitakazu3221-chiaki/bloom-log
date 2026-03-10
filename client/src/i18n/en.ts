@@ -170,4 +170,28 @@ export const en: Record<keyof typeof ja, string> = {
   "toast.subscriptionStarted": "Subscription started!",
   "toast.welcomePrefix": "Welcome, ",
   "toast.welcomeSuffix": "! Account created",
+
+  // Legal page
+  "legal.title": "Legal Notice",
+  "legal.operator": "Operator",
+  "legal.operatorValue": "Bloom Log",
+  "legal.address": "Address",
+  "legal.addressValue": "Disclosed upon request without delay",
+  "legal.phone": "Phone",
+  "legal.phoneValue": "Disclosed upon request without delay",
+  "legal.email": "Contact",
+  "legal.emailValue": "support@bloom-log.com",
+  "legal.price": "Price",
+  "legal.priceValue": "$5/month (tax included)",
+  "legal.payment": "Payment Method",
+  "legal.paymentValue": "Credit card (via Stripe)",
+  "legal.delivery": "Service Availability",
+  "legal.deliveryValue": "Available immediately after payment",
+  "legal.cancel": "Cancellation Policy",
+  "legal.cancelValue": "You can cancel anytime from the Stripe dashboard. Service continues until the end of the billing period. No refunds.",
+  "legal.extra": "Additional Fees",
+  "legal.extraValue": "No additional fees beyond the monthly subscription",
+
+  // Landing footer
+  "landing.legal": "Legal Notice",
 };

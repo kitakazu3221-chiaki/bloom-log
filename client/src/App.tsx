@@ -7,6 +7,7 @@ import { HistoryPage } from "./pages/HistoryPage";
 import { AuthPage } from "./pages/AuthPage";
 import { PaywallPage } from "./pages/PaywallPage";
 import { LandingPage } from "./pages/LandingPage";
+import { LegalPage } from "./pages/LegalPage";
 
 function App() {
   const url = new URL(window.location.href);
@@ -61,6 +62,8 @@ function AuthGate({ pathname }: { pathname: string }) {
       </div>
     );
   }
+
+  if (pathname === "/legal") return <LegalPage />;
 
   if (!user) {
     if (pathname === "/auth") {

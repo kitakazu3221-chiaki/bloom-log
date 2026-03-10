@@ -109,6 +109,9 @@ export function LandingPage() {
           <p className="text-gray-400 text-xs mt-2">
             {t["landing.ctaSub"]}
           </p>
+          <a href="/legal" className="text-gray-300 hover:text-gray-400 text-xs mt-3 inline-block transition-colors">
+            {t["landing.legal"]}
+          </a>
         </div>
       </div>
     </div>

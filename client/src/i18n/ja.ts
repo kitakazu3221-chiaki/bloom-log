@@ -168,4 +168,28 @@ export const ja = {
   "toast.subscriptionStarted": "サブスクリプションを開始しました！",
   "toast.welcomePrefix": "ようこそ、",
   "toast.welcomeSuffix": " さん！アカウントを作成しました",
+
+  // Legal page
+  "legal.title": "特定商取引法に基づく表記",
+  "legal.operator": "事業者名",
+  "legal.operatorValue": "Bloom Log",
+  "legal.address": "所在地",
+  "legal.addressValue": "請求があった場合に遅滞なく開示いたします",
+  "legal.phone": "電話番号",
+  "legal.phoneValue": "請求があった場合に遅滞なく開示いたします",
+  "legal.email": "連絡先",
+  "legal.emailValue": "support@bloom-log.com",
+  "legal.price": "販売価格",
+  "legal.priceValue": "月額700円（税込）",
+  "legal.payment": "支払方法",
+  "legal.paymentValue": "クレジットカード（Stripe決済）",
+  "legal.delivery": "サービス提供時期",
+  "legal.deliveryValue": "お支払い完了後、即時ご利用いただけます",
+  "legal.cancel": "解約・キャンセル",
+  "legal.cancelValue": "いつでもStripeの管理画面から解約可能です。解約後も当月末までご利用いただけます。返金はいたしかねます。",
+  "legal.extra": "追加費用",
+  "legal.extraValue": "上記の月額料金以外に追加料金は発生しません",
+
+  // Landing footer
+  "landing.legal": "特定商取引法に基づく表記",
 };
