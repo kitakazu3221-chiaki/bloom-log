@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useI18n } from "../hooks/useI18n";
 
 interface PaywallPageProps {
   username: string;
@@ -6,6 +7,7 @@ interface PaywallPageProps {
 }
 
 export function PaywallPage({ username, onLogout }: PaywallPageProps) {
+  const { t, locale } = useI18n();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,10 +20,10 @@ export function PaywallPage({ username, onLogout }: PaywallPageProps) {
         credentials: "include",
       });
       const data = (await r.json()) as { url?: string; error?: string };
-      if (!r.ok) throw new Error(data.error ?? "エラーが発生しました");
+      if (!r.ok) throw new Error(data.error ?? t["common.error"]);
       if (data.url) window.location.href = data.url;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "エラーが発生しました");
+      setError(err instanceof Error ? err.message : t["common.error"]);
       setLoading(false);
     }
   };
@@ -38,6 +40,10 @@ export function PaywallPage({ username, onLogout }: PaywallPageProps) {
       // portal not available for this user
     }
   };
+
+  const greetingText = locale === "ja"
+    ? `${username} ${t["paywall.greeting"]}`
+    : username;
 
   return (
     <div className="min-h-screen bg-[#F8FAF8] flex items-center justify-center p-4 relative overflow-hidden">
@@ -57,37 +63,37 @@ export function PaywallPage({ username, onLogout }: PaywallPageProps) {
             <h1 className="text-3xl font-bold text-gray-800 tracking-tight">
               Bloom Log
             </h1>
-            <p className="text-base text-gray-400 mt-1">{username} さん</p>
+            <p className="text-base text-gray-400 mt-1">{greetingText}</p>
           </div>
 
           {/* Content */}
           <div className="px-6 pt-4 pb-6 space-y-4">
             <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 text-center">
               <p className="text-base font-semibold text-amber-600 mb-1">
-                無料トライアルが終了しました
+                {t["paywall.trialEnded"]}
               </p>
               <p className="text-sm text-amber-500">
-                引き続きご利用いただくにはサブスクリプションの登録が必要です
+                {t["paywall.subscriptionRequired"]}
               </p>
             </div>
 
             <div className="bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4">
               <div className="flex items-baseline justify-between mb-2">
-                <span className="text-base font-semibold text-gray-800">月額プラン</span>
-                <span className="text-sm text-gray-400">毎月自動更新</span>
+                <span className="text-base font-semibold text-gray-800">{t["paywall.monthlyPlan"]}</span>
+                <span className="text-sm text-gray-400">{t["paywall.autoRenew"]}</span>
               </div>
               <ul className="space-y-1.5 text-sm text-gray-500">
                 <li className="flex items-center gap-2">
                   <span className="text-emerald-600">&#10003;</span>
-                  頭皮写真の撮影・記録（無制限）
+                  {t["paywall.feature1"]}
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-emerald-600">&#10003;</span>
-                  Before/After比較・タイムライン
+                  {t["paywall.feature2"]}
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-emerald-600">&#10003;</span>
-                  スマホカメラ連携（WebRTC）
+                  {t["paywall.feature3"]}
                 </li>
               </ul>
             </div>
@@ -104,7 +110,7 @@ export function PaywallPage({ username, onLogout }: PaywallPageProps) {
               disabled={loading}
               className="w-full py-3.5 rounded-xl bg-emerald-600 text-white font-bold text-base shadow-md shadow-emerald-600/20 hover:bg-emerald-500 disabled:opacity-60 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
             >
-              {loading ? "処理中..." : "サブスクリプションを開始"}
+              {loading ? t["common.processing"] : t["paywall.subscribe"]}
             </button>
 
             <div className="flex items-center justify-between">
@@ -112,20 +118,20 @@ export function PaywallPage({ username, onLogout }: PaywallPageProps) {
                 onClick={handleManage}
                 className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
               >
-                お支払い管理
+                {t["paywall.managePayment"]}
               </button>
               <button
                 onClick={onLogout}
                 className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
               >
-                ログアウト
+                {t["common.logout"]}
               </button>
             </div>
           </div>
         </div>
 
         <p className="text-center text-sm text-gray-400 mt-6">
-          Bloom Log &middot; 頭皮ケア記録
+          Bloom Log &middot; {t["paywall.tagline"]}
         </p>
       </div>
     </div>

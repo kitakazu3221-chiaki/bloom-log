@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { SCALP_AREA_LABELS, type CapturedPhoto, type NoteData } from "../types";
+import { useI18n } from "../hooks/useI18n";
+import { type CapturedPhoto, type NoteData, type ScalpArea } from "../types";
 
 interface PhotoSaveDialogProps {
   photo: CapturedPhoto;
@@ -14,10 +15,17 @@ export function PhotoSaveDialog({
   onCancel,
   isSaving,
 }: PhotoSaveDialogProps) {
+  const { t, locale } = useI18n();
   const [shampoo, setShampoo] = useState("");
   const [treatment, setTreatment] = useState("");
   const [sleep, setSleep] = useState("");
   const [stress, setStress] = useState("");
+
+  const areaLabels: Record<ScalpArea, string> = {
+    top: t["area.top"],
+    front: t["area.front"],
+    side: t["area.side"],
+  };
 
   const handleSave = () => {
     onSave({
@@ -27,6 +35,8 @@ export function PhotoSaveDialog({
       stress: stress !== "" ? Number(stress) : undefined,
     });
   };
+
+  const dateLocale = locale === "ja" ? "ja-JP" : "en-US";
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
@@ -46,10 +56,10 @@ export function PhotoSaveDialog({
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-4 pb-3 border-b border-gray-200">
           <div>
-            <h2 className="text-lg font-bold text-gray-800">写真を保存</h2>
+            <h2 className="text-lg font-bold text-gray-800">{t["save.title"]}</h2>
             <p className="text-sm text-gray-400 mt-0.5">
-              {SCALP_AREA_LABELS[photo.area]} &middot;{" "}
-              {photo.timestamp.toLocaleString("ja-JP", {
+              {areaLabels[photo.area]} &middot;{" "}
+              {photo.timestamp.toLocaleString(dateLocale, {
                 month: "numeric",
                 day: "numeric",
                 hour: "2-digit",
@@ -70,7 +80,7 @@ export function PhotoSaveDialog({
         <div className="px-6 pt-4">
           <img
             src={photo.dataUrl}
-            alt="撮影した写真"
+            alt={t["save.photoAlt"]}
             className="w-full rounded-2xl object-cover max-h-44 shadow-sm ring-1 ring-gray-200"
           />
         </div>
@@ -78,15 +88,15 @@ export function PhotoSaveDialog({
         {/* Notes */}
         <div className="px-6 pt-4 pb-2 space-y-3">
           <p className="text-sm font-semibold text-gray-400 uppercase tracking-wide">
-            補助データ（任意）
+            {t["save.notesLabel"]}
           </p>
           <div className="grid grid-cols-2 gap-2.5">
             {[
-              { label: "シャンプー", placeholder: "〇〇シャンプー", value: shampoo, setValue: setShampoo, type: "text" },
-              { label: "育毛剤", placeholder: "ミノキシジル", value: treatment, setValue: setTreatment, type: "text" },
-              { label: "睡眠（時間）", placeholder: "7", value: sleep, setValue: setSleep, type: "number" },
-              { label: "ストレス（1〜5）", placeholder: "3", value: stress, setValue: setStress, type: "number" },
-            ].map(({ label, placeholder, value, setValue, type }) => (
+              { label: t["save.shampoo"], placeholder: t["save.shampooPlaceholder"], value: shampoo, setValue: setShampoo, type: "text", isSleep: false },
+              { label: t["save.treatment"], placeholder: t["save.treatmentPlaceholder"], value: treatment, setValue: setTreatment, type: "text", isSleep: false },
+              { label: t["save.sleep"], placeholder: "7", value: sleep, setValue: setSleep, type: "number", isSleep: true },
+              { label: t["save.stress"], placeholder: "3", value: stress, setValue: setStress, type: "number", isSleep: false },
+            ].map(({ label, placeholder, value, setValue, type, isSleep }) => (
               <div key={label}>
                 <label className="block text-sm text-gray-500 mb-1">{label}</label>
                 <input
@@ -94,9 +104,9 @@ export function PhotoSaveDialog({
                   value={value}
                   onChange={(e) => setValue(e.target.value)}
                   placeholder={placeholder}
-                  min={type === "number" ? (label.includes("睡") ? "0" : "1") : undefined}
-                  max={type === "number" ? (label.includes("睡") ? "24" : "5") : undefined}
-                  step={type === "number" && label.includes("睡") ? "0.5" : undefined}
+                  min={type === "number" ? (isSleep ? "0" : "1") : undefined}
+                  max={type === "number" ? (isSleep ? "24" : "5") : undefined}
+                  step={type === "number" && isSleep ? "0.5" : undefined}
                   className="w-full text-base bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 placeholder-gray-300 transition-all"
                 />
               </div>
@@ -111,14 +121,14 @@ export function PhotoSaveDialog({
             disabled={isSaving}
             className="flex-1 py-3 rounded-xl bg-gray-100 text-gray-500 text-base font-medium hover:bg-gray-200 border border-gray-200 disabled:opacity-50 transition-colors"
           >
-            キャンセル
+            {t["common.cancel"]}
           </button>
           <button
             onClick={handleSave}
             disabled={isSaving}
             className="flex-1 py-3 rounded-xl bg-emerald-600 text-white text-base font-bold shadow-md shadow-emerald-600/20 hover:bg-emerald-500 disabled:opacity-50 transition-all active:scale-[0.98]"
           >
-            {isSaving ? "保存中..." : "保存"}
+            {isSaving ? t["save.saving"] : t["common.save"]}
           </button>
         </div>
       </div>

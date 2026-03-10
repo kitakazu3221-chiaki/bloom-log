@@ -1,4 +1,5 @@
-import { SCALP_AREA_LABELS, type ScalpArea } from "../types";
+import { useI18n } from "../hooks/useI18n";
+import { type ScalpArea } from "../types";
 
 interface AreaSelectorProps {
   selected: ScalpArea;
@@ -14,6 +15,13 @@ const AREA_ICONS: Record<ScalpArea, string> = {
 };
 
 export function AreaSelector({ selected, onChange }: AreaSelectorProps) {
+  const { t } = useI18n();
+  const areaLabels: Record<ScalpArea, string> = {
+    top: t["area.top"],
+    front: t["area.front"],
+    side: t["area.side"],
+  };
+
   return (
     <div className="flex gap-2">
       {AREAS.map((area) => (
@@ -27,7 +35,7 @@ export function AreaSelector({ selected, onChange }: AreaSelectorProps) {
           }`}
         >
           <span className="text-sm opacity-70">{AREA_ICONS[area]}</span>
-          {SCALP_AREA_LABELS[area]}
+          {areaLabels[area]}
         </button>
       ))}
     </div>

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useSignaling } from "../hooks/useSignaling";
 import { useWebRTC } from "../hooks/useWebRTC";
+import { useI18n } from "../hooks/useI18n";
 import { VideoPreview } from "../components/VideoPreview";
 import type { SignalingMessage } from "../types";
 
@@ -9,6 +10,7 @@ interface PhonePageProps {
 }
 
 export function PhonePage({ sessionId }: PhonePageProps) {
+  const { t } = useI18n();
   const rtcHandleSignalRef = useRef<(msg: SignalingMessage) => void>(() => {});
 
   const onSignal = useCallback((msg: SignalingMessage) => {
@@ -75,10 +77,10 @@ export function PhonePage({ sessionId }: PhonePageProps) {
           />
           <span className="text-gray-500 text-base">
             {rtc.connectionState === "connected"
-              ? "配信中"
+              ? t["phone.streaming"]
               : ws.connectionState === "connected"
-                ? "接続待ち..."
-                : "サーバー接続中..."}
+                ? t["phone.waiting"]
+                : t["phone.connecting"]}
           </span>
         </div>
       </div>
@@ -90,8 +92,8 @@ export function PhonePage({ sessionId }: PhonePageProps) {
         ) : (
           <div className="flex-1 flex items-center justify-center h-full">
             <div className="text-center text-gray-400 p-8">
-              <p className="text-xl mb-2">カメラを起動中...</p>
-              <p className="text-base">カメラへのアクセスを許可してください</p>
+              <p className="text-xl mb-2">{t["phone.startingCamera"]}</p>
+              <p className="text-base">{t["phone.allowCamera"]}</p>
             </div>
           </div>
         )}
@@ -100,7 +102,7 @@ export function PhonePage({ sessionId }: PhonePageProps) {
       {/* Debug info + Instructions */}
       <div className="px-4 py-6 bg-white border-t border-gray-200 text-center space-y-2">
         <p className="text-gray-600 text-base">
-          PC画面を見ながら位置を合わせてください
+          {t["phone.alignOnPC"]}
         </p>
         <div className="text-gray-300 text-sm space-y-1">
           <p>WS: {ws.connectionState} | Peer: {ws.peerJoined ? "Yes" : "No"}</p>

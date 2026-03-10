@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import type { ScalpArea, NoteData, PhotoRecord } from "../types";
 import { useLocalDb } from "./useLocalDb";
+import { useI18n } from "./useI18n";
 
 export interface UseStorageReturn {
   isReady: true;
@@ -18,6 +19,7 @@ export interface UseStorageReturn {
 }
 
 export function useStorage(mode: "cloud" | "local" = "cloud"): UseStorageReturn {
+  const { t } = useI18n();
   const localDb = useLocalDb();
 
   const selectDirectory = useCallback(async () => {}, []);
@@ -33,11 +35,11 @@ export function useStorage(mode: "cloud" | "local" = "cloud"): UseStorageReturn 
       });
       if (!res.ok) {
         const err = (await res.json().catch(() => ({}))) as { error?: string };
-        throw new Error(err.error ?? "保存に失敗しました");
+        throw new Error(err.error ?? t["pc.saveFailed"]);
       }
       return res.json() as Promise<PhotoRecord>;
     },
-    []
+    [t]
   );
 
   const cloudLoadRecords = useCallback(async (): Promise<PhotoRecord[]> => {
@@ -61,9 +63,9 @@ export function useStorage(mode: "cloud" | "local" = "cloud"): UseStorageReturn 
     });
     if (!res.ok) {
       const err = (await res.json().catch(() => ({}))) as { error?: string };
-      throw new Error(err.error ?? "削除に失敗しました");
+      throw new Error(err.error ?? t["history.deleteFailed"]);
     }
-  }, []);
+  }, [t]);
 
   // ── Select based on mode ──
   return useMemo(() => ({

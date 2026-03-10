@@ -4,6 +4,7 @@ import { useWebRTC } from "../hooks/useWebRTC";
 import { useStorage } from "../hooks/useStorage";
 import { useLocalCamera } from "../hooks/useLocalCamera";
 import { useBrightnessCheck } from "../hooks/useBrightnessCheck";
+import { useI18n } from "../hooks/useI18n";
 import { ConnectionStatus } from "../components/ConnectionStatus";
 import { QRCodeDisplay } from "../components/QRCodeDisplay";
 import {
@@ -36,6 +37,7 @@ interface PCPageProps {
 }
 
 export function PCPage({ username, onLogout, subscription, trialDaysLeft, createdAt, storageMode, onStorageModeChange }: PCPageProps) {
+  const { t, locale, setLocale } = useI18n();
   const [cameraMode, setCameraMode] = useState<CameraMode>("phone");
   const [selectedArea, setSelectedArea] = useState<ScalpArea>("top");
   const [pendingPhoto, setPendingPhoto] = useState<CapturedPhoto | null>(null);
@@ -75,6 +77,8 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
     () => videoPreviewRef.current?.getVideoElement() ?? null,
     isStreamReady
   );
+
+  const dayCount = Math.max(1, Math.ceil((Date.now() - new Date(createdAt).getTime()) / 86400000));
 
   // Load the most recent photo for the selected area as overlay
   useEffect(() => {
@@ -166,12 +170,12 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
         setOverlayUrl(newUrl);
         setPendingPhoto(null);
       } catch (err) {
-        setSaveError(err instanceof Error ? err.message : "保存に失敗しました");
+        setSaveError(err instanceof Error ? err.message : t["pc.saveFailed"]);
       } finally {
         setIsSaving(false);
       }
     },
-    [pendingPhoto, storage]
+    [pendingPhoto, storage, t]
   );
 
   const handleCancelSave = useCallback(() => {
@@ -196,20 +200,26 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
             href="/history"
             className="text-sm font-medium text-gray-500 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
           >
-            履歴
+            {t["pc.history"]}
           </a>
           <span className="text-sm font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg px-2.5 py-1">
-            {Math.max(1, Math.ceil((Date.now() - new Date(createdAt).getTime()) / 86400000))}日目
+            {locale === "ja" ? `${dayCount}${t["pc.dayCount"]}` : `Day ${dayCount}`}
           </span>
         </div>
         <div className="flex items-center gap-3">
           <button
+            onClick={() => setLocale(locale === "ja" ? "en" : "ja")}
+            className="text-sm font-medium text-gray-400 hover:text-gray-600 bg-gray-100 border border-gray-200 rounded-lg px-2.5 py-1 transition-colors"
+          >
+            {locale === "ja" ? "EN" : "JA"}
+          </button>
+          <button
             onClick={() => setShowStorageConfirm(true)}
             className="text-sm text-gray-400 flex items-center gap-1.5 hover:text-gray-600 transition-colors"
-            title="保存先を切替"
+            title={t["pc.storageSwitchTitle"]}
           >
             <span className={`w-1.5 h-1.5 rounded-full inline-block ${storageMode === "cloud" ? "bg-emerald-500" : "bg-amber-500"}`} />
-            {storageMode === "cloud" ? "クラウド保存" : "ローカル保存"}
+            {storageMode === "cloud" ? t["pc.cloudStorage"] : t["pc.localStorage"]}
           </button>
           {cameraMode === "phone" && (
             <ConnectionStatus
@@ -224,7 +234,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
               onClick={onLogout}
               className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
             >
-              ログアウト
+              {t["common.logout"]}
             </button>
           </div>
         </div>
@@ -249,7 +259,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
                 : "text-gray-400 hover:text-gray-600 hover:bg-white/50"
             }`}
           >
-            スマホカメラ
+            {t["pc.phoneCamera"]}
           </button>
           <button
             onClick={() => setCameraMode("pc")}
@@ -259,7 +269,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
                 : "text-gray-400 hover:text-gray-600 hover:bg-white/50"
             }`}
           >
-            PCカメラ
+            {t["pc.pcCamera"]}
           </button>
         </div>
 
@@ -280,8 +290,8 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
                   </span>
                   <span>
                     {brightness === "dark"
-                      ? "暗すぎます。明るい場所で撮影してください"
-                      : "明るすぎます。光を調整してください"}
+                      ? t["pc.tooDark"]
+                      : t["pc.tooBright"]}
                   </span>
                 </div>
               )}
@@ -308,16 +318,16 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
               {localCamera.error ? (
                 <div className="text-center text-red-400 px-6">
                   <p className="text-4xl mb-3">📷</p>
-                  <p className="font-medium text-base">カメラを起動できませんでした</p>
+                  <p className="font-medium text-base">{t["pc.cameraFailed"]}</p>
                   <p className="text-base mt-1 opacity-70">{localCamera.error}</p>
                   <p className="text-sm mt-2 opacity-50">
-                    ブラウザのカメラ権限を確認してください
+                    {t["pc.checkPermission"]}
                   </p>
                 </div>
               ) : (
                 <div className="text-center text-gray-400">
                   <div className="animate-spin w-8 h-8 border-2 border-emerald-200 border-t-emerald-500 rounded-full mx-auto mb-3" />
-                  <p className="text-base">PCカメラを起動中...</p>
+                  <p className="text-base">{t["pc.startingCamera"]}</p>
                 </div>
               )}
             </div>
@@ -328,7 +338,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
               ) : (
                 <div className="text-center text-gray-400">
                   <div className="animate-spin w-8 h-8 border-2 border-emerald-200 border-t-emerald-500 rounded-full mx-auto mb-3" />
-                  <p className="text-base">映像接続を確立中...</p>
+                  <p className="text-base">{t["pc.establishingVideo"]}</p>
                 </div>
               )}
             </div>
@@ -336,7 +346,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center text-gray-400">
                 <div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-transparent rounded-full mx-auto mb-3" />
-                <p className="text-base">サーバーに接続中...</p>
+                <p className="text-base">{t["pc.connectingServer"]}</p>
               </div>
             </div>
           )}
@@ -354,11 +364,11 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
                   onChange={(e) => setShowOverlay(e.target.checked)}
                   className="accent-emerald-600 w-4 h-4"
                 />
-                前回写真オーバーレイ
+                {t["pc.overlayLabel"]}
               </label>
               {showOverlay && (
                 <label className="flex items-center gap-2 text-sm text-gray-500 ml-auto">
-                  透明度
+                  {t["pc.opacity"]}
                   <input
                     type="range"
                     min={10}
@@ -408,18 +418,18 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowStorageConfirm(false)} />
             <div className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 space-y-4">
               <h3 className="text-lg font-bold text-gray-800">
-                {nextMode === "local" ? "ローカル保存に切替" : "クラウド保存に切替"}
+                {nextMode === "local" ? t["pc.switchToLocal"] : t["pc.switchToCloud"]}
               </h3>
               <div className="text-base text-gray-500 space-y-2">
                 {nextMode === "local" ? (
                   <>
-                    <p>写真はこの端末のブラウザにのみ保存されます。</p>
-                    <p className="text-amber-600 font-medium">注意: ブラウザのデータを消去すると写真も失われます。既存のクラウド写真はクラウドに残ります。</p>
+                    <p>{t["pc.localWarning"]}</p>
+                    <p className="text-amber-600 font-medium">{t["pc.localCaution"]}</p>
                   </>
                 ) : (
                   <>
-                    <p>写真はサーバーに安全に保存されます。</p>
-                    <p className="text-gray-400">既存のローカル写真はこの端末に残ります。</p>
+                    <p>{t["pc.cloudDesc"]}</p>
+                    <p className="text-gray-400">{t["pc.cloudNote"]}</p>
                   </>
                 )}
               </div>
@@ -428,13 +438,13 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
                   onClick={() => setShowStorageConfirm(false)}
                   className="flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-500 text-base font-medium border border-gray-200"
                 >
-                  キャンセル
+                  {t["common.cancel"]}
                 </button>
                 <button
                   onClick={() => { onStorageModeChange(nextMode); setShowStorageConfirm(false); }}
                   className="flex-1 py-2.5 rounded-xl bg-emerald-600 text-white text-base font-bold shadow-md"
                 >
-                  切替
+                  {t["pc.switch"]}
                 </button>
               </div>
             </div>

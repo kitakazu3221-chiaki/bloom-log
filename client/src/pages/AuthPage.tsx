@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useI18n } from "../hooks/useI18n";
 
 interface AuthPageProps {
   onLogin: (username: string, password: string) => Promise<void>;
@@ -6,6 +7,7 @@ interface AuthPageProps {
 }
 
 export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
+  const { t } = useI18n();
   const [tab, setTab] = useState<"login" | "register">("login");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -23,7 +25,7 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
     setError(null);
 
     if (tab === "register" && password !== confirmPassword) {
-      setError("パスワードが一致しません");
+      setError(t["auth.passwordMismatch"]);
       return;
     }
 
@@ -35,7 +37,7 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
         await onRegister(username, password);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "エラーが発生しました");
+      setError(err instanceof Error ? err.message : t["common.error"]);
       setSubmitting(false);
     }
   };
@@ -72,7 +74,7 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
                   : "text-gray-400 hover:text-gray-600"
               }`}
             >
-              ログイン
+              {t["auth.login"]}
             </button>
             <button
               onClick={() => handleTabChange("register")}
@@ -82,7 +84,7 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
                   : "text-gray-400 hover:text-gray-600"
               }`}
             >
-              アカウント作成
+              {t["auth.createAccount"]}
             </button>
           </div>
 
@@ -90,13 +92,13 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
           <form onSubmit={handleSubmit} className="px-6 pt-4 pb-6 space-y-3">
             <div>
               <label className="block text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-                ユーザー名
+                {t["auth.username"]}
               </label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="例: yamada_taro"
+                placeholder={t["auth.usernamePlaceholder"]}
                 autoComplete="username"
                 required
                 className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all"
@@ -105,13 +107,13 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
 
             <div>
               <label className="block text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-                パスワード
+                {t["auth.password"]}
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder={tab === "register" ? "8文字以上" : ""}
+                placeholder={tab === "register" ? t["auth.passwordHint"] : ""}
                 autoComplete={tab === "login" ? "current-password" : "new-password"}
                 required
                 className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all"
@@ -121,7 +123,7 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
             {tab === "register" && (
               <div className="animate-fade-in">
                 <label className="block text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-                  パスワード（確認）
+                  {t["auth.confirmPassword"]}
                 </label>
                 <input
                   type="password"
@@ -147,10 +149,10 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
               className="w-full mt-1 py-3.5 rounded-xl bg-emerald-600 text-white font-bold text-base shadow-md shadow-emerald-600/20 hover:bg-emerald-500 disabled:opacity-60 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
             >
               {submitting
-                ? "処理中..."
+                ? t["common.processing"]
                 : tab === "login"
-                ? "ログイン"
-                : "アカウントを作成"}
+                ? t["auth.login"]
+                : t["auth.submitCreate"]}
             </button>
           </form>
         </div>

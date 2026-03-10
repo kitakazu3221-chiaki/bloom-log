@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "./hooks/useAuth";
+import { useI18n, I18nProvider } from "./hooks/useI18n";
 import { PCPage } from "./pages/PCPage";
 import { PhonePage } from "./pages/PhonePage";
 import { HistoryPage } from "./pages/HistoryPage";
@@ -12,15 +13,20 @@ function App() {
   const { pathname } = url;
   const sessionId = url.searchParams.get("session");
 
-  if (pathname === "/phone" && sessionId) {
-    return <PhonePage sessionId={sessionId} />;
-  }
-
-  return <AuthGate pathname={pathname} />;
+  return (
+    <I18nProvider>
+      {pathname === "/phone" && sessionId ? (
+        <PhonePage sessionId={sessionId} />
+      ) : (
+        <AuthGate pathname={pathname} />
+      )}
+    </I18nProvider>
+  );
 }
 
 function AuthGate({ pathname }: { pathname: string }) {
   const { user, loading, login, register, logout, refreshUser } = useAuth();
+  const { t } = useI18n();
   const [toast, setToast] = useState<string | null>(null);
 
   // Handle Stripe checkout redirect
@@ -29,18 +35,18 @@ function AuthGate({ pathname }: { pathname: string }) {
     if (params.get("checkout") === "success") {
       window.history.replaceState({}, "", window.location.pathname);
       refreshUser();
-      setToast("サブスクリプションを開始しました！");
+      setToast(t["toast.subscriptionStarted"]);
       setTimeout(() => setToast(null), 4000);
     }
-  }, [refreshUser]);
+  }, [refreshUser, t]);
 
   const handleRegister = useCallback(
     async (username: string, password: string) => {
       await register(username, password);
-      setToast(`ようこそ、${username} さん！アカウントを作成しました`);
+      setToast(`${t["toast.welcomePrefix"]}${username}${t["toast.welcomeSuffix"]}`);
       setTimeout(() => setToast(null), 4000);
     },
-    [register]
+    [register, t]
   );
 
   if (loading) {

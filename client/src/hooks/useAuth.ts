@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useI18n } from "./useI18n";
 
 export interface AuthUser {
   username: string;
@@ -18,6 +19,7 @@ interface UseAuthReturn {
 }
 
 export function useAuth(): UseAuthReturn {
+  const { t } = useI18n();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -51,10 +53,10 @@ export function useAuth(): UseAuthReturn {
       credentials: "include",
     });
     const data = (await r.json()) as { error?: string };
-    if (!r.ok) throw new Error(data.error ?? "ログインに失敗しました");
+    if (!r.ok) throw new Error(data.error ?? t["auth.loginFailed"]);
     const me = await fetchMe();
     setUser(me);
-  }, [fetchMe]);
+  }, [fetchMe, t]);
 
   const register = useCallback(async (username: string, password: string) => {
     const r = await fetch("/api/auth/register", {
@@ -64,10 +66,10 @@ export function useAuth(): UseAuthReturn {
       credentials: "include",
     });
     const data = (await r.json()) as { error?: string };
-    if (!r.ok) throw new Error(data.error ?? "登録に失敗しました");
+    if (!r.ok) throw new Error(data.error ?? t["auth.registerFailed"]);
     const me = await fetchMe();
     setUser(me);
-  }, [fetchMe]);
+  }, [fetchMe, t]);
 
   const logout = useCallback(async () => {
     await fetch("/api/auth/logout", {

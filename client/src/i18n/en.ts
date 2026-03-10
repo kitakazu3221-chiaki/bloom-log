@@ -1,0 +1,160 @@
+import type { ja } from "./ja";
+
+export const en: Record<keyof typeof ja, string> = {
+  // Common
+  "common.cancel": "Cancel",
+  "common.save": "Save",
+  "common.delete": "Delete",
+  "common.back": "Back",
+  "common.close": "Close",
+  "common.logout": "Logout",
+  "common.processing": "Processing...",
+  "common.error": "An error occurred",
+
+  // Scalp areas
+  "area.top": "Crown",
+  "area.front": "Frontal",
+  "area.side": "Temporal",
+
+  // Landing page
+  "landing.tagline": "Track changes. See the difference.",
+  "landing.feature1.title": "Visualize Changes",
+  "landing.feature1.desc": "Daily photos reveal subtle changes invisible to the eye",
+  "landing.feature2.title": "Before / After",
+  "landing.feature2.desc": "Compare past and present side by side with a slider",
+  "landing.feature3.title": "Track Habits Too",
+  "landing.feature3.desc": "Record shampoo, sleep, and other scalp health factors",
+  "landing.howToUse": "How it works",
+  "landing.step1": "Take photos on PC or phone",
+  "landing.step2": "Auto-organized",
+  "landing.step3": "Track changes",
+  "landing.cta": "Get Started Free",
+  "landing.ctaSub": "Start with a free trial today",
+
+  // Auth page
+  "auth.login": "Login",
+  "auth.createAccount": "Create Account",
+  "auth.username": "Username",
+  "auth.usernamePlaceholder": "e.g. john_doe",
+  "auth.password": "Password",
+  "auth.passwordHint": "8+ characters",
+  "auth.confirmPassword": "Confirm Password",
+  "auth.passwordMismatch": "Passwords do not match",
+  "auth.submitCreate": "Create Account",
+  "auth.loginFailed": "Login failed",
+  "auth.registerFailed": "Registration failed",
+
+  // PC page
+  "pc.history": "History",
+  "pc.dayCount": "",
+  "pc.storageSwitchTitle": "Switch storage",
+  "pc.cloudStorage": "Cloud",
+  "pc.localStorage": "Local",
+  "pc.phoneCamera": "Phone Camera",
+  "pc.pcCamera": "PC Camera",
+  "pc.tooDark": "Too dark. Please use a brighter area",
+  "pc.tooBright": "Too bright. Please adjust the lighting",
+  "pc.cameraFailed": "Failed to start camera",
+  "pc.checkPermission": "Please check browser camera permissions",
+  "pc.startingCamera": "Starting PC camera...",
+  "pc.establishingVideo": "Establishing video connection...",
+  "pc.connectingServer": "Connecting to server...",
+  "pc.overlayLabel": "Previous photo overlay",
+  "pc.opacity": "Opacity",
+  "pc.saveFailed": "Failed to save",
+  "pc.switchToLocal": "Switch to Local Storage",
+  "pc.switchToCloud": "Switch to Cloud Storage",
+  "pc.localWarning": "Photos will only be saved in this browser on this device.",
+  "pc.localCaution": "Warning: Clearing browser data will also delete photos. Existing cloud photos will remain in the cloud.",
+  "pc.cloudDesc": "Photos will be safely stored on the server.",
+  "pc.cloudNote": "Existing local photos will remain on this device.",
+  "pc.switch": "Switch",
+
+  // Phone page
+  "phone.startingCamera": "Starting camera...",
+  "phone.allowCamera": "Please allow camera access",
+  "phone.alignOnPC": "Align position while looking at the PC screen",
+  "phone.streaming": "Streaming",
+  "phone.waiting": "Waiting for connection...",
+  "phone.connecting": "Connecting to server...",
+
+  // History page
+  "history.title": "Photo History",
+  "history.growthTimeline": "Growth Timeline",
+  "history.noRecords": "No photos recorded yet",
+  "history.calendar": "Calendar",
+  "history.list": "List",
+  "history.compareHint": "Drag the slider left/right to compare",
+  "history.compareTitle": "Before / After",
+  "history.noAreaRecords": " — no records yet",
+  "history.selectTwo": "Select 2 to compare",
+  "history.selected": " selected",
+  "history.unselected": "none",
+  "history.confirmDelete": "Delete?",
+  "history.timeline": "Timeline",
+  "history.deleteFailed": "Failed to delete",
+  "history.resetPosition": "Reset Position",
+  "history.sleepLabel": "Sleep",
+  "history.stressLabel": "Stress",
+
+  // Calendar
+  "calendar.sun": "Sun",
+  "calendar.mon": "Mon",
+  "calendar.tue": "Tue",
+  "calendar.wed": "Wed",
+  "calendar.thu": "Thu",
+  "calendar.fri": "Fri",
+  "calendar.sat": "Sat",
+  "calendar.yearMonth": "{month}/{year}",
+
+  // Paywall page
+  "paywall.greeting": "",
+  "paywall.trialEnded": "Your free trial has ended",
+  "paywall.subscriptionRequired": "A subscription is required to continue using the service",
+  "paywall.monthlyPlan": "Monthly Plan",
+  "paywall.autoRenew": "Auto-renewed monthly",
+  "paywall.feature1": "Unlimited scalp photo capture & recording",
+  "paywall.feature2": "Before/After comparison & timeline",
+  "paywall.feature3": "Phone camera sync (WebRTC)",
+  "paywall.subscribe": "Start Subscription",
+  "paywall.managePayment": "Manage Billing",
+  "paywall.tagline": "Scalp Care Tracker",
+
+  // Connection status
+  "connection.serverDisconnected": "Server disconnected",
+  "connection.waitingPhone": "Waiting for phone",
+  "connection.connected": "Connected",
+  "connection.videoConnecting": "Video connecting...",
+  "connection.failed": "Connection failed",
+  "connection.preparing": "Preparing",
+
+  // QR code
+  "qr.instruction": "Scan QR code with your phone",
+
+  // Trial banner
+  "trial.label": "Free Trial:",
+  "trial.remaining": "",
+  "trial.days": "days left",
+  "trial.selectPlan": "Select Plan",
+
+  // Photo save dialog
+  "save.title": "Save Photo",
+  "save.notesLabel": "Additional Data (optional)",
+  "save.shampoo": "Shampoo",
+  "save.shampooPlaceholder": "Brand name",
+  "save.treatment": "Treatment",
+  "save.treatmentPlaceholder": "Minoxidil",
+  "save.sleep": "Sleep (hours)",
+  "save.stress": "Stress (1-5)",
+  "save.saving": "Saving...",
+  "save.photoAlt": "Captured photo",
+
+  // Capture button
+  "capture.tapToCancel": "Tap to cancel",
+  "capture.tapToCapture": "Tap to capture",
+
+  // Toast (App.tsx)
+  "toast.subscriptionStarted": "Subscription started!",
+  "toast.welcomePrefix": "Welcome, ",
+  "toast.welcomeSuffix": "! Account created",
+};

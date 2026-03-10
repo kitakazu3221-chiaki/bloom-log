@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import QRCode from "qrcode";
+import { useI18n } from "../hooks/useI18n";
 
 interface QRCodeDisplayProps {
   sessionId: string;
 }
 
 export function QRCodeDisplay({ sessionId }: QRCodeDisplayProps) {
+  const { t } = useI18n();
   const [qrDataUrl, setQrDataUrl] = useState<string>("");
 
   useEffect(() => {
@@ -25,7 +27,7 @@ export function QRCodeDisplay({ sessionId }: QRCodeDisplayProps) {
         <div className="w-64 h-64 bg-gray-100 animate-pulse rounded-xl" />
       )}
       <p className="text-gray-600 text-base text-center">
-        スマホでQRコードを読み取ってください
+        {t["qr.instruction"]}
       </p>
       <p className="text-gray-300 text-sm text-center break-all max-w-xs">
         {sessionUrl}

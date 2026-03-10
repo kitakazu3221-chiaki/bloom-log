@@ -1,3 +1,4 @@
+import { useI18n } from "../hooks/useI18n";
 import type { WSConnectionState, RTCConnectionState } from "../types";
 
 interface ConnectionStatusProps {
@@ -11,27 +12,28 @@ export function ConnectionStatus({
   rtcState,
   peerJoined,
 }: ConnectionStatusProps) {
+  const { t } = useI18n();
   let color: string;
   let label: string;
 
   if (wsState !== "connected") {
     color = "bg-red-400";
-    label = "サーバー未接続";
+    label = t["connection.serverDisconnected"];
   } else if (!peerJoined) {
     color = "bg-amber-500";
-    label = "スマホ待ち";
+    label = t["connection.waitingPhone"];
   } else if (rtcState === "connected") {
     color = "bg-emerald-500";
-    label = "接続中";
+    label = t["connection.connected"];
   } else if (rtcState === "connecting") {
     color = "bg-amber-500";
-    label = "映像接続中...";
+    label = t["connection.videoConnecting"];
   } else if (rtcState === "failed") {
     color = "bg-red-400";
-    label = "接続失敗";
+    label = t["connection.failed"];
   } else {
     color = "bg-amber-500";
-    label = "準備中";
+    label = t["connection.preparing"];
   }
 
   return (

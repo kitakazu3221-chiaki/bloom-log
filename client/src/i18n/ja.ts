@@ -1,0 +1,158 @@
+export const ja = {
+  // Common
+  "common.cancel": "キャンセル",
+  "common.save": "保存",
+  "common.delete": "削除",
+  "common.back": "戻る",
+  "common.close": "閉じる",
+  "common.logout": "ログアウト",
+  "common.processing": "処理中...",
+  "common.error": "エラーが発生しました",
+
+  // Scalp areas
+  "area.top": "頭頂部",
+  "area.front": "前頭部",
+  "area.side": "側頭部",
+
+  // Landing page
+  "landing.tagline": "髪の変化は、記録から見えてくる。",
+  "landing.feature1.title": "変化を可視化",
+  "landing.feature1.desc": "毎日の写真で、目では気づきにくい変化を確認",
+  "landing.feature2.title": "Before / After比較",
+  "landing.feature2.desc": "スライダーで過去と今を並べて一目瞭然",
+  "landing.feature3.title": "習慣も一緒に記録",
+  "landing.feature3.desc": "シャンプーや睡眠など頭皮に影響する情報も管理",
+  "landing.howToUse": "使い方",
+  "landing.step1": "パソコン・スマホで撮影",
+  "landing.step2": "自動で整理",
+  "landing.step3": "変化を確認",
+  "landing.cta": "無料で始める",
+  "landing.ctaSub": "まずは無料トライアルからお試しください",
+
+  // Auth page
+  "auth.login": "ログイン",
+  "auth.createAccount": "アカウント作成",
+  "auth.username": "ユーザー名",
+  "auth.usernamePlaceholder": "例: yamada_taro",
+  "auth.password": "パスワード",
+  "auth.passwordHint": "8文字以上",
+  "auth.confirmPassword": "パスワード（確認）",
+  "auth.passwordMismatch": "パスワードが一致しません",
+  "auth.submitCreate": "アカウントを作成",
+  "auth.loginFailed": "ログインに失敗しました",
+  "auth.registerFailed": "登録に失敗しました",
+
+  // PC page
+  "pc.history": "履歴",
+  "pc.dayCount": "日目",
+  "pc.storageSwitchTitle": "保存先を切替",
+  "pc.cloudStorage": "クラウド保存",
+  "pc.localStorage": "ローカル保存",
+  "pc.phoneCamera": "スマホカメラ",
+  "pc.pcCamera": "PCカメラ",
+  "pc.tooDark": "暗すぎます。明るい場所で撮影してください",
+  "pc.tooBright": "明るすぎます。光を調整してください",
+  "pc.cameraFailed": "カメラを起動できませんでした",
+  "pc.checkPermission": "ブラウザのカメラ権限を確認してください",
+  "pc.startingCamera": "PCカメラを起動中...",
+  "pc.establishingVideo": "映像接続を確立中...",
+  "pc.connectingServer": "サーバーに接続中...",
+  "pc.overlayLabel": "前回写真オーバーレイ",
+  "pc.opacity": "透明度",
+  "pc.saveFailed": "保存に失敗しました",
+  "pc.switchToLocal": "ローカル保存に切替",
+  "pc.switchToCloud": "クラウド保存に切替",
+  "pc.localWarning": "写真はこの端末のブラウザにのみ保存されます。",
+  "pc.localCaution": "注意: ブラウザのデータを消去すると写真も失われます。既存のクラウド写真はクラウドに残ります。",
+  "pc.cloudDesc": "写真はサーバーに安全に保存されます。",
+  "pc.cloudNote": "既存のローカル写真はこの端末に残ります。",
+  "pc.switch": "切替",
+
+  // Phone page
+  "phone.startingCamera": "カメラを起動中...",
+  "phone.allowCamera": "カメラへのアクセスを許可してください",
+  "phone.alignOnPC": "PC画面を見ながら位置を合わせてください",
+  "phone.streaming": "配信中",
+  "phone.waiting": "接続待ち...",
+  "phone.connecting": "サーバー接続中...",
+
+  // History page
+  "history.title": "撮影履歴",
+  "history.growthTimeline": "成長タイムライン",
+  "history.noRecords": "撮影記録がありません",
+  "history.calendar": "カレンダー",
+  "history.list": "一覧",
+  "history.compareHint": "スライダーを左右にドラッグして比較",
+  "history.compareTitle": "Before / After 比較",
+  "history.noAreaRecords": "の記録はありません",
+  "history.selectTwo": "2枚選んで比較",
+  "history.selected": "枚選択中",
+  "history.unselected": "未選択",
+  "history.confirmDelete": "削除？",
+  "history.timeline": "タイムライン",
+  "history.deleteFailed": "削除に失敗しました",
+  "history.resetPosition": "位置リセット",
+  "history.sleepLabel": "睡眠",
+  "history.stressLabel": "ストレス",
+
+  // Calendar
+  "calendar.sun": "日",
+  "calendar.mon": "月",
+  "calendar.tue": "火",
+  "calendar.wed": "水",
+  "calendar.thu": "木",
+  "calendar.fri": "金",
+  "calendar.sat": "土",
+  "calendar.yearMonth": "{year}年{month}月",
+
+  // Paywall page
+  "paywall.greeting": "さん",
+  "paywall.trialEnded": "無料トライアルが終了しました",
+  "paywall.subscriptionRequired": "引き続きご利用いただくにはサブスクリプションの登録が必要です",
+  "paywall.monthlyPlan": "月額プラン",
+  "paywall.autoRenew": "毎月自動更新",
+  "paywall.feature1": "頭皮写真の撮影・記録（無制限）",
+  "paywall.feature2": "Before/After比較・タイムライン",
+  "paywall.feature3": "スマホカメラ連携（WebRTC）",
+  "paywall.subscribe": "サブスクリプションを開始",
+  "paywall.managePayment": "お支払い管理",
+  "paywall.tagline": "頭皮ケア記録",
+
+  // Connection status
+  "connection.serverDisconnected": "サーバー未接続",
+  "connection.waitingPhone": "スマホ待ち",
+  "connection.connected": "接続中",
+  "connection.videoConnecting": "映像接続中...",
+  "connection.failed": "接続失敗",
+  "connection.preparing": "準備中",
+
+  // QR code
+  "qr.instruction": "スマホでQRコードを読み取ってください",
+
+  // Trial banner
+  "trial.label": "無料トライアル:",
+  "trial.remaining": "残り",
+  "trial.days": "日",
+  "trial.selectPlan": "プランを選択",
+
+  // Photo save dialog
+  "save.title": "写真を保存",
+  "save.notesLabel": "補助データ（任意）",
+  "save.shampoo": "シャンプー",
+  "save.shampooPlaceholder": "〇〇シャンプー",
+  "save.treatment": "育毛剤",
+  "save.treatmentPlaceholder": "ミノキシジル",
+  "save.sleep": "睡眠（時間）",
+  "save.stress": "ストレス（1〜5）",
+  "save.saving": "保存中...",
+  "save.photoAlt": "撮影した写真",
+
+  // Capture button
+  "capture.tapToCancel": "タップでキャンセル",
+  "capture.tapToCapture": "タップで撮影",
+
+  // Toast (App.tsx)
+  "toast.subscriptionStarted": "サブスクリプションを開始しました！",
+  "toast.welcomePrefix": "ようこそ、",
+  "toast.welcomeSuffix": " さん！アカウントを作成しました",
+};

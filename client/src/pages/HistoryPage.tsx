@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useStorage } from "../hooks/useStorage";
+import { useI18n } from "../hooks/useI18n";
 import { TrialBanner } from "../components/TrialBanner";
-import { SCALP_AREA_LABELS, type ScalpArea, type PhotoRecord } from "../types";
+import { type ScalpArea, type PhotoRecord } from "../types";
 
 const AREAS: ScalpArea[] = ["top", "front", "side"];
 
@@ -27,6 +28,15 @@ function groupByDate(records: PhotoRecord[]): Map<string, PhotoRecord[]> {
   return map;
 }
 
+function useAreaLabels(): Record<ScalpArea, string> {
+  const { t } = useI18n();
+  return {
+    top: t["area.top"],
+    front: t["area.front"],
+    side: t["area.side"],
+  };
+}
+
 // ── Calendar ─────────────────────────────────────────────────────────────────
 function PhotoCalendar({
   records,
@@ -37,6 +47,9 @@ function PhotoCalendar({
   selectedDate: string | null;
   onSelectDate: (date: string | null) => void;
 }) {
+  const { t, locale } = useI18n();
+  const areaLabels = useAreaLabels();
+
   const { initYear, initMonth } = useMemo(() => {
     const sorted = [...records].sort((a, b) => b.date.localeCompare(a.date));
     if (sorted.length > 0) {
@@ -72,6 +85,15 @@ function PhotoCalendar({
     else setMonth((m) => m + 1);
   };
 
+  const dayHeaders = [
+    t["calendar.sun"], t["calendar.mon"], t["calendar.tue"], t["calendar.wed"],
+    t["calendar.thu"], t["calendar.fri"], t["calendar.sat"],
+  ];
+
+  const monthLabel = locale === "ja"
+    ? `${year}年${month + 1}月`
+    : `${month + 1}/${year}`;
+
   return (
     <div className="card rounded-2xl p-5">
       {/* Month nav */}
@@ -83,7 +105,7 @@ function PhotoCalendar({
           ‹
         </button>
         <span className="text-base font-bold text-gray-800">
-          {year}年{month + 1}月
+          {monthLabel}
         </span>
         <button
           onClick={goToNext}
@@ -95,7 +117,7 @@ function PhotoCalendar({
 
       {/* Day-of-week headers */}
       <div className="grid grid-cols-7 mb-2">
-        {["日", "月", "火", "水", "木", "金", "土"].map((d, i) => (
+        {dayHeaders.map((d, i) => (
           <div
             key={d}
             className={`text-center text-sm font-semibold py-1 ${
@@ -164,7 +186,7 @@ function PhotoCalendar({
         {(["top", "front", "side"] as ScalpArea[]).map((area) => (
           <span key={area} className="flex items-center gap-1.5 text-sm text-gray-500">
             <span className={`w-2 h-2 rounded-full ${AREA_DOT_COLORS[area]}`} />
-            {SCALP_AREA_LABELS[area]}
+            {areaLabels[area]}
           </span>
         ))}
       </div>
@@ -174,6 +196,7 @@ function PhotoCalendar({
 
 // ── Before/After slider ───────────────────────────────────────────────────────
 function CompareSlider({ beforeUrl, afterUrl }: { beforeUrl: string; afterUrl: string }) {
+  const { t } = useI18n();
   const [pos, setPos] = useState(50);
   const [beforeOff, setBeforeOff] = useState({ x: 0, y: 0 });
   const [afterOff, setAfterOff] = useState({ x: 0, y: 0 });
@@ -278,7 +301,7 @@ function CompareSlider({ beforeUrl, afterUrl }: { beforeUrl: string; afterUrl: s
           onClick={(e) => { e.stopPropagation(); handleDoubleClick(); }}
           className="absolute bottom-3 left-1/2 -translate-x-1/2 text-sm bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full hover:bg-black/70 transition-colors"
         >
-          位置リセット
+          {t["history.resetPosition"]}
         </button>
       )}
     </div>
@@ -296,6 +319,8 @@ interface HistoryPageProps {
 }
 
 export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, createdAt, storageMode }: HistoryPageProps) {
+  const { t, locale } = useI18n();
+  const areaLabels = useAreaLabels();
   const storage = useStorage(storageMode);
   const [records, setRecords] = useState<PhotoRecord[]>([]);
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
@@ -317,7 +342,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
         setCompareIds(null);
       }
     } catch {
-      alert("削除に失敗しました");
+      alert(t["history.deleteFailed"]);
     } finally {
       setDeletingId(null);
     }
@@ -382,6 +407,16 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
   const compareAfterUrl = compareIds ? (photoUrls[compareIds[1]] ?? null) : null;
   const calendarDateRecords = calendarDate ? records.filter((r) => r.date === calendarDate) : [];
 
+  const dayCount = Math.max(1, Math.ceil((Date.now() - new Date(createdAt).getTime()) / 86400000));
+  const dateLocale = locale === "ja" ? "ja-JP" : "en-US";
+
+  const formatNotesInfo = (r: PhotoRecord) => {
+    const parts: string[] = [];
+    if (r.notes.sleep !== undefined) parts.push(`${t["history.sleepLabel"]}${r.notes.sleep}h`);
+    if (r.notes.stress !== undefined) parts.push(`${t["history.stressLabel"]}${r.notes.stress}`);
+    return parts.join(" · ");
+  };
+
   return (
     <div className="min-h-screen bg-[#F8FAF8] flex flex-col">
       {/* Header */}
@@ -389,7 +424,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
         <a
           href="/"
           className="w-8 h-8 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-500 border border-gray-200 transition-colors text-base"
-          aria-label="戻る"
+          aria-label={t["common.back"]}
         >
           ←
         </a>
@@ -397,16 +432,16 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
           <div className="w-6 h-6 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center">
             <span className="text-xs">🌱</span>
           </div>
-          <h1 className="text-lg font-bold text-gray-800 tracking-tight">撮影履歴</h1>
+          <h1 className="text-lg font-bold text-gray-800 tracking-tight">{t["history.title"]}</h1>
         </div>
         <span className="text-sm font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg px-2.5 py-1">
-          {Math.max(1, Math.ceil((Date.now() - new Date(createdAt).getTime()) / 86400000))}日目
+          {locale === "ja" ? `${dayCount}${t["pc.dayCount"]}` : `Day ${dayCount}`}
         </span>
         <div className="ml-auto flex items-center gap-3">
           <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
             <span className="text-sm text-gray-400">{username}</span>
             <button onClick={onLogout} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
-              ログアウト
+              {t["common.logout"]}
             </button>
           </div>
         </div>
@@ -422,7 +457,6 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
       <main className="flex-1 p-6 max-w-3xl mx-auto w-full space-y-5">
         {/* Growth milestone bar */}
         {(() => {
-          const dayCount = Math.max(1, Math.ceil((Date.now() - new Date(createdAt).getTime()) / 86400000));
           const milestones = [
             { day: 1, label: "Day 1" },
             { day: 30, label: "Day 30" },
@@ -434,7 +468,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
           const progress = Math.min((dayCount / maxDay) * 100, 100);
           return (
             <section className="card rounded-2xl p-4">
-              <h2 className="text-base font-bold text-gray-800 mb-3">成長タイムライン</h2>
+              <h2 className="text-base font-bold text-gray-800 mb-3">{t["history.growthTimeline"]}</h2>
               <div className="relative">
                 {/* Progress bar */}
                 <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -464,7 +498,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
         {records.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-4xl mb-4">📷</p>
-            <p className="text-gray-400 text-base">撮影記録がありません</p>
+            <p className="text-gray-400 text-base">{t["history.noRecords"]}</p>
           </div>
         ) : (
           <>
@@ -476,7 +510,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
                   viewMode === "calendar" ? "bg-white text-gray-800 shadow-sm" : "text-gray-400 hover:text-gray-600"
                 }`}
               >
-                カレンダー
+                {t["history.calendar"]}
               </button>
               <button
                 onClick={() => setViewMode("list")}
@@ -484,7 +518,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
                   viewMode === "list" ? "bg-white text-gray-800 shadow-sm" : "text-gray-400 hover:text-gray-600"
                 }`}
               >
-                一覧
+                {t["history.list"]}
               </button>
             </div>
 
@@ -499,7 +533,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
                 {calendarDate && calendarDateRecords.length > 0 && (
                   <div className="card rounded-2xl p-5 animate-fade-in-up">
                     <h2 className="text-base font-bold text-gray-800 mb-4">
-                      {new Date(calendarDate + "T00:00:00").toLocaleDateString("ja-JP", {
+                      {new Date(calendarDate + "T00:00:00").toLocaleDateString(dateLocale, {
                         year: "numeric", month: "long", day: "numeric",
                       })}
                     </h2>
@@ -508,7 +542,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
                         <div key={r.id} className="flex flex-col items-center gap-2">
                           <div className="w-32 h-32 rounded-2xl overflow-hidden bg-gray-50 border border-gray-200">
                             {photoUrls[r.id] ? (
-                              <img src={photoUrls[r.id]} alt={SCALP_AREA_LABELS[r.area]} className="w-full h-full object-cover" />
+                              <img src={photoUrls[r.id]} alt={areaLabels[r.area]} className="w-full h-full object-cover" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
                                 <div className="w-5 h-5 border-2 border-emerald-200 border-t-emerald-500 rounded-full animate-spin" />
@@ -516,13 +550,11 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
                             )}
                           </div>
                           <span className={`text-sm font-semibold px-3 py-1 rounded-full shadow-sm ${AREA_PILL_COLORS[r.area]}`}>
-                            {SCALP_AREA_LABELS[r.area]}
+                            {areaLabels[r.area]}
                           </span>
                           {(r.notes.sleep !== undefined || r.notes.stress !== undefined) && (
                             <span className="text-sm text-gray-400">
-                              {r.notes.sleep !== undefined && `睡眠${r.notes.sleep}h`}
-                              {r.notes.sleep !== undefined && r.notes.stress !== undefined && " · "}
-                              {r.notes.stress !== undefined && `ストレス${r.notes.stress}`}
+                              {formatNotesInfo(r)}
                             </span>
                           )}
                           {(r.notes.shampoo || r.notes.treatment) && (
@@ -550,7 +582,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
                           : "bg-gray-100 text-gray-400 border border-gray-200 hover:border-gray-300"
                       }`}
                     >
-                      {SCALP_AREA_LABELS[area]}
+                      {areaLabels[area]}
                       <span className="ml-1.5 text-sm opacity-60">
                         ({records.filter((r) => r.area === area).length})
                       </span>
@@ -562,13 +594,13 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
                 {compareIds && compareBeforeUrl && compareAfterUrl && compareIds[0] !== compareIds[1] && (
                   <section className="card rounded-2xl p-4">
                     <div className="flex items-center justify-between mb-3">
-                      <h2 className="text-base font-bold text-gray-800">Before / After 比較</h2>
+                      <h2 className="text-base font-bold text-gray-800">{t["history.compareTitle"]}</h2>
                       <button onClick={() => setCompareIds(null)} className="text-sm text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg transition-colors">
-                        閉じる
+                        {t["common.close"]}
                       </button>
                     </div>
                     <CompareSlider beforeUrl={compareBeforeUrl} afterUrl={compareAfterUrl} />
-                    <p className="text-sm text-center text-gray-400 mt-2">スライダーを左右にドラッグして比較</p>
+                    <p className="text-sm text-center text-gray-400 mt-2">{t["history.compareHint"]}</p>
                   </section>
                 )}
 
@@ -576,17 +608,17 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
                 {areaRecords.length === 0 ? (
                   <div className="text-center py-12">
                     <p className="text-3xl mb-3">📷</p>
-                    <p className="text-base text-gray-400">{SCALP_AREA_LABELS[selectedArea]}の記録はありません</p>
+                    <p className="text-base text-gray-400">{areaLabels[selectedArea]}{t["history.noAreaRecords"]}</p>
                   </div>
                 ) : (
                   <section>
                     <div className="flex items-center justify-between mb-3">
-                      <h2 className="text-base font-bold text-gray-800">{SCALP_AREA_LABELS[selectedArea]}</h2>
+                      <h2 className="text-base font-bold text-gray-800">{areaLabels[selectedArea]}</h2>
                       {areaRecords.length >= 2 && (
                         <p className="text-sm text-gray-400">
-                          2枚選んで比較（{compareIds
-                            ? `${compareIds.filter((id, i, arr) => arr.indexOf(id) === i).length}枚選択中`
-                            : "未選択"})
+                          {t["history.selectTwo"]}({compareIds
+                            ? `${compareIds.filter((id, i, arr) => arr.indexOf(id) === i).length}${t["history.selected"]}`
+                            : t["history.unselected"]})
                         </p>
                       )}
                     </div>
@@ -622,20 +654,20 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
                           </button>
                           {confirmDeleteId === record.id ? (
                             <div className="absolute inset-0 bg-black/60 rounded-2xl flex flex-col items-center justify-center gap-2 z-10">
-                              <p className="text-white text-base font-bold">削除？</p>
+                              <p className="text-white text-base font-bold">{t["history.confirmDelete"]}</p>
                               <div className="flex gap-2">
                                 <button
                                   onClick={() => handleDelete(record.id)}
                                   disabled={deletingId === record.id}
                                   className="px-3 py-1.5 bg-red-500 text-white text-sm rounded-xl font-bold disabled:opacity-50"
                                 >
-                                  {deletingId === record.id ? "..." : "削除"}
+                                  {deletingId === record.id ? "..." : t["common.delete"]}
                                 </button>
                                 <button
                                   onClick={() => setConfirmDeleteId(null)}
                                   className="px-3 py-1.5 bg-white/20 text-white text-sm rounded-xl"
                                 >
-                                  戻る
+                                  {t["common.back"]}
                                 </button>
                               </div>
                             </div>
@@ -643,7 +675,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
                             <button
                               onClick={() => setConfirmDeleteId(record.id)}
                               className="absolute top-2 left-2 w-7 h-7 rounded-full bg-black/40 text-white text-base flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                              title="削除"
+                              title={t["common.delete"]}
                             >
                               ×
                             </button>
@@ -657,14 +689,14 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
 
                 {/* Timeline */}
                 <section>
-                  <h2 className="text-base font-bold text-gray-800 mb-3">タイムライン</h2>
+                  <h2 className="text-base font-bold text-gray-800 mb-3">{t["history.timeline"]}</h2>
                   <div className="space-y-3">
                     {Array.from(byDate.entries())
                       .sort(([a], [b]) => b.localeCompare(a))
                       .map(([date, dayRecords]) => (
                         <div key={date} className="card rounded-2xl p-4">
                           <p className="text-sm font-semibold text-gray-400 mb-3">
-                            {new Date(date + "T00:00:00").toLocaleDateString("ja-JP", {
+                            {new Date(date + "T00:00:00").toLocaleDateString(dateLocale, {
                               year: "numeric", month: "long", day: "numeric",
                             })}
                           </p>
@@ -682,20 +714,20 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
                                   {/* Delete button */}
                                   {confirmDeleteId === r.id ? (
                                     <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-1.5 rounded-xl">
-                                      <p className="text-white text-sm font-bold">削除？</p>
+                                      <p className="text-white text-sm font-bold">{t["history.confirmDelete"]}</p>
                                       <div className="flex gap-1.5">
                                         <button
                                           onClick={() => handleDelete(r.id)}
                                           disabled={deletingId === r.id}
                                           className="px-2.5 py-1 bg-red-500 text-white text-sm rounded-lg font-bold disabled:opacity-50"
                                         >
-                                          {deletingId === r.id ? "..." : "削除"}
+                                          {deletingId === r.id ? "..." : t["common.delete"]}
                                         </button>
                                         <button
                                           onClick={() => setConfirmDeleteId(null)}
                                           className="px-2.5 py-1 bg-white/20 text-white text-sm rounded-lg"
                                         >
-                                          戻る
+                                          {t["common.back"]}
                                         </button>
                                       </div>
                                     </div>
@@ -703,20 +735,18 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
                                     <button
                                       onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(r.id); }}
                                       className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/40 text-white text-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity sm:opacity-0 active:opacity-100"
-                                      title="削除"
+                                      title={t["common.delete"]}
                                     >
                                       ×
                                     </button>
                                   )}
                                 </div>
                                 <span className={`text-sm px-2 py-0.5 rounded-full font-medium ${AREA_PILL_COLORS[r.area]}`}>
-                                  {SCALP_AREA_LABELS[r.area]}
+                                  {areaLabels[r.area]}
                                 </span>
                                 {(r.notes.sleep !== undefined || r.notes.stress !== undefined) && (
                                   <span className="text-sm text-gray-400">
-                                    {r.notes.sleep !== undefined && `睡眠${r.notes.sleep}h`}
-                                    {r.notes.sleep !== undefined && r.notes.stress !== undefined && " · "}
-                                    {r.notes.stress !== undefined && `ストレス${r.notes.stress}`}
+                                    {formatNotesInfo(r)}
                                   </span>
                                 )}
                               </div>

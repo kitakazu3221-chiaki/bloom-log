@@ -1,3 +1,5 @@
+import { useI18n } from "../hooks/useI18n";
+
 interface CaptureButtonProps {
   onCapture: () => void;
   onCancel?: () => void;
@@ -11,6 +13,7 @@ export function CaptureButton({
   disabled,
   countdown,
 }: CaptureButtonProps) {
+  const { t } = useI18n();
   const isCounting = countdown !== null;
 
   const handleClick = () => {
@@ -62,7 +65,7 @@ export function CaptureButton({
       </button>
 
       <span className="text-sm text-gray-400 h-5 transition-all">
-        {isCounting ? "タップでキャンセル" : disabled ? "" : "タップで撮影"}
+        {isCounting ? t["capture.tapToCancel"] : disabled ? "" : t["capture.tapToCapture"]}
       </span>
     </div>
   );
