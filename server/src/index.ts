@@ -22,7 +22,7 @@ const JWT_SECRET =
 const BCRYPT_ROUNDS = 10;
 const PORT = Number(process.env.PORT ?? 3001);
 const IS_PROD = process.env.NODE_ENV === "production";
-const TRIAL_DAYS = 3;
+const TRIAL_DAYS = 14;
 
 // ── Stripe ──────────────────────────────────────────────────────────────────
 
