@@ -1,5 +1,11 @@
 import { useI18n } from "../hooks/useI18n";
 
+const StrengthIcon = ({ d }: { d: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+    <path d={d} fill="#059669" />
+  </svg>
+);
+
 export function LandingPage() {
   const { t, locale, setLocale } = useI18n();
 
@@ -59,15 +65,15 @@ export function LandingPage() {
             </h2>
             <div className="space-y-1">
               {[
-                { icon: "📱", title: t["landing.strength1.title"], desc: t["landing.strength1.desc"] },
-                { icon: "🗂️", title: t["landing.strength2.title"], desc: t["landing.strength2.desc"] },
-                { icon: "📝", title: t["landing.strength3.title"], desc: t["landing.strength3.desc"] },
-                { icon: "🔒", title: t["landing.strength4.title"], desc: t["landing.strength4.desc"] },
-                { icon: "🌐", title: t["landing.strength5.title"], desc: t["landing.strength5.desc"] },
+                { icon: "M7 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H7Zm5 17a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z", title: t["landing.strength1.title"], desc: t["landing.strength1.desc"] },
+                { icon: "M3 3h8v8H3V3Zm10 0h8v8h-8V3ZM3 13h8v8H3v-8Zm10 0h8v8h-8v-8Z", title: t["landing.strength2.title"], desc: t["landing.strength2.desc"] },
+                { icon: "M9 2a1 1 0 0 0 0 2h6a1 1 0 1 0 0-2H9ZM4 6a2 2 0 0 1 2-2h1v1a1 1 0 0 0 2 0V4h6v1a1 1 0 1 0 2 0V4h1a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6Zm4 4a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H9a1 1 0 0 1-1-1Zm1 3a1 1 0 1 0 0 2h4a1 1 0 1 0 0-2H9Z", title: t["landing.strength3.title"], desc: t["landing.strength3.desc"] },
+                { icon: "M12 2C9.24 2 7 4.24 7 7v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7c0-2.76-2.24-5-5-5Zm-3 8V7a3 3 0 1 1 6 0v3H9Zm3 4a2 2 0 0 1 1 3.73V19a1 1 0 1 1-2 0v-1.27A2 2 0 0 1 12 14Z", title: t["landing.strength4.title"], desc: t["landing.strength4.desc"] },
+                { icon: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm-1 17.93A8.01 8.01 0 0 1 4.07 13H7v-2H4.07A8.01 8.01 0 0 1 11 4.07V7h2V4.07A8.01 8.01 0 0 1 19.93 11H17v2h2.93A8.01 8.01 0 0 1 13 19.93V17h-2v2.93Z", title: t["landing.strength5.title"], desc: t["landing.strength5.desc"] },
               ].map((s) => (
-                <div key={s.icon} className="flex items-start gap-2.5">
-                  <span className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-base shrink-0">
-                    {s.icon}
+                <div key={s.title} className="flex items-start gap-2.5">
+                  <span className="w-5 h-5 shrink-0 mt-0.5">
+                    <StrengthIcon d={s.icon} />
                   </span>
                   <div className="min-w-0">
                     <h3 className="text-sm lg:text-base font-bold text-gray-800">{s.title}</h3>
