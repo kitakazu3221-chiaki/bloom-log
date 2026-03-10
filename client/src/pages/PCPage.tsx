@@ -30,9 +30,12 @@ interface PCPageProps {
   onLogout: () => void;
   subscription: "trialing" | "active";
   trialDaysLeft: number;
+  createdAt: string;
+  storageMode: "cloud" | "local";
+  onStorageModeChange: (mode: "cloud" | "local") => void;
 }
 
-export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPageProps) {
+export function PCPage({ username, onLogout, subscription, trialDaysLeft, createdAt, storageMode, onStorageModeChange }: PCPageProps) {
   const [cameraMode, setCameraMode] = useState<CameraMode>("phone");
   const [selectedArea, setSelectedArea] = useState<ScalpArea>("top");
   const [pendingPhoto, setPendingPhoto] = useState<CapturedPhoto | null>(null);
@@ -57,7 +60,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
     peerJoined: ws.peerJoined,
     sendSignal: ws.sendSignal,
   });
-  const storage = useStorage();
+  const storage = useStorage(storageMode);
   const localCamera = useLocalCamera(cameraMode === "pc");
 
   rtcHandleSignalRef.current = rtc.handleSignal;
@@ -82,7 +85,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
       const latest = areaRecords[areaRecords.length - 1];
       if (!latest || cancelled) return;
 
-      const url = await storage.loadPhotoUrl(latest.area, latest.filename);
+      const url = await storage.loadPhotoUrl(latest.area, latest.filename, latest.id);
       if (cancelled) {
         if (url) URL.revokeObjectURL(url);
         return;
@@ -157,7 +160,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
           notes
         );
         if (prevOverlayUrl.current) URL.revokeObjectURL(prevOverlayUrl.current);
-        const newUrl = await storage.loadPhotoUrl(saved.area, saved.filename);
+        const newUrl = await storage.loadPhotoUrl(saved.area, saved.filename, saved.id);
         prevOverlayUrl.current = newUrl;
         setOverlayUrl(newUrl);
         setPendingPhoto(null);
@@ -194,12 +197,19 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft }: PCPa
           >
             履歴
           </a>
+          <span className="text-sm font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg px-2.5 py-1">
+            {Math.max(1, Math.ceil((Date.now() - new Date(createdAt).getTime()) / 86400000))}日目
+          </span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-sm text-gray-400 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
-            クラウド保存
-          </span>
+          <button
+            onClick={() => onStorageModeChange(storageMode === "cloud" ? "local" : "cloud")}
+            className="text-sm text-gray-400 flex items-center gap-1.5 hover:text-gray-600 transition-colors"
+            title="保存先を切替"
+          >
+            <span className={`w-1.5 h-1.5 rounded-full inline-block ${storageMode === "cloud" ? "bg-emerald-500" : "bg-amber-500"}`} />
+            {storageMode === "cloud" ? "クラウド保存" : "ローカル保存"}
+          </button>
           {cameraMode === "phone" && (
             <ConnectionStatus
               wsState={ws.connectionState}

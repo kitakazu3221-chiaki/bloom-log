@@ -79,6 +79,8 @@ function AuthGate({ pathname }: { pathname: string }) {
         onLogout={logout}
         subscription={user.subscription}
         trialDaysLeft={user.trialDaysLeft}
+        createdAt={user.createdAt}
+        storageMode={user.storageMode}
       />
     ) : (
       <PCPage
@@ -86,6 +88,17 @@ function AuthGate({ pathname }: { pathname: string }) {
         onLogout={logout}
         subscription={user.subscription}
         trialDaysLeft={user.trialDaysLeft}
+        createdAt={user.createdAt}
+        storageMode={user.storageMode}
+        onStorageModeChange={async (mode) => {
+          await fetch("/api/settings/storage-mode", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mode }),
+          });
+          refreshUser();
+        }}
       />
     );
 

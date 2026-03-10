@@ -4,6 +4,8 @@ export interface AuthUser {
   username: string;
   subscription: "trialing" | "active" | "expired";
   trialDaysLeft: number;
+  createdAt: string;
+  storageMode: "cloud" | "local";
 }
 
 interface UseAuthReturn {

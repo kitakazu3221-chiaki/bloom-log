@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import rateLimit from "express-rate-limit";
 import Stripe from "stripe";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
-import { readFile, writeFile, mkdir } from "fs/promises";
+import { readFile, writeFile, mkdir, unlink } from "fs/promises";
 import { resolve, dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid";
@@ -67,6 +67,7 @@ interface User {
   subscriptionStatus?: "trialing" | "active" | "canceled" | "past_due" | "none";
   subscriptionId?: string;
   currentPeriodEnd?: string;
+  storageMode?: "cloud" | "local";
 }
 interface UsersStore {
   users: User[];
@@ -355,7 +356,7 @@ app.get("/api/auth/me", (req, res) => {
   const trialDaysLeft = Math.max(0, Math.ceil(
     (new Date(user.trialEndsAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
   ));
-  res.json({ username: payload.username, subscription, trialDaysLeft });
+  res.json({ username: payload.username, subscription, trialDaysLeft, createdAt: user.createdAt, storageMode: user.storageMode ?? "cloud" });
 });
 
 // ── Signaling routes ──────────────────────────────────────────────────────────
@@ -540,6 +541,36 @@ app.get("/api/photos/file/:area/:filename", requireAuth, requireSubscription, as
     res.setHeader("Cache-Control", "private, max-age=86400");
     res.end(data);
   } catch { res.status(404).end(); }
+});
+
+app.delete("/api/photos/:id", requireAuth, requireSubscription, async (req, res) => {
+  const { userId } = (req as AuthRequest).authUser;
+  const recordsFile = join(RECORDS_DIR, userId, "records.json");
+  try {
+    const store = JSON.parse(await readFile(recordsFile, "utf-8")) as RecordsStore;
+    const idx = store.records.findIndex((r) => r.id === req.params.id);
+    if (idx === -1) { res.status(404).json({ error: "not_found" }); return; }
+    const record = store.records[idx];
+    // Delete photo file
+    const photoPath = join(PHOTOS_DIR, userId, record.area, record.filename);
+    try { await unlink(photoPath); } catch { /* file may already be gone */ }
+    // Remove from records
+    store.records.splice(idx, 1);
+    await writeFile(recordsFile, JSON.stringify(store, null, 2), "utf-8");
+    res.json({ ok: true });
+  } catch { res.status(500).json({ error: "delete_failed" }); }
+});
+
+app.post("/api/settings/storage-mode", requireAuth, (req, res) => {
+  const { userId } = (req as AuthRequest).authUser;
+  const { mode } = req.body as { mode?: string };
+  if (mode !== "cloud" && mode !== "local") { res.status(400).json({ error: "invalid_mode" }); return; }
+  const store = JSON.parse(readFileSync(USERS_FILE, "utf-8")) as UsersStore;
+  const user = store.users.find((u) => u.id === userId);
+  if (!user) { res.status(404).json({ error: "user_not_found" }); return; }
+  user.storageMode = mode;
+  writeFileSync(USERS_FILE, JSON.stringify(store, null, 2), "utf-8");
+  res.json({ ok: true, storageMode: mode });
 });
 
 // ── Static files (production) ─────────────────────────────────────────────────

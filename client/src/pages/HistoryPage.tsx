@@ -291,17 +291,37 @@ interface HistoryPageProps {
   onLogout: () => void;
   subscription: "trialing" | "active";
   trialDaysLeft: number;
+  createdAt: string;
+  storageMode: "cloud" | "local";
 }
 
-export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }: HistoryPageProps) {
-  const storage = useStorage();
+export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, createdAt, storageMode }: HistoryPageProps) {
+  const storage = useStorage(storageMode);
   const [records, setRecords] = useState<PhotoRecord[]>([]);
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [selectedArea, setSelectedArea] = useState<ScalpArea>("top");
   const [compareIds, setCompareIds] = useState<[string, string] | null>(null);
   const [viewMode, setViewMode] = useState<"calendar" | "list">("list");
   const [calendarDate, setCalendarDate] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const urlsRef = useRef<Record<string, string>>({});
+
+  const handleDelete = async (id: string) => {
+    setDeletingId(id);
+    try {
+      await storage.deletePhoto(id);
+      setRecords((prev) => prev.filter((r) => r.id !== id));
+      setConfirmDeleteId(null);
+      if (compareIds && (compareIds[0] === id || compareIds[1] === id)) {
+        setCompareIds(null);
+      }
+    } catch {
+      alert("削除に失敗しました");
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   useEffect(() => {
     if (!storage.isReady) return;
@@ -316,7 +336,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
     Promise.all(
       areaRecords.map(async (r) => {
         if (urlsRef.current[r.id]) return;
-        const url = await storage.loadPhotoUrl(r.area, r.filename);
+        const url = await storage.loadPhotoUrl(r.area, r.filename, r.id);
         if (!cancelled && url) {
           urlsRef.current[r.id] = url;
           setPhotoUrls((prev) => ({ ...prev, [r.id]: url }));
@@ -334,7 +354,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
     Promise.all(
       dateRecords.map(async (r) => {
         if (urlsRef.current[r.id]) return;
-        const url = await storage.loadPhotoUrl(r.area, r.filename);
+        const url = await storage.loadPhotoUrl(r.area, r.filename, r.id);
         if (!cancelled && url) {
           urlsRef.current[r.id] = url;
           setPhotoUrls((prev) => ({ ...prev, [r.id]: url }));
@@ -379,6 +399,9 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
           </div>
           <h1 className="text-lg font-bold text-gray-800 tracking-tight">撮影履歴</h1>
         </div>
+        <span className="text-sm font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg px-2.5 py-1">
+          {Math.max(1, Math.ceil((Date.now() - new Date(createdAt).getTime()) / 86400000))}日目
+        </span>
         <div className="ml-auto flex items-center gap-3">
           <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
             <span className="text-sm text-gray-400">{username}</span>
@@ -397,6 +420,47 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
       )}
 
       <main className="flex-1 p-6 max-w-3xl mx-auto w-full space-y-5">
+        {/* Growth milestone bar */}
+        {(() => {
+          const dayCount = Math.max(1, Math.ceil((Date.now() - new Date(createdAt).getTime()) / 86400000));
+          const milestones = [
+            { day: 1, label: "Day 1" },
+            { day: 30, label: "Day 30" },
+            { day: 90, label: "Day 90" },
+            { day: 180, label: "Day 180" },
+            { day: 365, label: "Day 365" },
+          ];
+          const maxDay = milestones[milestones.length - 1].day;
+          const progress = Math.min((dayCount / maxDay) * 100, 100);
+          return (
+            <section className="card rounded-2xl p-4">
+              <h2 className="text-base font-bold text-gray-800 mb-3">成長タイムライン</h2>
+              <div className="relative">
+                {/* Progress bar */}
+                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${progress}%` }} />
+                </div>
+                {/* Milestones */}
+                <div className="flex justify-between mt-2">
+                  {milestones.map((m) => {
+                    const reached = dayCount >= m.day;
+                    return (
+                      <div key={m.day} className="flex flex-col items-center" style={{ width: "20%" }}>
+                        <div className={`w-3 h-3 rounded-full border-2 -mt-[18px] mb-1 ${
+                          reached ? "bg-emerald-500 border-emerald-500" : "bg-white border-gray-300"
+                        }`} />
+                        <span className={`text-sm font-medium ${reached ? "text-emerald-600" : "text-gray-400"}`}>
+                          {m.label}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </section>
+          );
+        })()}
+
         {records.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-4xl mb-4">📷</p>
@@ -531,10 +595,10 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
                         const url = photoUrls[record.id];
                         const isSelected = compareIds?.includes(record.id) ?? false;
                         return (
+                          <div key={record.id} className="relative group">
                           <button
-                            key={record.id}
                             onClick={() => toggleCompare(record.id)}
-                            className={`relative aspect-square rounded-2xl overflow-hidden border-2 transition-all ${
+                            className={`relative w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all ${
                               isSelected
                                 ? "border-emerald-500 ring-2 ring-emerald-200 scale-[1.02]"
                                 : "border-gray-200 hover:border-gray-300"
@@ -556,6 +620,35 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
                               </div>
                             )}
                           </button>
+                          {confirmDeleteId === record.id ? (
+                            <div className="absolute inset-0 bg-black/60 rounded-2xl flex flex-col items-center justify-center gap-2 z-10">
+                              <p className="text-white text-base font-bold">削除？</p>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => handleDelete(record.id)}
+                                  disabled={deletingId === record.id}
+                                  className="px-3 py-1.5 bg-red-500 text-white text-sm rounded-xl font-bold disabled:opacity-50"
+                                >
+                                  {deletingId === record.id ? "..." : "削除"}
+                                </button>
+                                <button
+                                  onClick={() => setConfirmDeleteId(null)}
+                                  className="px-3 py-1.5 bg-white/20 text-white text-sm rounded-xl"
+                                >
+                                  戻る
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => setConfirmDeleteId(record.id)}
+                              className="absolute top-2 left-2 w-7 h-7 rounded-full bg-black/40 text-white text-base flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                              title="削除"
+                            >
+                              ×
+                            </button>
+                          )}
+                          </div>
                         );
                       })}
                     </div>
@@ -577,14 +670,43 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft }:
                           </p>
                           <div className="flex gap-3 flex-wrap">
                             {dayRecords.map((r) => (
-                              <div key={r.id} className="flex flex-col items-center gap-1.5">
-                                <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-50 border border-gray-200">
+                              <div key={r.id} className="relative flex flex-col items-center gap-1.5 group">
+                                <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-50 border border-gray-200 relative">
                                   {photoUrls[r.id] ? (
                                     <img src={photoUrls[r.id]} alt={r.area} className="w-full h-full object-cover" />
                                   ) : (
                                     <div className="w-full h-full flex items-center justify-center">
                                       <div className="w-4 h-4 border-2 border-emerald-200 border-t-emerald-500 rounded-full animate-spin" />
                                     </div>
+                                  )}
+                                  {/* Delete button */}
+                                  {confirmDeleteId === r.id ? (
+                                    <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-1.5 rounded-xl">
+                                      <p className="text-white text-sm font-bold">削除？</p>
+                                      <div className="flex gap-1.5">
+                                        <button
+                                          onClick={() => handleDelete(r.id)}
+                                          disabled={deletingId === r.id}
+                                          className="px-2.5 py-1 bg-red-500 text-white text-sm rounded-lg font-bold disabled:opacity-50"
+                                        >
+                                          {deletingId === r.id ? "..." : "削除"}
+                                        </button>
+                                        <button
+                                          onClick={() => setConfirmDeleteId(null)}
+                                          className="px-2.5 py-1 bg-white/20 text-white text-sm rounded-lg"
+                                        >
+                                          戻る
+                                        </button>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(r.id); }}
+                                      className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/40 text-white text-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity sm:opacity-0 active:opacity-100"
+                                      title="削除"
+                                    >
+                                      ×
+                                    </button>
                                   )}
                                 </div>
                                 <span className={`text-sm px-2 py-0.5 rounded-full font-medium ${AREA_PILL_COLORS[r.area]}`}>

@@ -1,11 +1,8 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import type { ScalpArea, NoteData, PhotoRecord } from "../types";
+import { useLocalDb } from "./useLocalDb";
 
-// Storage is now fully server-side.
-// Photos are uploaded to / fetched from Express via /api/photos/*.
-// No folder selection or File System Access API required.
-
-interface UseStorageReturn {
+export interface UseStorageReturn {
   isReady: true;
   directoryName: null;
   dirHandle: null;
@@ -16,19 +13,18 @@ interface UseStorageReturn {
     notes: NoteData
   ) => Promise<PhotoRecord>;
   loadRecords: () => Promise<PhotoRecord[]>;
-  loadPhotoUrl: (area: ScalpArea, filename: string) => Promise<string | null>;
+  loadPhotoUrl: (area: ScalpArea, filename: string, id?: string) => Promise<string | null>;
+  deletePhoto: (id: string) => Promise<void>;
 }
 
-export function useStorage(): UseStorageReturn {
-  // No-op: server handles storage
+export function useStorage(mode: "cloud" | "local" = "cloud"): UseStorageReturn {
+  const localDb = useLocalDb();
+
   const selectDirectory = useCallback(async () => {}, []);
 
-  const saveCapture = useCallback(
-    async (
-      dataUrl: string,
-      area: ScalpArea,
-      notes: NoteData
-    ): Promise<PhotoRecord> => {
+  // ── Cloud methods ──
+  const cloudSave = useCallback(
+    async (dataUrl: string, area: ScalpArea, notes: NoteData): Promise<PhotoRecord> => {
       const res = await fetch("/api/photos/upload", {
         method: "POST",
         credentials: "include",
@@ -44,29 +40,40 @@ export function useStorage(): UseStorageReturn {
     []
   );
 
-  const loadRecords = useCallback(async (): Promise<PhotoRecord[]> => {
+  const cloudLoadRecords = useCallback(async (): Promise<PhotoRecord[]> => {
     const res = await fetch("/api/photos/records", { credentials: "include" });
     if (!res.ok) return [];
     const data = (await res.json()) as { records: PhotoRecord[] };
     return data.records ?? [];
   }, []);
 
-  // Returns the API URL directly — browser sends cookies automatically on
-  // same-origin requests, so <img src={url}> works without extra fetch calls.
-  const loadPhotoUrl = useCallback(
+  const cloudLoadPhotoUrl = useCallback(
     async (area: ScalpArea, filename: string): Promise<string | null> => {
       return `/api/photos/file/${encodeURIComponent(area)}/${encodeURIComponent(filename)}`;
     },
     []
   );
 
-  return {
-    isReady: true,
+  const cloudDeletePhoto = useCallback(async (id: string): Promise<void> => {
+    const res = await fetch(`/api/photos/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    if (!res.ok) {
+      const err = (await res.json().catch(() => ({}))) as { error?: string };
+      throw new Error(err.error ?? "削除に失敗しました");
+    }
+  }, []);
+
+  // ── Select based on mode ──
+  return useMemo(() => ({
+    isReady: true as const,
     directoryName: null,
     dirHandle: null,
     selectDirectory,
-    saveCapture,
-    loadRecords,
-    loadPhotoUrl,
-  };
+    saveCapture: mode === "local" ? localDb.saveCapture : cloudSave,
+    loadRecords: mode === "local" ? localDb.loadRecords : cloudLoadRecords,
+    loadPhotoUrl: mode === "local" ? localDb.loadPhotoUrl : cloudLoadPhotoUrl,
+    deletePhoto: mode === "local" ? localDb.deletePhoto : cloudDeletePhoto,
+  }), [mode, selectDirectory, localDb, cloudSave, cloudLoadRecords, cloudLoadPhotoUrl, cloudDeletePhoto]);
 }
