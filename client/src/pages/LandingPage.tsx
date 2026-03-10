@@ -50,6 +50,32 @@ export function LandingPage() {
           ))}
         </div>
 
+        {/* Strengths */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-5 mb-8">
+          <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wide mb-5 text-center">
+            {t["landing.strengthsTitle"]}
+          </h2>
+          <div className="space-y-4">
+            {[
+              { icon: "📱", title: t["landing.strength1.title"], desc: t["landing.strength1.desc"] },
+              { icon: "🗂️", title: t["landing.strength2.title"], desc: t["landing.strength2.desc"] },
+              { icon: "📝", title: t["landing.strength3.title"], desc: t["landing.strength3.desc"] },
+              { icon: "🔒", title: t["landing.strength4.title"], desc: t["landing.strength4.desc"] },
+              { icon: "🌐", title: t["landing.strength5.title"], desc: t["landing.strength5.desc"] },
+            ].map((s) => (
+              <div key={s.icon} className="flex items-start gap-3">
+                <span className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-lg shrink-0">
+                  {s.icon}
+                </span>
+                <div>
+                  <h3 className="text-sm font-bold text-gray-800">{s.title}</h3>
+                  <p className="text-sm text-gray-400 leading-relaxed">{s.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Steps */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-5 mb-8">
           <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wide mb-4 text-center">
