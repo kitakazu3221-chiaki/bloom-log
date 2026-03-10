@@ -421,7 +421,7 @@ app.get("/api/session/events", (req, res) => {
 // ── Subscription routes ──────────────────────────────────────────────────────
 
 app.post("/api/subscription/checkout", requireAuth, async (req, res) => {
-  const { locale } = req.body as { locale?: string };
+  const locale = (req.body as { locale?: string } | undefined)?.locale;
   const priceId = locale === "ja" ? STRIPE_PRICE_ID_JPY : STRIPE_PRICE_ID_USD;
   if (!priceId) { res.status(500).json({ error: "Stripe not configured" }); return; }
   const { userId, username } = (req as AuthRequest).authUser;

@@ -15,6 +15,8 @@ export function TrialBanner({ daysLeft }: TrialBannerProps) {
       const r = await fetch("/api/subscription/checkout", {
         method: "POST",
         credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ locale }),
       });
       const data = (await r.json()) as { url?: string };
       if (data.url) window.location.href = data.url;
