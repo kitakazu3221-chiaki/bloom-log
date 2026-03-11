@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useI18n } from "../hooks/useI18n";
 import { useStorage } from "../hooks/useStorage";
+import { LanguageSelect } from "../components/LanguageSelect";
 import type { ScalpArea, PhotoRecord } from "../types";
 
 const AREAS: ScalpArea[] = ["top", "front", "side"];
@@ -69,7 +70,7 @@ export function HomePage({
   createdAt,
   storageMode,
 }: HomePageProps) {
-  const { t, locale, setLocale } = useI18n();
+  const { t, locale } = useI18n();
   const storage = useStorage(storageMode);
   const [records, setRecords] = useState<PhotoRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -167,12 +168,7 @@ export function HomePage({
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => setLocale(locale === "ja" ? "en" : "ja")}
-            className="text-sm font-medium text-gray-400 hover:text-gray-600 bg-gray-100 border border-gray-200 rounded-lg px-2.5 py-1 transition-colors"
-          >
-            {locale === "ja" ? "EN" : "JA"}
-          </button>
+          <LanguageSelect />
           {subscription === "trialing" && (
             <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
               <span className="text-sm text-amber-600">

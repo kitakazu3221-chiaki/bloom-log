@@ -16,6 +16,7 @@ import { AreaSelector } from "../components/AreaSelector";
 import { CaptureButton } from "../components/CaptureButton";
 import { PhotoSaveDialog } from "../components/PhotoSaveDialog";
 import { PreviousPhotoOverlay } from "../components/PreviousPhotoOverlay";
+import { LanguageSelect } from "../components/LanguageSelect";
 
 import {
   type ScalpArea,
@@ -37,7 +38,7 @@ interface PCPageProps {
 }
 
 export function PCPage({ username, onLogout, subscription, trialDaysLeft, createdAt, storageMode, onStorageModeChange }: PCPageProps) {
-  const { t, locale, setLocale } = useI18n();
+  const { t, locale } = useI18n();
   const [cameraMode, setCameraMode] = useState<CameraMode>("phone");
   const [selectedArea, setSelectedArea] = useState<ScalpArea>("top");
   const [pendingPhoto, setPendingPhoto] = useState<CapturedPhoto | null>(null);
@@ -211,12 +212,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => setLocale(locale === "ja" ? "en" : "ja")}
-            className="text-sm font-medium text-gray-400 hover:text-gray-600 bg-gray-100 border border-gray-200 rounded-lg px-2.5 py-1 transition-colors"
-          >
-            {locale === "ja" ? "EN" : "JA"}
-          </button>
+          <LanguageSelect />
           <button
             onClick={() => setShowStorageConfirm(true)}
             className="text-sm text-gray-400 flex items-center gap-1.5 hover:text-gray-600 transition-colors"

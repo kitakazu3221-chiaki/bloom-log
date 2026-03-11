@@ -1,4 +1,5 @@
 import { useI18n } from "../hooks/useI18n";
+import { LanguageSelect } from "../components/LanguageSelect";
 
 const FeatureIcon = ({ d }: { d: string }) => (
   <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
@@ -7,7 +8,7 @@ const FeatureIcon = ({ d }: { d: string }) => (
 );
 
 export function LandingPage() {
-  const { t, locale, setLocale } = useI18n();
+  const { t } = useI18n();
 
   const features = [
     { icon: "M7 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H7Zm5 17a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z", title: t["landing.strength1.title"], desc: t["landing.strength1.desc"] },
@@ -32,12 +33,7 @@ export function LandingPage() {
 
       {/* Language toggle */}
       <div className="absolute top-4 right-4 z-20">
-        <button
-          onClick={() => setLocale(locale === "ja" ? "en" : "ja")}
-          className="text-sm font-medium text-gray-400 hover:text-gray-600 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg px-2.5 py-1 transition-colors"
-        >
-          {locale === "ja" ? "EN" : "JA"}
-        </button>
+        <LanguageSelect className="[&_button:first-child]:bg-white/80 [&_button:first-child]:backdrop-blur-sm" />
       </div>
 
       {/* Hero Section */}
