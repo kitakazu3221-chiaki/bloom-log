@@ -6,12 +6,9 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
   return (
     <button
       onClick={toggleTheme}
-      className={`w-9 h-9 flex items-center justify-center rounded-lg bg-secondary border border-theme text-theme-muted hover:text-theme-secondary transition-colors ${className}`}
-      title={theme === "dark" ? "Light mode" : "Dark mode"}
+      className={`text-sm font-medium text-theme-muted hover:text-theme-secondary bg-secondary border border-theme rounded-lg px-2.5 py-1 transition-colors ${className}`}
     >
-      <span className="text-base">
-        {theme === "dark" ? "☀️" : "🌙"}
-      </span>
+      {theme === "dark" ? "Light" : "Dark"}
     </button>
   );
 }
