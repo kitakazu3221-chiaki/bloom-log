@@ -316,7 +316,7 @@ interface HistoryPageProps {
   subscription: "trialing" | "active";
   trialDaysLeft: number;
   createdAt: string;
-  storageMode: "cloud" | "local";
+  storageMode: "cloud" | "local" | "filesystem";
 }
 
 export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, createdAt, storageMode }: HistoryPageProps) {

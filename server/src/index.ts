@@ -68,7 +68,7 @@ interface User {
   subscriptionStatus?: "trialing" | "active" | "canceled" | "past_due" | "none";
   subscriptionId?: string;
   currentPeriodEnd?: string;
-  storageMode?: "cloud" | "local";
+  storageMode?: "cloud" | "local" | "filesystem";
 }
 interface UsersStore {
   users: User[];
@@ -567,7 +567,7 @@ app.delete("/api/photos/:id", requireAuth, requireSubscription, async (req, res)
 app.post("/api/settings/storage-mode", requireAuth, (req, res) => {
   const { userId } = (req as AuthRequest).authUser;
   const { mode } = req.body as { mode?: string };
-  if (mode !== "cloud" && mode !== "local") { res.status(400).json({ error: "invalid_mode" }); return; }
+  if (mode !== "cloud" && mode !== "local" && mode !== "filesystem") { res.status(400).json({ error: "invalid_mode" }); return; }
   const store = JSON.parse(readFileSync(USERS_FILE, "utf-8")) as UsersStore;
   const user = store.users.find((u) => u.id === userId);
   if (!user) { res.status(404).json({ error: "user_not_found" }); return; }

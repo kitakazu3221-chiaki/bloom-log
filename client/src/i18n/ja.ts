@@ -78,6 +78,16 @@ export const ja = {
   "pc.cloudDesc": "写真はサーバーに安全に保存されます。",
   "pc.cloudNote": "既存のローカル写真はこの端末に残ります。",
   "pc.switch": "切替",
+  "pc.filesystemStorage": "フォルダ保存",
+  "pc.switchToFilesystem": "フォルダ保存に切替",
+  "pc.filesystemDesc": "写真をこの端末の選択したフォルダに直接保存します。",
+  "pc.filesystemNote": "ブラウザのデータを消去しても写真は残ります。Chrome / Edge でのみ利用可能です。",
+  "pc.filesystemCaution": "対応ブラウザ: Chrome / Edge のみ",
+  "pc.selectFolder": "フォルダを選択",
+  "pc.currentFolder": "保存先:",
+  "pc.changeFolder": "変更",
+  "pc.folderRequired": "保存するにはフォルダを選択してください",
+  "pc.unsupportedBrowser": "このブラウザではフォルダ保存に対応していません（Chrome / Edge をお使いください）",
 
   // Phone page
   "phone.startingCamera": "カメラを起動中...",

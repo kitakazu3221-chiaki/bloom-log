@@ -60,7 +60,7 @@ interface HomePageProps {
   subscription: "trialing" | "active";
   trialDaysLeft: number;
   createdAt: string;
-  storageMode: "cloud" | "local";
+  storageMode: "cloud" | "local" | "filesystem";
 }
 
 export function HomePage({

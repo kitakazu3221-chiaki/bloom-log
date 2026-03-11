@@ -80,6 +80,16 @@ export const en: Record<keyof typeof ja, string> = {
   "pc.cloudDesc": "Photos will be safely stored on the server.",
   "pc.cloudNote": "Existing local photos will remain on this device.",
   "pc.switch": "Switch",
+  "pc.filesystemStorage": "Folder",
+  "pc.switchToFilesystem": "Switch to Folder Storage",
+  "pc.filesystemDesc": "Photos are saved directly to a folder on your device.",
+  "pc.filesystemNote": "Photos persist even if you clear browser data. Available on Chrome / Edge only.",
+  "pc.filesystemCaution": "Supported browsers: Chrome / Edge only",
+  "pc.selectFolder": "Select Folder",
+  "pc.currentFolder": "Saving to:",
+  "pc.changeFolder": "Change",
+  "pc.folderRequired": "Please select a folder to save photos",
+  "pc.unsupportedBrowser": "Folder storage is not supported in this browser (please use Chrome / Edge)",
 
   // Phone page
   "phone.startingCamera": "Starting camera...",

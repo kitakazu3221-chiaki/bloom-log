@@ -34,8 +34,8 @@ interface PCPageProps {
   subscription: "trialing" | "active";
   trialDaysLeft: number;
   createdAt: string;
-  storageMode: "cloud" | "local";
-  onStorageModeChange: (mode: "cloud" | "local") => void;
+  storageMode: "cloud" | "local" | "filesystem";
+  onStorageModeChange: (mode: "cloud" | "local" | "filesystem") => void;
 }
 
 export function PCPage({ username, onLogout, subscription, trialDaysLeft, createdAt, storageMode, onStorageModeChange }: PCPageProps) {
@@ -169,8 +169,8 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
             className="text-sm text-theme-muted flex items-center gap-1.5 hover:text-theme-secondary transition-colors"
             title={t["pc.storageSwitchTitle"]}
           >
-            <span className={`w-1.5 h-1.5 rounded-full inline-block ${storageMode === "cloud" ? "bg-emerald-500" : "bg-amber-500"}`} />
-            {storageMode === "cloud" ? t["pc.cloudStorage"] : t["pc.localStorage"]}
+            <span className={`w-1.5 h-1.5 rounded-full inline-block ${storageMode === "cloud" ? "bg-emerald-500" : storageMode === "filesystem" ? "bg-sky-500" : "bg-amber-500"}`} />
+            {storageMode === "cloud" ? t["pc.cloudStorage"] : storageMode === "filesystem" ? t["pc.filesystemStorage"] : t["pc.localStorage"]}
           </button>
           {cameraMode === "phone" && (
             <ConnectionStatus wsState={ws.connectionState} rtcState={rtc.connectionState} peerJoined={ws.peerJoined} />
@@ -305,35 +305,76 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
       {pendingPhoto && <PhotoSaveDialog photo={pendingPhoto} onSave={handleSave} onCancel={handleCancelSave} isSaving={isSaving} />}
 
       {showStorageConfirm && (() => {
-        const nextMode = storageMode === "cloud" ? "local" : "cloud";
+        const supportsFs = typeof window.showDirectoryPicker === "function";
+        const modes: Array<{ key: "cloud" | "local" | "filesystem"; label: string; icon: string; color: string; desc: string; note?: string }> = [
+          { key: "cloud", label: t["pc.cloudStorage"], icon: "☁️", color: "emerald", desc: t["pc.cloudDesc"], note: storageMode !== "cloud" ? t["pc.cloudNote"] : undefined },
+          { key: "local", label: t["pc.localStorage"], icon: "💾", color: "amber", desc: t["pc.localWarning"], note: storageMode !== "local" ? t["pc.localCaution"] : undefined },
+          ...(supportsFs ? [{ key: "filesystem" as const, label: t["pc.filesystemStorage"], icon: "📁", color: "sky", desc: t["pc.filesystemDesc"], note: storageMode !== "filesystem" ? t["pc.filesystemNote"] : undefined }] : []),
+        ];
         return (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowStorageConfirm(false)} />
-            <div className="relative bg-surface rounded-2xl shadow-2xl max-w-sm w-full p-6 space-y-4">
-              <h3 className="text-lg font-bold text-theme-primary">
-                {nextMode === "local" ? t["pc.switchToLocal"] : t["pc.switchToCloud"]}
-              </h3>
-              <div className="text-base text-theme-secondary space-y-2">
-                {nextMode === "local" ? (
-                  <>
-                    <p>{t["pc.localWarning"]}</p>
-                    <p className="text-amber-600 font-medium">{t["pc.localCaution"]}</p>
-                  </>
-                ) : (
-                  <>
-                    <p>{t["pc.cloudDesc"]}</p>
-                    <p className="text-theme-muted">{t["pc.cloudNote"]}</p>
-                  </>
-                )}
+            <div className="relative bg-surface rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-bold text-theme-primary">{t["pc.storageSwitchTitle"]}</h3>
+                <button onClick={() => setShowStorageConfirm(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-secondary hover:bg-[var(--border)] text-theme-muted text-xl leading-none">×</button>
               </div>
-              <div className="flex gap-2.5">
-                <button onClick={() => setShowStorageConfirm(false)} className="flex-1 py-2.5 rounded-xl bg-secondary text-theme-secondary text-base font-medium border border-theme">
-                  {t["common.cancel"]}
-                </button>
-                <button onClick={() => { onStorageModeChange(nextMode); setShowStorageConfirm(false); }} className="flex-1 py-2.5 rounded-xl bg-emerald-600 text-white text-base font-bold shadow-md">
-                  {t["pc.switch"]}
-                </button>
+              <div className="space-y-2.5">
+                {modes.map((m) => {
+                  const isActive = storageMode === m.key;
+                  const borderColor = m.color === "emerald" ? "border-emerald-400" : m.color === "amber" ? "border-amber-400" : "border-sky-400";
+                  const bgColor = m.color === "emerald" ? "bg-emerald-50" : m.color === "amber" ? "bg-amber-50" : "bg-sky-50";
+                  const dotColor = m.color === "emerald" ? "bg-emerald-500" : m.color === "amber" ? "bg-amber-500" : "bg-sky-500";
+                  return (
+                    <button
+                      key={m.key}
+                      onClick={() => {
+                        if (!isActive) {
+                          if (m.key === "filesystem") {
+                            // For filesystem, need to select directory first
+                            storage.selectDirectory().then(() => {
+                              onStorageModeChange(m.key);
+                              setShowStorageConfirm(false);
+                            }).catch(() => {
+                              // User cancelled directory picker
+                            });
+                          } else {
+                            onStorageModeChange(m.key);
+                            setShowStorageConfirm(false);
+                          }
+                        }
+                      }}
+                      className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
+                        isActive
+                          ? `${borderColor} ${bgColor}`
+                          : "border-theme hover:border-theme-light hover:bg-[var(--card-hover)]"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-xl">{m.icon}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className={`font-bold text-base ${isActive ? "text-theme-primary" : "text-theme-secondary"}`}>{m.label}</span>
+                            {isActive && <span className={`w-2 h-2 rounded-full ${dotColor}`} />}
+                          </div>
+                          <p className="text-sm text-theme-muted mt-0.5">{m.desc}</p>
+                          {m.note && !isActive && <p className="text-xs text-amber-600 mt-1">{m.note}</p>}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
+              {!supportsFs && (
+                <p className="text-xs text-theme-muted text-center">{t["pc.unsupportedBrowser"]}</p>
+              )}
+              {storageMode === "filesystem" && storage.directoryName && (
+                <div className="flex items-center gap-2 text-sm text-theme-secondary bg-secondary rounded-xl px-3 py-2">
+                  <span>📁</span>
+                  <span className="truncate">{t["pc.currentFolder"]} {storage.directoryName}</span>
+                  <button onClick={() => storage.selectDirectory()} className="ml-auto text-sky-600 hover:text-sky-500 font-medium shrink-0">{t["pc.changeFolder"]}</button>
+                </div>
+              )}
             </div>
           </div>
         );

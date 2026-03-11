@@ -1,12 +1,14 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useEffect } from "react";
 import type { ScalpArea, NoteData, PhotoRecord } from "../types";
 import { useLocalDb } from "./useLocalDb";
+import { useFileSystemStorage } from "./useFileSystemStorage";
 import { useI18n } from "./useI18n";
 
+export type StorageMode = "cloud" | "local" | "filesystem";
+
 export interface UseStorageReturn {
-  isReady: true;
-  directoryName: null;
-  dirHandle: null;
+  isReady: boolean;
+  directoryName: string | null;
   selectDirectory: () => Promise<void>;
   saveCapture: (
     dataUrl: string,
@@ -18,11 +20,17 @@ export interface UseStorageReturn {
   deletePhoto: (id: string) => Promise<void>;
 }
 
-export function useStorage(mode: "cloud" | "local" = "cloud"): UseStorageReturn {
+export function useStorage(mode: StorageMode = "cloud"): UseStorageReturn {
   const { t } = useI18n();
   const localDb = useLocalDb();
+  const fs = useFileSystemStorage();
 
-  const selectDirectory = useCallback(async () => {}, []);
+  // Auto-restore filesystem handle when mode is filesystem
+  useEffect(() => {
+    if (mode === "filesystem" && !fs.isReady) {
+      fs.restoreHandle();
+    }
+  }, [mode, fs.isReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Cloud methods ──
   const cloudSave = useCallback(
@@ -68,14 +76,28 @@ export function useStorage(mode: "cloud" | "local" = "cloud"): UseStorageReturn 
   }, [t]);
 
   // ── Select based on mode ──
-  return useMemo(() => ({
-    isReady: true as const,
-    directoryName: null,
-    dirHandle: null,
-    selectDirectory,
-    saveCapture: mode === "local" ? localDb.saveCapture : cloudSave,
-    loadRecords: mode === "local" ? localDb.loadRecords : cloudLoadRecords,
-    loadPhotoUrl: mode === "local" ? localDb.loadPhotoUrl : cloudLoadPhotoUrl,
-    deletePhoto: mode === "local" ? localDb.deletePhoto : cloudDeletePhoto,
-  }), [mode, selectDirectory, localDb, cloudSave, cloudLoadRecords, cloudLoadPhotoUrl, cloudDeletePhoto]);
+  return useMemo(() => {
+    if (mode === "filesystem") {
+      return {
+        isReady: fs.isReady,
+        directoryName: fs.directoryName,
+        selectDirectory: fs.selectDirectory,
+        saveCapture: fs.saveCapture,
+        loadRecords: fs.loadRecords,
+        loadPhotoUrl: fs.loadPhotoUrl,
+        deletePhoto: fs.deletePhoto,
+      };
+    }
+
+    const noop = async () => {};
+    return {
+      isReady: true,
+      directoryName: null,
+      selectDirectory: noop,
+      saveCapture: mode === "local" ? localDb.saveCapture : cloudSave,
+      loadRecords: mode === "local" ? localDb.loadRecords : cloudLoadRecords,
+      loadPhotoUrl: mode === "local" ? localDb.loadPhotoUrl : cloudLoadPhotoUrl,
+      deletePhoto: mode === "local" ? localDb.deletePhoto : cloudDeletePhoto,
+    };
+  }, [mode, fs, localDb, cloudSave, cloudLoadRecords, cloudLoadPhotoUrl, cloudDeletePhoto]);
 }
