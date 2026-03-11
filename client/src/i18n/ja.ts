@@ -190,6 +190,26 @@ export const ja = {
   "legal.extra": "追加費用",
   "legal.extraValue": "上記の月額料金以外に追加料金は発生しません",
 
+  // Home page
+  "home.greeting": "さん、こんにちは",
+  "home.todayStatus": "今日の記録",
+  "home.allCaptured": "全部位を撮影済み！",
+  "home.captured": "部位を撮影済み",
+  "home.notCaptured": "まだ撮影していません",
+  "home.startCapture": "撮影を始める",
+  "home.additionalCapture": "追加の撮影をする",
+  "home.streak": "日連続記録中",
+  "home.noRecords": "まだ記録がありません",
+  "home.weekView": "今週の記録",
+  "home.totalPhotos": "合計写真数",
+  "home.recordingDays": "撮影日数",
+  "home.photos": "枚",
+  "home.days": "日",
+  "home.latestPhotos": "最近の写真",
+  "home.viewHistory": "履歴を見る",
+  "home.capture": "撮影",
+  "home.home": "ホーム",
+
   // Landing footer
   "landing.legal": "特定商取引法に基づく表記",
 };

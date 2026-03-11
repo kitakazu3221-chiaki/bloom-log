@@ -195,6 +195,12 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
             </h1>
           </div>
           <a
+            href="/"
+            className="text-sm font-medium text-gray-500 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
+          >
+            {t["home.home"]}
+          </a>
+          <a
             href="/history"
             className="text-sm font-medium text-gray-500 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
           >

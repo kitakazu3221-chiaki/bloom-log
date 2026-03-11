@@ -192,6 +192,26 @@ export const en: Record<keyof typeof ja, string> = {
   "legal.extra": "Additional Fees",
   "legal.extraValue": "No additional fees beyond the monthly subscription",
 
+  // Home page
+  "home.greeting": ", welcome",
+  "home.todayStatus": "Today's Record",
+  "home.allCaptured": "All areas captured!",
+  "home.captured": " areas captured",
+  "home.notCaptured": "Not yet captured today",
+  "home.startCapture": "Start Capturing",
+  "home.additionalCapture": "Take More Photos",
+  "home.streak": "-day streak",
+  "home.noRecords": "No records yet",
+  "home.weekView": "This Week",
+  "home.totalPhotos": "Total Photos",
+  "home.recordingDays": "Recording Days",
+  "home.photos": "",
+  "home.days": "",
+  "home.latestPhotos": "Recent Photos",
+  "home.viewHistory": "View History",
+  "home.capture": "Capture",
+  "home.home": "Home",
+
   // Landing footer
   "landing.legal": "Legal Notice",
 };

@@ -8,6 +8,7 @@ import { AuthPage } from "./pages/AuthPage";
 import { PaywallPage } from "./pages/PaywallPage";
 import { LandingPage } from "./pages/LandingPage";
 import { LegalPage } from "./pages/LegalPage";
+import { HomePage } from "./pages/HomePage";
 
 function App() {
   const url = new URL(window.location.href);
@@ -91,7 +92,7 @@ function AuthGate({ pathname }: { pathname: string }) {
         createdAt={user.createdAt}
         storageMode={user.storageMode}
       />
-    ) : (
+    ) : pathname === "/capture" ? (
       <PCPage
         username={user.username}
         onLogout={logout}
@@ -108,6 +109,15 @@ function AuthGate({ pathname }: { pathname: string }) {
           });
           refreshUser();
         }}
+      />
+    ) : (
+      <HomePage
+        username={user.username}
+        onLogout={logout}
+        subscription={user.subscription}
+        trialDaysLeft={user.trialDaysLeft}
+        createdAt={user.createdAt}
+        storageMode={user.storageMode}
       />
     );
 
