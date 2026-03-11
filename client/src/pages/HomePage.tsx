@@ -200,36 +200,36 @@ export function HomePage({
       </header>
 
       {/* Main content */}
-      <main className="flex-1 px-6 py-8 max-w-4xl mx-auto w-full animate-fade-in-up">
+      <main className="flex-1 px-4 lg:px-8 xl:px-12 py-6 lg:py-8 w-full animate-fade-in-up">
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="animate-spin w-8 h-8 border-3 border-emerald-200 border-t-emerald-600 rounded-full" />
           </div>
         ) : (
-          <div className="grid lg:grid-cols-2 gap-5">
+          <div className="grid lg:grid-cols-[1fr_1fr] gap-5 lg:gap-8">
             {/* Left Column */}
-            <div className="space-y-5">
+            <div className="space-y-5 lg:space-y-6">
               {/* Today's Status Card */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-gray-800 font-bold text-lg">
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 lg:p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <p className="text-gray-800 font-bold text-xl lg:text-2xl">
                     {username}
                     {t["home.greeting"]}
                   </p>
-                  <span className="text-sm text-gray-400">
+                  <span className="text-base lg:text-lg text-gray-400">
                     {todayFormatted}
                   </span>
                 </div>
-                <p className="text-sm font-bold text-gray-500 mb-3">
+                <p className="text-base lg:text-lg font-bold text-gray-500 mb-5">
                   {t["home.todayStatus"]}
                 </p>
-                <div className="flex items-center gap-5 mb-3">
+                <div className="flex items-center gap-6 lg:gap-8 mb-5">
                   {AREAS.map((area) => {
                     const done = todayAreas.has(area);
                     return (
-                      <div key={area} className="flex items-center gap-2">
+                      <div key={area} className="flex items-center gap-3">
                         <span
-                          className={`w-7 h-7 rounded-full flex items-center justify-center text-sm ${
+                          className={`w-10 h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center text-base lg:text-lg ${
                             done
                               ? "bg-emerald-500 text-white"
                               : "bg-gray-100 text-gray-300 border border-gray-200"
@@ -238,7 +238,7 @@ export function HomePage({
                           {done ? "✓" : ""}
                         </span>
                         <span
-                          className={`text-sm ${done ? "text-gray-700" : "text-gray-400"}`}
+                          className={`text-base lg:text-lg ${done ? "text-gray-700" : "text-gray-400"}`}
                         >
                           {areaLabels[area]}
                         </span>
@@ -246,7 +246,7 @@ export function HomePage({
                     );
                   })}
                 </div>
-                <p className="text-sm text-gray-500">
+                <p className="text-base lg:text-lg text-gray-500">
                   {capturedCount === 3
                     ? t["home.allCaptured"]
                     : capturedCount === 0
@@ -260,7 +260,7 @@ export function HomePage({
               {/* Main CTA */}
               <a
                 href="/capture"
-                className={`block text-center py-4 rounded-2xl font-bold text-lg transition-all active:scale-[0.98] ${
+                className={`block text-center py-5 lg:py-6 rounded-2xl font-bold text-xl lg:text-2xl transition-all active:scale-[0.98] ${
                   capturedCount === 3
                     ? "bg-white text-emerald-600 border-2 border-emerald-200 hover:bg-emerald-50"
                     : "bg-emerald-600 text-white shadow-lg shadow-emerald-600/25 hover:bg-emerald-500"
@@ -271,20 +271,21 @@ export function HomePage({
                   : t["home.startCapture"]}
               </a>
 
-              {/* Streak */}
-              {streak > 0 && (
-                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4 flex items-center gap-3">
-                  <span className="text-2xl">🔥</span>
-                  <span className="text-gray-800 font-bold">
-                    {locale === "ja"
-                      ? `${streak}${t["home.streak"]}`
-                      : `${streak}${t["home.streak"]}`}
-                  </span>
-                </div>
-              )}
-
-              {/* Stats Row */}
-              <div className="grid grid-cols-3 gap-3">
+              {/* Streak + Stats in a row */}
+              <div className="grid grid-cols-4 gap-4 lg:gap-5">
+                {/* Streak */}
+                {streak > 0 && (
+                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 lg:p-6 flex flex-col items-center justify-center text-center">
+                    <span className="text-3xl lg:text-4xl mb-1">🔥</span>
+                    <span className="text-gray-800 font-bold text-lg lg:text-xl">
+                      {streak}
+                    </span>
+                    <span className="text-sm text-gray-400">
+                      {locale === "ja" ? "日連続" : "day streak"}
+                    </span>
+                  </div>
+                )}
+                {/* Stats */}
                 {[
                   {
                     label: t["home.totalPhotos"],
@@ -307,13 +308,13 @@ export function HomePage({
                 ].map((stat) => (
                   <div
                     key={stat.label}
-                    className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 text-center"
+                    className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 lg:p-6 text-center flex flex-col items-center justify-center"
                   >
-                    <p className="text-xs text-gray-400 mb-1">{stat.label}</p>
+                    <p className="text-sm lg:text-base text-gray-400 mb-1">{stat.label}</p>
                     {stat.value && (
-                      <p className="text-2xl font-bold text-gray-800">
+                      <p className="text-3xl lg:text-4xl font-bold text-gray-800">
                         {stat.value}
-                        <span className="text-sm text-gray-400 ml-0.5">
+                        <span className="text-base lg:text-lg text-gray-400 ml-0.5">
                           {stat.unit}
                         </span>
                       </p>
@@ -324,10 +325,10 @@ export function HomePage({
             </div>
 
             {/* Right Column */}
-            <div className="space-y-5">
+            <div className="space-y-5 lg:space-y-6">
               {/* Weekly View */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                <p className="text-sm font-bold text-gray-500 mb-4">
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 lg:p-8">
+                <p className="text-base lg:text-lg font-bold text-gray-500 mb-6">
                   {t["home.weekView"]}
                 </p>
                 <div className="flex items-center justify-between">
@@ -336,10 +337,10 @@ export function HomePage({
                     return (
                       <div
                         key={day.dateStr}
-                        className="flex flex-col items-center gap-1.5"
+                        className="flex flex-col items-center gap-2.5"
                       >
                         <span
-                          className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                          className={`w-12 h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center text-sm lg:text-base font-bold ${
                             hasRecord
                               ? "bg-emerald-500 text-white"
                               : day.isToday
@@ -350,7 +351,7 @@ export function HomePage({
                           {hasRecord ? "✓" : ""}
                         </span>
                         <span
-                          className={`text-xs ${day.isToday ? "text-emerald-600 font-bold" : "text-gray-400"}`}
+                          className={`text-sm lg:text-base ${day.isToday ? "text-emerald-600 font-bold" : "text-gray-400"}`}
                         >
                           {day.dayLabel}
                         </span>
@@ -361,24 +362,24 @@ export function HomePage({
               </div>
 
               {/* Latest Photos */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-sm font-bold text-gray-500">
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 lg:p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <p className="text-base lg:text-lg font-bold text-gray-500">
                     {t["home.latestPhotos"]}
                   </p>
                   <a
                     href="/history"
-                    className="text-sm text-emerald-600 hover:text-emerald-500 font-medium transition-colors"
+                    className="text-base lg:text-lg text-emerald-600 hover:text-emerald-500 font-medium transition-colors"
                   >
                     {t["home.viewHistory"]} →
                   </a>
                 </div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-4 lg:gap-6">
                   {AREAS.map((area) => (
                     <a
                       key={area}
                       href="/history"
-                      className="flex flex-col items-center gap-2"
+                      className="flex flex-col items-center gap-3"
                     >
                       <div className="w-full aspect-square rounded-xl bg-gray-100 overflow-hidden">
                         {latestPhotos[area] ? (
@@ -388,12 +389,12 @@ export function HomePage({
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-300 text-2xl">
+                          <div className="w-full h-full flex items-center justify-center text-gray-300 text-4xl">
                             📷
                           </div>
                         )}
                       </div>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-sm lg:text-base text-gray-500">
                         {areaLabels[area]}
                       </span>
                     </a>
