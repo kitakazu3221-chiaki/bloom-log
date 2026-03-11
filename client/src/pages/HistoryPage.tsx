@@ -330,7 +330,16 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
   const [calendarDate, setCalendarDate] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [zoomUrl, setZoomUrl] = useState<string | null>(null);
   const urlsRef = useRef<Record<string, string>>({});
+
+  // Close lightbox on Escape
+  useEffect(() => {
+    if (!zoomUrl) return;
+    const handleKey = (e: KeyboardEvent) => { if (e.key === "Escape") setZoomUrl(null); };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [zoomUrl]);
 
   const handleDelete = async (id: string) => {
     setDeletingId(id);
@@ -539,10 +548,18 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
                     </h2>
                     <div className="flex gap-4 flex-wrap">
                       {calendarDateRecords.map((r) => (
-                        <div key={r.id} className="flex flex-col items-center gap-2">
-                          <div className="w-32 h-32 rounded-2xl overflow-hidden bg-gray-50 border border-gray-200">
+                        <div key={r.id} className="flex flex-col items-center gap-2 group">
+                          <div className="w-32 h-32 rounded-2xl overflow-hidden bg-gray-50 border border-gray-200 relative">
                             {photoUrls[r.id] ? (
-                              <img src={photoUrls[r.id]} alt={areaLabels[r.area]} className="w-full h-full object-cover" />
+                              <>
+                                <img src={photoUrls[r.id]} alt={areaLabels[r.area]} className="w-full h-full object-cover" />
+                                <button
+                                  onClick={() => setZoomUrl(photoUrls[r.id])}
+                                  className="absolute bottom-1 right-1 w-7 h-7 rounded-full bg-black/40 text-white text-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  🔍
+                                </button>
+                              </>
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
                                 <div className="w-5 h-5 border-2 border-emerald-200 border-t-emerald-500 rounded-full animate-spin" />
@@ -652,6 +669,14 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
                               </div>
                             )}
                           </button>
+                          {url && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setZoomUrl(url); }}
+                              className="absolute bottom-10 right-2 w-7 h-7 rounded-full bg-black/40 text-white text-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                            >
+                              🔍
+                            </button>
+                          )}
                           {confirmDeleteId === record.id ? (
                             <div className="absolute inset-0 bg-black/60 rounded-2xl flex flex-col items-center justify-center gap-2 z-10">
                               <p className="text-white text-base font-bold">{t["history.confirmDelete"]}</p>
@@ -711,6 +736,15 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
                                       <div className="w-4 h-4 border-2 border-emerald-200 border-t-emerald-500 rounded-full animate-spin" />
                                     </div>
                                   )}
+                                  {/* Zoom button */}
+                                  {photoUrls[r.id] && (
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); setZoomUrl(photoUrls[r.id]); }}
+                                      className="absolute bottom-1 left-1 w-6 h-6 rounded-full bg-black/40 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                    >
+                                      🔍
+                                    </button>
+                                  )}
                                   {/* Delete button */}
                                   {confirmDeleteId === r.id ? (
                                     <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-1.5 rounded-xl">
@@ -761,6 +795,27 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
           </>
         )}
       </main>
+
+      {/* Lightbox */}
+      {zoomUrl && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center animate-fade-in-up"
+          onClick={() => setZoomUrl(null)}
+        >
+          <button
+            onClick={() => setZoomUrl(null)}
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 text-white text-xl flex items-center justify-center hover:bg-white/30 transition-colors"
+          >
+            ×
+          </button>
+          <img
+            src={zoomUrl}
+            alt=""
+            className="max-w-[90vw] max-h-[90vh] object-contain rounded-2xl shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 }
