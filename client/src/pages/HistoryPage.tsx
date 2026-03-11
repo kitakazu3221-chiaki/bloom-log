@@ -348,46 +348,27 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
     }
   };
 
-  useEffect(() => {
-    if (!storage.isReady) return;
-    storage.loadRecords().then(setRecords);
-  }, [storage.isReady]); // eslint-disable-line
+  const { loadRecords, loadPhotoUrl } = storage;
 
-  // Load URLs for list mode (selected area)
   useEffect(() => {
-    if (!storage.isReady || viewMode !== "list") return;
-    const areaRecords = records.filter((r) => r.area === selectedArea);
+    loadRecords().then(setRecords);
+  }, [loadRecords]);
+
+  // Load URLs for all records
+  useEffect(() => {
+    if (records.length === 0) return;
     let cancelled = false;
-    Promise.all(
-      areaRecords.map(async (r) => {
-        if (urlsRef.current[r.id]) return;
-        const url = await storage.loadPhotoUrl(r.area, r.filename, r.id);
+    for (const r of records) {
+      if (urlsRef.current[r.id]) continue;
+      loadPhotoUrl(r.area, r.filename, r.id).then((url) => {
         if (!cancelled && url) {
           urlsRef.current[r.id] = url;
           setPhotoUrls((prev) => ({ ...prev, [r.id]: url }));
         }
-      })
-    );
+      });
+    }
     return () => { cancelled = true; };
-  }, [records, selectedArea, viewMode, storage.isReady]); // eslint-disable-line
-
-  // Load URLs for calendar selected date
-  useEffect(() => {
-    if (!storage.isReady || !calendarDate) return;
-    const dateRecords = records.filter((r) => r.date === calendarDate);
-    let cancelled = false;
-    Promise.all(
-      dateRecords.map(async (r) => {
-        if (urlsRef.current[r.id]) return;
-        const url = await storage.loadPhotoUrl(r.area, r.filename, r.id);
-        if (!cancelled && url) {
-          urlsRef.current[r.id] = url;
-          setPhotoUrls((prev) => ({ ...prev, [r.id]: url }));
-        }
-      })
-    );
-    return () => { cancelled = true; };
-  }, [records, calendarDate, storage.isReady]); // eslint-disable-line
+  }, [records, loadPhotoUrl]);
 
   const areaRecords = records
     .filter((r) => r.area === selectedArea)
