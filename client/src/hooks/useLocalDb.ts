@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import type { ScalpArea, NoteData, PhotoRecord } from "../types";
 import { v4 as uuidv4 } from "uuid";
 
@@ -107,5 +107,8 @@ export function useLocalDb() {
     db.close();
   }, []);
 
-  return { saveCapture, loadRecords, loadPhotoUrl, deletePhoto };
+  return useMemo(
+    () => ({ saveCapture, loadRecords, loadPhotoUrl, deletePhoto }),
+    [saveCapture, loadRecords, loadPhotoUrl, deletePhoto]
+  );
 }

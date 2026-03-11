@@ -84,14 +84,15 @@ export function HomePage({
     )
   );
 
+  const { loadRecords, loadPhotoUrl } = storage;
+
   // Load records
   useEffect(() => {
-    if (!storage.isReady) return;
-    storage.loadRecords().then((recs) => {
+    loadRecords().then((recs) => {
       setRecords(recs);
       setLoading(false);
     });
-  }, [storage.isReady]);
+  }, [loadRecords]);
 
   // Load latest photo URLs per area
   useEffect(() => {
@@ -102,14 +103,14 @@ export function HomePage({
         .sort((a, b) => a.date.localeCompare(b.date));
       const latest = areaRecs[areaRecs.length - 1];
       if (!latest) return;
-      const url = await storage.loadPhotoUrl(
+      const url = await loadPhotoUrl(
         latest.area,
         latest.filename,
         latest.id
       );
       setLatestPhotos((prev) => ({ ...prev, [area]: url }));
     });
-  }, [records, storage]);
+  }, [records, loadPhotoUrl]);
 
   // Derived data
   const today = new Date().toISOString().split("T")[0];
