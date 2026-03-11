@@ -123,7 +123,6 @@ export function HomePage({
   const last7 = getLast7Days(locale);
   const recordDates = new Set(records.map((r) => r.date));
   const areaLabels = locale === "ja" ? AREA_LABELS_JA : AREA_LABELS_EN;
-  const hasAnyPhotos = records.length > 0;
 
   const todayFormatted = new Date().toLocaleDateString(
     locale === "ja" ? "ja-JP" : "en-US",
@@ -201,163 +200,167 @@ export function HomePage({
       </header>
 
       {/* Main content */}
-      <main className="flex-1 px-6 py-8 max-w-lg mx-auto w-full space-y-6 animate-fade-in-up">
+      <main className="flex-1 px-6 py-8 max-w-4xl mx-auto w-full animate-fade-in-up">
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="animate-spin w-8 h-8 border-3 border-emerald-200 border-t-emerald-600 rounded-full" />
           </div>
         ) : (
-          <>
-            {/* Today's Status Card */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-gray-800 font-bold text-lg">
-                  {username}
-                  {t["home.greeting"]}
-                </p>
-                <span className="text-sm text-gray-400">
-                  {todayFormatted}
-                </span>
-              </div>
-              <p className="text-sm font-bold text-gray-500 mb-3">
-                {t["home.todayStatus"]}
-              </p>
-              <div className="flex items-center gap-5 mb-3">
-                {AREAS.map((area) => {
-                  const done = todayAreas.has(area);
-                  return (
-                    <div key={area} className="flex items-center gap-2">
-                      <span
-                        className={`w-7 h-7 rounded-full flex items-center justify-center text-sm ${
-                          done
-                            ? "bg-emerald-500 text-white"
-                            : "bg-gray-100 text-gray-300 border border-gray-200"
-                        }`}
-                      >
-                        {done ? "✓" : ""}
-                      </span>
-                      <span
-                        className={`text-sm ${done ? "text-gray-700" : "text-gray-400"}`}
-                      >
-                        {areaLabels[area]}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-              <p className="text-sm text-gray-500">
-                {capturedCount === 3
-                  ? t["home.allCaptured"]
-                  : capturedCount === 0
-                    ? t["home.notCaptured"]
-                    : locale === "ja"
-                      ? `${capturedCount}/3 ${t["home.captured"]}`
-                      : `${capturedCount}/3${t["home.captured"]}`}
-              </p>
-            </div>
-
-            {/* Main CTA */}
-            <a
-              href="/capture"
-              className={`block text-center py-4 rounded-2xl font-bold text-lg transition-all active:scale-[0.98] ${
-                capturedCount === 3
-                  ? "bg-white text-emerald-600 border-2 border-emerald-200 hover:bg-emerald-50"
-                  : "bg-emerald-600 text-white shadow-lg shadow-emerald-600/25 hover:bg-emerald-500"
-              }`}
-            >
-              {capturedCount === 3
-                ? t["home.additionalCapture"]
-                : t["home.startCapture"]}
-            </a>
-
-            {/* Streak */}
-            {streak > 0 && (
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4 flex items-center gap-3">
-                <span className="text-2xl">🔥</span>
-                <span className="text-gray-800 font-bold">
-                  {locale === "ja"
-                    ? `${streak}${t["home.streak"]}`
-                    : `${streak}${t["home.streak"]}`}
-                </span>
-              </div>
-            )}
-
-            {/* Weekly View */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-              <p className="text-sm font-bold text-gray-500 mb-4">
-                {t["home.weekView"]}
-              </p>
-              <div className="flex items-center justify-between">
-                {last7.map((day) => {
-                  const hasRecord = recordDates.has(day.dateStr);
-                  return (
-                    <div
-                      key={day.dateStr}
-                      className="flex flex-col items-center gap-1.5"
-                    >
-                      <span
-                        className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                          hasRecord
-                            ? "bg-emerald-500 text-white"
-                            : day.isToday
-                              ? "bg-white text-gray-400 border-2 border-emerald-300"
-                              : "bg-gray-100 text-gray-300"
-                        }`}
-                      >
-                        {hasRecord ? "✓" : ""}
-                      </span>
-                      <span
-                        className={`text-xs ${day.isToday ? "text-emerald-600 font-bold" : "text-gray-400"}`}
-                      >
-                        {day.dayLabel}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Stats Row */}
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                {
-                  label: t["home.totalPhotos"],
-                  value: `${totalPhotos}`,
-                  unit: locale === "ja" ? t["home.photos"] : "",
-                },
-                {
-                  label: t["home.recordingDays"],
-                  value: `${recordingDays}`,
-                  unit: locale === "ja" ? t["home.days"] : "",
-                },
-                {
-                  label:
-                    locale === "ja"
-                      ? `${dayCount}${t["pc.dayCount"]}`
-                      : `Day ${dayCount}`,
-                  value: "",
-                  unit: "",
-                },
-              ].map((stat) => (
-                <div
-                  key={stat.label}
-                  className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 text-center"
-                >
-                  <p className="text-xs text-gray-400 mb-1">{stat.label}</p>
-                  {stat.value && (
-                    <p className="text-2xl font-bold text-gray-800">
-                      {stat.value}
-                      <span className="text-sm text-gray-400 ml-0.5">
-                        {stat.unit}
-                      </span>
-                    </p>
-                  )}
+          <div className="grid lg:grid-cols-2 gap-5">
+            {/* Left Column */}
+            <div className="space-y-5">
+              {/* Today's Status Card */}
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-gray-800 font-bold text-lg">
+                    {username}
+                    {t["home.greeting"]}
+                  </p>
+                  <span className="text-sm text-gray-400">
+                    {todayFormatted}
+                  </span>
                 </div>
-              ))}
+                <p className="text-sm font-bold text-gray-500 mb-3">
+                  {t["home.todayStatus"]}
+                </p>
+                <div className="flex items-center gap-5 mb-3">
+                  {AREAS.map((area) => {
+                    const done = todayAreas.has(area);
+                    return (
+                      <div key={area} className="flex items-center gap-2">
+                        <span
+                          className={`w-7 h-7 rounded-full flex items-center justify-center text-sm ${
+                            done
+                              ? "bg-emerald-500 text-white"
+                              : "bg-gray-100 text-gray-300 border border-gray-200"
+                          }`}
+                        >
+                          {done ? "✓" : ""}
+                        </span>
+                        <span
+                          className={`text-sm ${done ? "text-gray-700" : "text-gray-400"}`}
+                        >
+                          {areaLabels[area]}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <p className="text-sm text-gray-500">
+                  {capturedCount === 3
+                    ? t["home.allCaptured"]
+                    : capturedCount === 0
+                      ? t["home.notCaptured"]
+                      : locale === "ja"
+                        ? `${capturedCount}/3 ${t["home.captured"]}`
+                        : `${capturedCount}/3${t["home.captured"]}`}
+                </p>
+              </div>
+
+              {/* Main CTA */}
+              <a
+                href="/capture"
+                className={`block text-center py-4 rounded-2xl font-bold text-lg transition-all active:scale-[0.98] ${
+                  capturedCount === 3
+                    ? "bg-white text-emerald-600 border-2 border-emerald-200 hover:bg-emerald-50"
+                    : "bg-emerald-600 text-white shadow-lg shadow-emerald-600/25 hover:bg-emerald-500"
+                }`}
+              >
+                {capturedCount === 3
+                  ? t["home.additionalCapture"]
+                  : t["home.startCapture"]}
+              </a>
+
+              {/* Streak */}
+              {streak > 0 && (
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4 flex items-center gap-3">
+                  <span className="text-2xl">🔥</span>
+                  <span className="text-gray-800 font-bold">
+                    {locale === "ja"
+                      ? `${streak}${t["home.streak"]}`
+                      : `${streak}${t["home.streak"]}`}
+                  </span>
+                </div>
+              )}
+
+              {/* Stats Row */}
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  {
+                    label: t["home.totalPhotos"],
+                    value: `${totalPhotos}`,
+                    unit: locale === "ja" ? t["home.photos"] : "",
+                  },
+                  {
+                    label: t["home.recordingDays"],
+                    value: `${recordingDays}`,
+                    unit: locale === "ja" ? t["home.days"] : "",
+                  },
+                  {
+                    label:
+                      locale === "ja"
+                        ? `${dayCount}${t["pc.dayCount"]}`
+                        : `Day ${dayCount}`,
+                    value: "",
+                    unit: "",
+                  },
+                ].map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 text-center"
+                  >
+                    <p className="text-xs text-gray-400 mb-1">{stat.label}</p>
+                    {stat.value && (
+                      <p className="text-2xl font-bold text-gray-800">
+                        {stat.value}
+                        <span className="text-sm text-gray-400 ml-0.5">
+                          {stat.unit}
+                        </span>
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Latest Photos */}
-            {hasAnyPhotos && (
+            {/* Right Column */}
+            <div className="space-y-5">
+              {/* Weekly View */}
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                <p className="text-sm font-bold text-gray-500 mb-4">
+                  {t["home.weekView"]}
+                </p>
+                <div className="flex items-center justify-between">
+                  {last7.map((day) => {
+                    const hasRecord = recordDates.has(day.dateStr);
+                    return (
+                      <div
+                        key={day.dateStr}
+                        className="flex flex-col items-center gap-1.5"
+                      >
+                        <span
+                          className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                            hasRecord
+                              ? "bg-emerald-500 text-white"
+                              : day.isToday
+                                ? "bg-white text-gray-400 border-2 border-emerald-300"
+                                : "bg-gray-100 text-gray-300"
+                          }`}
+                        >
+                          {hasRecord ? "✓" : ""}
+                        </span>
+                        <span
+                          className={`text-xs ${day.isToday ? "text-emerald-600 font-bold" : "text-gray-400"}`}
+                        >
+                          {day.dayLabel}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Latest Photos */}
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                 <div className="flex items-center justify-between mb-4">
                   <p className="text-sm font-bold text-gray-500">
@@ -397,8 +400,8 @@ export function HomePage({
                   ))}
                 </div>
               </div>
-            )}
-          </>
+            </div>
+          </div>
         )}
       </main>
     </div>
