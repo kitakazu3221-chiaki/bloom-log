@@ -421,17 +421,22 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
     <div className="min-h-screen bg-[#F8FAF8] flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-10 flex items-center gap-3 px-6 py-3.5 bg-white/90 backdrop-blur-sm border-b border-gray-200">
-        <a
-          href="/"
-          className="w-8 h-8 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-500 border border-gray-200 transition-colors text-base"
-          aria-label={t["common.back"]}
-        >
-          ←
-        </a>
         <div className="flex items-center gap-2">
           <span className="text-lg">🌱</span>
           <h1 className="text-lg font-bold text-gray-800 tracking-tight">{t["history.title"]}</h1>
         </div>
+        <a
+          href="/"
+          className="text-sm font-medium text-gray-500 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
+        >
+          {t["home.home"]}
+        </a>
+        <a
+          href="/capture"
+          className="text-sm font-medium text-gray-500 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
+        >
+          {t["home.capture"]}
+        </a>
         <span className="text-sm font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg px-2.5 py-1">
           {locale === "ja" ? `${dayCount}${t["pc.dayCount"]}` : `Day ${dayCount}`}
         </span>
