@@ -172,7 +172,7 @@ export const ja = {
   // Legal page
   "legal.title": "特定商取引法に基づく表記",
   "legal.operator": "事業者名",
-  "legal.operatorValue": "Bloom Log",
+  "legal.operatorValue": "喜多 一真",
   "legal.address": "所在地",
   "legal.addressValue": "請求があった場合に遅滞なく開示いたします",
   "legal.phone": "電話番号",

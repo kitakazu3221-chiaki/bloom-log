@@ -174,7 +174,7 @@ export const en: Record<keyof typeof ja, string> = {
   // Legal page
   "legal.title": "Legal Notice",
   "legal.operator": "Operator",
-  "legal.operatorValue": "Bloom Log",
+  "legal.operatorValue": "Kazuma Kita",
   "legal.address": "Address",
   "legal.addressValue": "Disclosed upon request without delay",
   "legal.phone": "Phone",
