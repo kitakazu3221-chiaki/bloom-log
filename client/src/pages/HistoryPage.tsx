@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useStorage } from "../hooks/useStorage";
 import { useI18n } from "../hooks/useI18n";
-import { TrialBanner } from "../components/TrialBanner";
+
 import { type ScalpArea, type PhotoRecord } from "../types";
 
 const AREAS: ScalpArea[] = ["top", "front", "side"];
@@ -442,6 +442,21 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
           >
             {locale === "ja" ? "EN" : "JA"}
           </button>
+          {subscription === "trialing" && (
+            <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
+              <span className="text-sm text-amber-600">
+                {locale === "ja"
+                  ? `${t["trial.label"]} ${t["trial.remaining"]} ${trialDaysLeft} ${t["trial.days"]}`
+                  : `${t["trial.label"]} ${trialDaysLeft} ${t["trial.days"]}`}
+              </span>
+              <button
+                onClick={() => window.location.href = "/paywall"}
+                className="text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 rounded-md px-2 py-1 transition-colors"
+              >
+                {t["trial.selectPlan"]}
+              </button>
+            </div>
+          )}
           <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
             <span className="text-sm text-gray-400">{username}</span>
             <button onClick={onLogout} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
@@ -451,12 +466,7 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
         </div>
       </header>
 
-      {/* Trial banner */}
-      {subscription === "trialing" && (
-        <div className="px-6 pt-3 max-w-3xl mx-auto w-full">
-          <TrialBanner daysLeft={trialDaysLeft} />
-        </div>
-      )}
+      {/* Trial banner - now inline in header */}
 
       <main className="flex-1 p-6 max-w-3xl mx-auto w-full space-y-5">
         {/* Growth milestone bar */}

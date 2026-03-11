@@ -16,7 +16,7 @@ import { AreaSelector } from "../components/AreaSelector";
 import { CaptureButton } from "../components/CaptureButton";
 import { PhotoSaveDialog } from "../components/PhotoSaveDialog";
 import { PreviousPhotoOverlay } from "../components/PreviousPhotoOverlay";
-import { TrialBanner } from "../components/TrialBanner";
+
 import {
   type ScalpArea,
   type SignalingMessage,
@@ -226,6 +226,21 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
               peerJoined={ws.peerJoined}
             />
           )}
+          {subscription === "trialing" && (
+            <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
+              <span className="text-sm text-amber-600">
+                {locale === "ja"
+                  ? `${t["trial.label"]} ${t["trial.remaining"]} ${trialDaysLeft} ${t["trial.days"]}`
+                  : `${t["trial.label"]} ${trialDaysLeft} ${t["trial.days"]}`}
+              </span>
+              <button
+                onClick={() => window.location.href = "/paywall"}
+                className="text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 rounded-md px-2 py-1 transition-colors"
+              >
+                {t["trial.selectPlan"]}
+              </button>
+            </div>
+          )}
           <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
             <span className="text-sm text-gray-400">{username}</span>
             <button
@@ -238,12 +253,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
         </div>
       </header>
 
-      {/* Trial banner */}
-      {subscription === "trialing" && (
-        <div className="px-6 pt-3">
-          <TrialBanner daysLeft={trialDaysLeft} />
-        </div>
-      )}
+      {/* Trial banner - now inline in header */}
 
       {/* Main content */}
       <main className="flex-1 flex flex-col items-center gap-5 p-6">
