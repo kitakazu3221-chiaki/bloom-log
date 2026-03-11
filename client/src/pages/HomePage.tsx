@@ -162,6 +162,12 @@ export function HomePage({
           >
             {t["pc.history"]}
           </a>
+          <a
+            href="/insights"
+            className="text-sm font-medium text-theme-secondary bg-secondary hover:bg-[var(--border)] border border-theme rounded-lg px-3 py-1.5 transition-colors"
+          >
+            {t["nav.insights"]}
+          </a>
           <span className="text-sm font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg px-2.5 py-1">
             {locale === "ja"
               ? `${dayCount}${t["pc.dayCount"]}`

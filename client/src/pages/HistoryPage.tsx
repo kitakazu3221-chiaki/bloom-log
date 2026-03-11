@@ -393,6 +393,10 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
     const parts: string[] = [];
     if (r.notes.sleep !== undefined) parts.push(`${t["history.sleepLabel"]}${r.notes.sleep}h`);
     if (r.notes.stress !== undefined) parts.push(`${t["history.stressLabel"]}${r.notes.stress}`);
+    if (r.notes.exercise) parts.push(t["history.exerciseLabel"]);
+    if (r.notes.diet !== undefined) parts.push(`${t["history.dietLabel"]}${r.notes.diet}`);
+    if (r.notes.alcohol) parts.push(t["history.alcoholLabel"]);
+    if (r.notes.scalpMassage) parts.push(t["history.massageLabel"]);
     return parts.join(" · ");
   };
 
@@ -409,6 +413,9 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
         </a>
         <a href="/capture" className="text-sm font-medium text-theme-secondary bg-secondary hover:bg-[var(--border)] border border-theme rounded-lg px-3 py-1.5 transition-colors">
           {t["home.capture"]}
+        </a>
+        <a href="/insights" className="text-sm font-medium text-theme-secondary bg-secondary hover:bg-[var(--border)] border border-theme rounded-lg px-3 py-1.5 transition-colors">
+          {t["nav.insights"]}
         </a>
         <span className="text-sm font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg px-2.5 py-1">
           {locale === "ja" ? `${dayCount}${t["pc.dayCount"]}` : `Day ${dayCount}`}

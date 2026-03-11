@@ -43,6 +43,12 @@ export interface NoteData {
   treatment?: string;
   sleep?: number;
   stress?: number;
+  exercise?: boolean;
+  exerciseType?: string;
+  diet?: number;
+  alcohol?: boolean;
+  supplements?: string;
+  scalpMassage?: boolean;
 }
 
 export interface PhotoRecord {

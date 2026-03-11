@@ -10,6 +10,7 @@ import { PaywallPage } from "./pages/PaywallPage";
 import { LandingPage } from "./pages/LandingPage";
 import { LegalPage } from "./pages/LegalPage";
 import { HomePage } from "./pages/HomePage";
+import { InsightsPage } from "./pages/InsightsPage";
 
 function App() {
   const url = new URL(window.location.href);
@@ -88,6 +89,15 @@ function AuthGate({ pathname }: { pathname: string }) {
   const mainPage =
     pathname === "/history" ? (
       <HistoryPage
+        username={user.username}
+        onLogout={logout}
+        subscription={user.subscription}
+        trialDaysLeft={user.trialDaysLeft}
+        createdAt={user.createdAt}
+        storageMode={user.storageMode}
+      />
+    ) : pathname === "/insights" ? (
+      <InsightsPage
         username={user.username}
         onLogout={logout}
         subscription={user.subscription}
