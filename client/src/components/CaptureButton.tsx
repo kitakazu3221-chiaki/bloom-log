@@ -39,7 +39,7 @@ export function CaptureButton({
             isCounting
               ? "border-amber-400 pulse-orange"
               : disabled
-              ? "border-gray-300"
+              ? "border-theme-faint"
               : "border-emerald-500 pulse-green"
           }`}
         />
@@ -50,7 +50,7 @@ export function CaptureButton({
             isCounting
               ? "bg-amber-400"
               : disabled
-              ? "bg-gray-200"
+              ? "bg-secondary"
               : "bg-emerald-600 shadow-md shadow-emerald-600/20"
           }`}
         >
@@ -64,7 +64,7 @@ export function CaptureButton({
         </span>
       </button>
 
-      <span className="text-sm text-gray-400 h-5 transition-all">
+      <span className="text-sm text-theme-muted h-5 transition-all">
         {isCounting ? t["capture.tapToCancel"] : disabled ? "" : t["capture.tapToCapture"]}
       </span>
     </div>

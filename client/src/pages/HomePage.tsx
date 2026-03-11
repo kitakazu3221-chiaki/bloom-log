@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useI18n } from "../hooks/useI18n";
 import { useStorage } from "../hooks/useStorage";
 import { LanguageSelect } from "../components/LanguageSelect";
+import { ThemeToggle } from "../components/ThemeToggle";
 import type { ScalpArea, PhotoRecord } from "../types";
 
 const AREAS: ScalpArea[] = ["top", "front", "side"];
@@ -137,27 +138,27 @@ export function HomePage({
 
   return (
     <div
-      className="min-h-screen bg-[#F8FAF8] flex flex-col"
+      className="min-h-screen bg-page flex flex-col"
       style={{ fontFamily: "'Kosugi Maru', sans-serif" }}
     >
       {/* Header */}
-      <header className="sticky top-0 z-10 flex items-center justify-between px-6 py-3.5 bg-white/90 backdrop-blur-sm border-b border-gray-200">
+      <header className="sticky top-0 z-10 flex items-center justify-between px-6 py-3.5 bg-header backdrop-blur-sm border-b border-theme">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <span className="text-xl">🌱</span>
-            <h1 className="text-lg font-bold text-gray-800 tracking-tight">
+            <h1 className="text-lg font-bold text-theme-primary tracking-tight">
               Bloom Log
             </h1>
           </div>
           <a
             href="/capture"
-            className="text-sm font-medium text-gray-500 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
+            className="text-sm font-medium text-theme-secondary bg-secondary hover:bg-[var(--border)] border border-theme rounded-lg px-3 py-1.5 transition-colors"
           >
             {t["home.capture"]}
           </a>
           <a
             href="/history"
-            className="text-sm font-medium text-gray-500 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
+            className="text-sm font-medium text-theme-secondary bg-secondary hover:bg-[var(--border)] border border-theme rounded-lg px-3 py-1.5 transition-colors"
           >
             {t["pc.history"]}
           </a>
@@ -168,9 +169,10 @@ export function HomePage({
           </span>
         </div>
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           <LanguageSelect />
           {subscription === "trialing" && (
-            <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
+            <div className="flex items-center gap-2 pl-2 border-l border-theme">
               <span className="text-sm text-amber-600">
                 {locale === "ja"
                   ? `${t["trial.label"]} ${t["trial.remaining"]} ${trialDaysLeft} ${t["trial.days"]}`
@@ -184,11 +186,11 @@ export function HomePage({
               </button>
             </div>
           )}
-          <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
-            <span className="text-sm text-gray-400">{username}</span>
+          <div className="flex items-center gap-2 pl-2 border-l border-theme">
+            <span className="text-sm text-theme-muted">{username}</span>
             <button
               onClick={onLogout}
-              className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-sm text-theme-muted hover:text-theme-secondary transition-colors"
             >
               {t["common.logout"]}
             </button>
@@ -207,17 +209,17 @@ export function HomePage({
             {/* Left Column */}
             <div className="space-y-5 lg:space-y-6">
               {/* Today's Status Card */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 lg:p-8">
+              <div className="bg-surface rounded-2xl border border-theme-light shadow-theme p-6 lg:p-8">
                 <div className="flex items-center justify-between mb-6">
-                  <p className="text-gray-800 font-bold text-xl lg:text-2xl">
+                  <p className="text-theme-primary font-bold text-xl lg:text-2xl">
                     {username}
                     {t["home.greeting"]}
                   </p>
-                  <span className="text-base lg:text-lg text-gray-400">
+                  <span className="text-base lg:text-lg text-theme-muted">
                     {todayFormatted}
                   </span>
                 </div>
-                <p className="text-base lg:text-lg font-bold text-gray-500 mb-5">
+                <p className="text-base lg:text-lg font-bold text-theme-secondary mb-5">
                   {t["home.todayStatus"]}
                 </p>
                 <div className="flex items-center gap-6 lg:gap-8 mb-5">
@@ -229,13 +231,13 @@ export function HomePage({
                           className={`w-10 h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center text-base lg:text-lg ${
                             done
                               ? "bg-emerald-500 text-white"
-                              : "bg-gray-100 text-gray-300 border border-gray-200"
+                              : "bg-secondary text-theme-faint border border-theme"
                           }`}
                         >
                           {done ? "✓" : ""}
                         </span>
                         <span
-                          className={`text-base lg:text-lg ${done ? "text-gray-700" : "text-gray-400"}`}
+                          className={`text-base lg:text-lg ${done ? "text-theme-primary" : "text-theme-muted"}`}
                         >
                           {areaLabels[area]}
                         </span>
@@ -243,7 +245,7 @@ export function HomePage({
                     );
                   })}
                 </div>
-                <p className="text-base lg:text-lg text-gray-500">
+                <p className="text-base lg:text-lg text-theme-secondary">
                   {capturedCount === 3
                     ? t["home.allCaptured"]
                     : capturedCount === 0
@@ -259,7 +261,7 @@ export function HomePage({
                 href="/capture"
                 className={`block text-center py-5 lg:py-6 rounded-2xl font-bold text-xl lg:text-2xl transition-all active:scale-[0.98] ${
                   capturedCount === 3
-                    ? "bg-white text-emerald-600 border-2 border-emerald-200 hover:bg-emerald-50"
+                    ? "bg-surface text-emerald-600 border-2 border-emerald-200 hover:bg-emerald-50"
                     : "bg-emerald-600 text-white shadow-lg shadow-emerald-600/25 hover:bg-emerald-500"
                 }`}
               >
@@ -272,12 +274,12 @@ export function HomePage({
               <div className="grid grid-cols-4 gap-4 lg:gap-5">
                 {/* Streak */}
                 {streak > 0 && (
-                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 lg:p-6 flex flex-col items-center justify-center text-center">
+                  <div className="bg-surface rounded-2xl border border-theme-light shadow-theme p-5 lg:p-6 flex flex-col items-center justify-center text-center">
                     <span className="text-3xl lg:text-4xl mb-1">🔥</span>
-                    <span className="text-gray-800 font-bold text-lg lg:text-xl">
+                    <span className="text-theme-primary font-bold text-lg lg:text-xl">
                       {streak}
                     </span>
-                    <span className="text-sm text-gray-400">
+                    <span className="text-sm text-theme-muted">
                       {locale === "ja" ? "日連続" : "day streak"}
                     </span>
                   </div>
@@ -305,13 +307,13 @@ export function HomePage({
                 ].map((stat) => (
                   <div
                     key={stat.label}
-                    className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 lg:p-6 text-center flex flex-col items-center justify-center"
+                    className="bg-surface rounded-2xl border border-theme-light shadow-theme p-5 lg:p-6 text-center flex flex-col items-center justify-center"
                   >
-                    <p className="text-sm lg:text-base text-gray-400 mb-1">{stat.label}</p>
+                    <p className="text-sm lg:text-base text-theme-muted mb-1">{stat.label}</p>
                     {stat.value && (
-                      <p className="text-3xl lg:text-4xl font-bold text-gray-800">
+                      <p className="text-3xl lg:text-4xl font-bold text-theme-primary">
                         {stat.value}
-                        <span className="text-base lg:text-lg text-gray-400 ml-0.5">
+                        <span className="text-base lg:text-lg text-theme-muted ml-0.5">
                           {stat.unit}
                         </span>
                       </p>
@@ -324,8 +326,8 @@ export function HomePage({
             {/* Right Column */}
             <div className="space-y-5 lg:space-y-6">
               {/* Weekly View */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 lg:p-8">
-                <p className="text-base lg:text-lg font-bold text-gray-500 mb-6">
+              <div className="bg-surface rounded-2xl border border-theme-light shadow-theme p-6 lg:p-8">
+                <p className="text-base lg:text-lg font-bold text-theme-secondary mb-6">
                   {t["home.weekView"]}
                 </p>
                 <div className="flex items-center justify-between">
@@ -341,14 +343,14 @@ export function HomePage({
                             hasRecord
                               ? "bg-emerald-500 text-white"
                               : day.isToday
-                                ? "bg-white text-gray-400 border-2 border-emerald-300"
-                                : "bg-gray-100 text-gray-300"
+                                ? "bg-surface text-theme-muted border-2 border-emerald-300"
+                                : "bg-secondary text-theme-faint"
                           }`}
                         >
                           {hasRecord ? "✓" : ""}
                         </span>
                         <span
-                          className={`text-sm lg:text-base ${day.isToday ? "text-emerald-600 font-bold" : "text-gray-400"}`}
+                          className={`text-sm lg:text-base ${day.isToday ? "text-emerald-600 font-bold" : "text-theme-muted"}`}
                         >
                           {day.dayLabel}
                         </span>
@@ -359,9 +361,9 @@ export function HomePage({
               </div>
 
               {/* Latest Photos */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 lg:p-8">
+              <div className="bg-surface rounded-2xl border border-theme-light shadow-theme p-6 lg:p-8">
                 <div className="flex items-center justify-between mb-6">
-                  <p className="text-base lg:text-lg font-bold text-gray-500">
+                  <p className="text-base lg:text-lg font-bold text-theme-secondary">
                     {t["home.latestPhotos"]}
                   </p>
                   <a
@@ -378,7 +380,7 @@ export function HomePage({
                       href="/history"
                       className="flex flex-col items-center gap-3"
                     >
-                      <div className="w-full aspect-square rounded-xl bg-gray-100 overflow-hidden">
+                      <div className="w-full aspect-square rounded-xl bg-secondary overflow-hidden">
                         {latestPhotos[area] ? (
                           <img
                             src={latestPhotos[area]!}
@@ -386,12 +388,12 @@ export function HomePage({
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-300 text-4xl">
+                          <div className="w-full h-full flex items-center justify-center text-theme-faint text-4xl">
                             📷
                           </div>
                         )}
                       </div>
-                      <span className="text-sm lg:text-base text-gray-500">
+                      <span className="text-sm lg:text-base text-theme-secondary">
                         {areaLabels[area]}
                       </span>
                     </a>

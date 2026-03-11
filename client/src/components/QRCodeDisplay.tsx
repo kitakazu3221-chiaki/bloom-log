@@ -24,12 +24,12 @@ export function QRCodeDisplay({ sessionId }: QRCodeDisplayProps) {
       {qrDataUrl ? (
         <img src={qrDataUrl} alt="QR Code" className="w-64 h-64 rounded-xl" />
       ) : (
-        <div className="w-64 h-64 bg-gray-100 animate-pulse rounded-xl" />
+        <div className="w-64 h-64 bg-secondary animate-pulse rounded-xl" />
       )}
-      <p className="text-gray-600 text-base text-center">
+      <p className="text-theme-secondary text-base text-center">
         {t["qr.instruction"]}
       </p>
-      <p className="text-gray-300 text-sm text-center break-all max-w-xs">
+      <p className="text-theme-faint text-sm text-center break-all max-w-xs">
         {sessionUrl}
       </p>
     </div>

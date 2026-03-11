@@ -10,13 +10,45 @@
 :root {
   --bg: #F8FAF8;
   --card: #FFFFFF;
+  --bg-secondary: #F3F4F6;
+  --input-bg: #F9FAFB;
+  --header-bg: rgba(255, 255, 255, 0.9);
+  --card-hover: #F9FAFB;
   --border: #E5E7EB;
   --border-light: #F3F4F6;
   --text-primary: #1F2937;
   --text-secondary: #6B7280;
   --text-muted: #9CA3AF;
+  --text-faint: #D1D5DB;
   --accent: #059669;
   --accent-light: #ECFDF5;
+  --shadow-color: rgba(0, 0, 0, 0.04);
+  --shadow-color-md: rgba(0, 0, 0, 0.06);
+  --scrollbar-thumb: rgba(0, 0, 0, 0.1);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.18);
+  --range-track: #E5E7EB;
+}
+
+html.dark {
+  --bg: #0F1117;
+  --card: #1A1D27;
+  --bg-secondary: #1A1D27;
+  --input-bg: #22252F;
+  --header-bg: rgba(15, 17, 23, 0.9);
+  --card-hover: #22252F;
+  --border: #2A2D37;
+  --border-light: #22252F;
+  --text-primary: #E5E7EB;
+  --text-secondary: #9CA3AF;
+  --text-muted: #6B7280;
+  --text-faint: #4B5563;
+  --accent: #10B981;
+  --accent-light: #064E3B;
+  --shadow-color: rgba(0, 0, 0, 0.2);
+  --shadow-color-md: rgba(0, 0, 0, 0.3);
+  --scrollbar-thumb: rgba(255, 255, 255, 0.1);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.18);
+  --range-track: #2A2D37;
 }
 
 body {
@@ -29,11 +61,69 @@ body {
 .card {
   background: var(--card);
   border: 1px solid var(--border);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 1px 3px var(--shadow-color), 0 1px 2px var(--shadow-color);
 }
 
 .card-hover:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 12px var(--shadow-color-md);
+}
+
+/* ── Theme utility classes (Tailwind v4 @utility) ────────────── */
+
+@utility bg-page {
+  background-color: var(--bg);
+}
+
+@utility bg-surface {
+  background-color: var(--card);
+}
+
+@utility bg-secondary {
+  background-color: var(--bg-secondary);
+}
+
+@utility bg-header {
+  background-color: var(--header-bg);
+}
+
+@utility bg-input {
+  background-color: var(--input-bg);
+}
+
+@utility border-theme {
+  border-color: var(--border);
+}
+
+@utility border-theme-light {
+  border-color: var(--border-light);
+}
+
+@utility text-theme-primary {
+  color: var(--text-primary);
+}
+
+@utility text-theme-secondary {
+  color: var(--text-secondary);
+}
+
+@utility text-theme-muted {
+  color: var(--text-muted);
+}
+
+@utility text-theme-faint {
+  color: var(--text-faint);
+}
+
+@utility shadow-theme {
+  box-shadow: 0 1px 3px var(--shadow-color), 0 1px 2px var(--shadow-color);
+}
+
+@utility shadow-theme-md {
+  box-shadow: 0 4px 12px var(--shadow-color-md);
+}
+
+@utility ring-theme {
+  --tw-ring-color: var(--border);
 }
 
 /* ── Animations ───────────────────────────────────────────────── */
@@ -98,11 +188,11 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--scrollbar-thumb);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.18);
+  background: var(--scrollbar-thumb-hover);
 }
 
 /* ── Input range styling ──────────────────────────────────────── */
@@ -113,13 +203,13 @@ input[type="range"]::-webkit-slider-thumb {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: #059669;
+  background: var(--accent);
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(5, 150, 105, 0.3);
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
-  background: #E5E7EB;
+  background: var(--range-track);
   border-radius: 4px;
   height: 4px;
 }

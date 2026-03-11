@@ -1,5 +1,6 @@
 import { useI18n } from "../hooks/useI18n";
 import { LanguageSelect } from "../components/LanguageSelect";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 const FeatureIcon = ({ d }: { d: string }) => (
   <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
@@ -26,14 +27,15 @@ export function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8FAF8] relative overflow-hidden" style={{ fontFamily: "'Kosugi Maru', sans-serif" }}>
+    <div className="min-h-screen bg-page relative overflow-hidden" style={{ fontFamily: "'Kosugi Maru', sans-serif" }}>
       {/* Background decoration */}
       <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-emerald-100/50 blur-3xl pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[400px] h-[400px] rounded-full bg-emerald-50/60 blur-3xl pointer-events-none" />
 
-      {/* Language toggle */}
-      <div className="absolute top-4 right-4 z-20">
-        <LanguageSelect className="[&_button:first-child]:bg-white/80 [&_button:first-child]:backdrop-blur-sm" />
+      {/* Top controls */}
+      <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+        <ThemeToggle />
+        <LanguageSelect className="[&_button:first-child]:bg-surface [&_button:first-child]:backdrop-blur-sm" />
       </div>
 
       {/* Hero Section */}
@@ -41,10 +43,10 @@ export function LandingPage() {
         <div className="inline-flex items-center justify-center mb-3 animate-float">
           <span className="text-5xl">🌱</span>
         </div>
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-800 tracking-tight mb-3">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-theme-primary tracking-tight mb-3">
           Bloom Log
         </h1>
-        <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 mb-8 max-w-xl mx-auto">
+        <p className="text-lg sm:text-xl lg:text-2xl text-theme-secondary mb-8 max-w-xl mx-auto">
           {t["landing.tagline"]}
         </p>
         <a
@@ -53,7 +55,7 @@ export function LandingPage() {
         >
           {t["landing.cta"]}
         </a>
-        <p className="text-gray-500 text-sm mt-3">
+        <p className="text-theme-secondary text-sm mt-3">
           {t["landing.ctaSub"]}
         </p>
       </section>
@@ -61,21 +63,21 @@ export function LandingPage() {
       {/* Features Section */}
       <section className="relative z-10 px-6 pb-14">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-center text-2xl sm:text-3xl font-bold text-gray-800 mb-8">
+          <h2 className="text-center text-2xl sm:text-3xl font-bold text-theme-primary mb-8">
             {t["landing.strengthsTitle"]}
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map((f) => (
               <div
                 key={f.title}
-                className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col gap-3 hover:shadow-md transition-shadow"
+                className="bg-surface rounded-2xl border border-theme-light shadow-theme p-6 flex flex-col gap-3 hover:shadow-theme-md transition-shadow"
               >
                 <div className="w-9 h-9 shrink-0 rounded-xl bg-emerald-50 p-2">
                   <FeatureIcon d={f.icon} />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-gray-800 mb-1">{f.title}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed">{f.desc}</p>
+                  <h3 className="text-base font-bold text-theme-primary mb-1">{f.title}</h3>
+                  <p className="text-sm text-theme-secondary leading-relaxed">{f.desc}</p>
                 </div>
               </div>
             ))}
@@ -86,7 +88,7 @@ export function LandingPage() {
       {/* How it works Section */}
       <section className="relative z-10 px-6 pb-14">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-center text-2xl sm:text-3xl font-bold text-gray-800 mb-8">
+          <h2 className="text-center text-2xl sm:text-3xl font-bold text-theme-primary mb-8">
             {t["landing.howToUse"]}
           </h2>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-4">
@@ -95,11 +97,11 @@ export function LandingPage() {
                 {i > 0 && (
                   <span className="hidden sm:block text-2xl text-emerald-300 mr-1">→</span>
                 )}
-                <div className="flex items-center gap-3 bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-4 sm:px-5 sm:py-3.5">
+                <div className="flex items-center gap-3 bg-surface rounded-2xl border border-theme-light shadow-theme px-6 py-4 sm:px-5 sm:py-3.5">
                   <span className="w-9 h-9 rounded-full bg-emerald-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
                     {s.num}
                   </span>
-                  <p className="text-base text-gray-700 font-medium whitespace-nowrap">{s.text}</p>
+                  <p className="text-base text-theme-primary font-medium whitespace-nowrap">{s.text}</p>
                 </div>
               </div>
             ))}
@@ -109,11 +111,11 @@ export function LandingPage() {
 
       {/* Bottom CTA Section */}
       <section className="relative z-10 px-6 pb-16 text-center">
-        <div className="max-w-xl mx-auto bg-white rounded-3xl border border-gray-100 shadow-sm p-8 sm:p-10">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
+        <div className="max-w-xl mx-auto bg-surface rounded-3xl border border-theme-light shadow-theme p-8 sm:p-10">
+          <h2 className="text-xl sm:text-2xl font-bold text-theme-primary mb-2">
             {t["landing.cta"]}
           </h2>
-          <p className="text-gray-500 text-sm mb-6">
+          <p className="text-theme-secondary text-sm mb-6">
             {t["landing.ctaSub"]}
           </p>
           <a
@@ -123,7 +125,7 @@ export function LandingPage() {
             {t["landing.cta"]}
           </a>
         </div>
-        <a href="/legal" className="text-gray-300 hover:text-gray-400 text-xs mt-4 inline-block transition-colors">
+        <a href="/legal" className="text-theme-faint hover:text-theme-muted text-xs mt-4 inline-block transition-colors">
           {t["landing.legal"]}
         </a>
       </section>

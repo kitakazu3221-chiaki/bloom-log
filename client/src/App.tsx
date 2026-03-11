@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "./hooks/useAuth";
 import { useI18n, I18nProvider } from "./hooks/useI18n";
+import { ThemeProvider } from "./hooks/useTheme";
 import { PCPage } from "./pages/PCPage";
 import { PhonePage } from "./pages/PhonePage";
 import { HistoryPage } from "./pages/HistoryPage";
@@ -16,13 +17,15 @@ function App() {
   const sessionId = url.searchParams.get("session");
 
   return (
-    <I18nProvider>
-      {pathname === "/phone" && sessionId ? (
-        <PhonePage sessionId={sessionId} />
-      ) : (
-        <AuthGate pathname={pathname} />
-      )}
-    </I18nProvider>
+    <ThemeProvider>
+      <I18nProvider>
+        {pathname === "/phone" && sessionId ? (
+          <PhonePage sessionId={sessionId} />
+        ) : (
+          <AuthGate pathname={pathname} />
+        )}
+      </I18nProvider>
+    </ThemeProvider>
   );
 }
 
@@ -53,7 +56,7 @@ function AuthGate({ pathname }: { pathname: string }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-green-50 flex items-center justify-center">
+      <div className="min-h-screen bg-page flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="animate-pulse">
             <span className="text-4xl">🌱</span>

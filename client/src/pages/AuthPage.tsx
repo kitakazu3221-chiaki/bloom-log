@@ -43,14 +43,14 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAF8] flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-page flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-emerald-100/50 blur-3xl pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[400px] h-[400px] rounded-full bg-emerald-50/60 blur-3xl pointer-events-none" />
 
       <div className="w-full max-w-sm animate-fade-in-up relative z-10">
         {/* Card */}
-        <div className="bg-white rounded-3xl overflow-hidden shadow-lg shadow-gray-200/60 border border-gray-100">
+        <div className="bg-surface rounded-3xl overflow-hidden shadow-lg shadow-[var(--shadow-color-md)] border border-theme-light">
           {/* Green accent stripe */}
           <div className="h-[2px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent" />
 
@@ -59,19 +59,19 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
             <div className="inline-flex items-center justify-center mb-4 animate-float">
               <span className="text-4xl">🌱</span>
             </div>
-            <h1 className="text-3xl font-bold text-gray-800 tracking-tight">
+            <h1 className="text-3xl font-bold text-theme-primary tracking-tight">
               Bloom Log
             </h1>
           </div>
 
           {/* Tabs */}
-          <div className="flex mx-6 mb-1 bg-gray-100 rounded-xl p-1">
+          <div className="flex mx-6 mb-1 bg-secondary rounded-xl p-1">
             <button
               onClick={() => handleTabChange("login")}
               className={`flex-1 py-2.5 text-base font-medium rounded-lg transition-all ${
                 tab === "login"
-                  ? "bg-white text-gray-800 shadow-sm"
-                  : "text-gray-400 hover:text-gray-600"
+                  ? "bg-surface text-theme-primary shadow-sm"
+                  : "text-theme-muted hover:text-theme-secondary"
               }`}
             >
               {t["auth.login"]}
@@ -80,8 +80,8 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
               onClick={() => handleTabChange("register")}
               className={`flex-1 py-2.5 text-base font-medium rounded-lg transition-all ${
                 tab === "register"
-                  ? "bg-white text-gray-800 shadow-sm"
-                  : "text-gray-400 hover:text-gray-600"
+                  ? "bg-surface text-theme-primary shadow-sm"
+                  : "text-theme-muted hover:text-theme-secondary"
               }`}
             >
               {t["auth.createAccount"]}
@@ -91,7 +91,7 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
           {/* Form */}
           <form onSubmit={handleSubmit} className="px-6 pt-4 pb-6 space-y-3">
             <div>
-              <label className="block text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+              <label className="block text-sm font-semibold text-theme-secondary uppercase tracking-wide mb-1.5">
                 {t["auth.username"]}
               </label>
               <input
@@ -101,12 +101,12 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
                 placeholder={t["auth.usernamePlaceholder"]}
                 autoComplete="username"
                 required
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all"
+                className="w-full bg-input border border-theme rounded-xl px-4 py-3.5 text-base text-theme-primary placeholder-[var(--text-faint)] focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+              <label className="block text-sm font-semibold text-theme-secondary uppercase tracking-wide mb-1.5">
                 {t["auth.password"]}
               </label>
               <input
@@ -116,13 +116,13 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
                 placeholder={tab === "register" ? t["auth.passwordHint"] : ""}
                 autoComplete={tab === "login" ? "current-password" : "new-password"}
                 required
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all"
+                className="w-full bg-input border border-theme rounded-xl px-4 py-3.5 text-base text-theme-primary placeholder-[var(--text-faint)] focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all"
               />
             </div>
 
             {tab === "register" && (
               <div className="animate-fade-in">
-                <label className="block text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+                <label className="block text-sm font-semibold text-theme-secondary uppercase tracking-wide mb-1.5">
                   {t["auth.confirmPassword"]}
                 </label>
                 <input
@@ -131,7 +131,7 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   autoComplete="new-password"
                   required
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all"
+                  className="w-full bg-input border border-theme rounded-xl px-4 py-3.5 text-base text-theme-primary placeholder-[var(--text-faint)] focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all"
                 />
               </div>
             )}
