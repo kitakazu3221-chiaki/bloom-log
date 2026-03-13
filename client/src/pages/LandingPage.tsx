@@ -27,7 +27,7 @@ export function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-page relative overflow-hidden" style={{ fontFamily: "'Kosugi Maru', sans-serif" }}>
+    <div className="min-h-screen bg-page relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-emerald-100/50 blur-3xl pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[400px] h-[400px] rounded-full bg-emerald-50/60 blur-3xl pointer-events-none" />

@@ -80,7 +80,6 @@ export function BlogListPage() {
   return (
     <div
       className="min-h-screen bg-page"
-      style={{ fontFamily: "'Kosugi Maru', sans-serif" }}
     >
       {/* Header */}
       <header className="sticky top-0 z-30 bg-surface/80 backdrop-blur-md border-b border-theme-light">
@@ -185,7 +184,6 @@ export function BlogArticlePage({ slug }: { slug: string }) {
   return (
     <div
       className="min-h-screen bg-page"
-      style={{ fontFamily: "'Kosugi Maru', sans-serif" }}
     >
       <header className="sticky top-0 z-30 bg-surface/80 backdrop-blur-md border-b border-theme-light">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
