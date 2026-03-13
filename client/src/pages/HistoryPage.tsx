@@ -405,44 +405,41 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
   return (
     <div className="min-h-screen bg-page flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-10 flex items-center gap-3 px-6 py-3.5 bg-header backdrop-blur-sm border-b border-theme">
-        <div className="flex items-center gap-2">
-          <span className="text-lg">🌱</span>
-          <h1 className="text-lg font-bold text-theme-primary tracking-tight">{t["history.title"]}</h1>
-        </div>
-        <a href="/" className="text-sm font-medium text-theme-secondary bg-secondary hover:bg-[var(--border)] border border-theme rounded-lg px-3 py-1.5 transition-colors">
-          {t["home.home"]}
-        </a>
-        <a href="/capture" className="text-sm font-medium text-theme-secondary bg-secondary hover:bg-[var(--border)] border border-theme rounded-lg px-3 py-1.5 transition-colors">
-          {t["home.capture"]}
-        </a>
-        <a href="/insights" className="text-sm font-medium text-theme-secondary bg-secondary hover:bg-[var(--border)] border border-theme rounded-lg px-3 py-1.5 transition-colors">
-          {t["nav.insights"]}
-        </a>
-        <span className="text-sm font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg px-2.5 py-1">
-          {locale === "ja" ? `${dayCount}${t["pc.dayCount"]}` : `Day ${dayCount}`}
-        </span>
-        <div className="ml-auto flex items-center gap-3">
-          <ThemeToggle />
-          <LanguageSelect />
-          {subscription === "trialing" && (
-            <div className="flex items-center gap-2 pl-2 border-l border-theme">
-              <span className="text-sm text-amber-600">
-                {locale === "ja"
-                  ? `${t["trial.label"]} ${t["trial.remaining"]} ${trialDaysLeft} ${t["trial.days"]}`
-                  : `${t["trial.label"]} ${trialDaysLeft} ${t["trial.days"]}`}
-              </span>
-              <button onClick={() => window.location.href = "/paywall"} className="text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 rounded-md px-2 py-1 transition-colors">
-                {t["trial.selectPlan"]}
-              </button>
-            </div>
-          )}
-          <div className="flex items-center gap-2 pl-2 border-l border-theme">
-            <span className="text-sm text-theme-muted">{username}</span>
-            <button onClick={onLogout} className="text-sm text-theme-muted hover:text-theme-secondary transition-colors">
-              {t["common.logout"]}
-            </button>
+      <header className="sticky top-0 z-10 bg-header backdrop-blur-sm border-b border-theme">
+        <div className="flex items-center justify-between px-4 md:px-6 py-3">
+          <div className="flex items-center gap-2">
+            <span className="text-lg">🌱</span>
+            <h1 className="text-lg font-bold text-theme-primary tracking-tight">{t["history.title"]}</h1>
           </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg px-2 py-1">
+              {locale === "ja" ? `${dayCount}${t["pc.dayCount"]}` : `Day ${dayCount}`}
+            </span>
+            <ThemeToggle />
+            <LanguageSelect />
+          </div>
+        </div>
+        <div className="flex items-center gap-1 px-4 md:px-6 pb-2 overflow-x-auto">
+          <a href="/" className="text-xs font-medium text-theme-secondary bg-secondary hover:bg-[var(--border)] border border-theme rounded-lg px-2.5 py-1.5 transition-colors whitespace-nowrap">
+            {t["home.home"]}
+          </a>
+          <a href="/capture" className="text-xs font-medium text-theme-secondary bg-secondary hover:bg-[var(--border)] border border-theme rounded-lg px-2.5 py-1.5 transition-colors whitespace-nowrap">
+            {t["home.capture"]}
+          </a>
+          <a href="/insights" className="text-xs font-medium text-theme-secondary bg-secondary hover:bg-[var(--border)] border border-theme rounded-lg px-2.5 py-1.5 transition-colors whitespace-nowrap">
+            {t["nav.insights"]}
+          </a>
+          {subscription === "trialing" && (
+            <span className="text-xs text-amber-600 whitespace-nowrap ml-1">
+              {locale === "ja"
+                ? `${t["trial.remaining"]} ${trialDaysLeft}${t["trial.days"]}`
+                : `Trial: ${trialDaysLeft} ${t["trial.days"]}`}
+            </span>
+          )}
+          <span className="text-xs text-theme-muted whitespace-nowrap ml-auto">{username}</span>
+          <button onClick={onLogout} className="text-xs text-theme-muted hover:text-theme-secondary transition-colors whitespace-nowrap">
+            {t["common.logout"]}
+          </button>
         </div>
       </header>
 

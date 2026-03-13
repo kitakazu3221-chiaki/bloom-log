@@ -240,6 +240,7 @@ export const en: Record<keyof typeof ja, string> = {
   "home.home": "Home",
 
   // Navigation
+  "nav.home": "Home",
   "nav.insights": "Insights",
 
   // Insights page

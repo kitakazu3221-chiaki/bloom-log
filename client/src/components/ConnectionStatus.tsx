@@ -37,9 +37,9 @@ export function ConnectionStatus({
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <div className={`w-2.5 h-2.5 rounded-full ${color}`} />
-      <span className="text-base text-theme-secondary">{label}</span>
+    <div className="flex items-center gap-1.5 whitespace-nowrap">
+      <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${color}`} />
+      <span className="text-xs text-theme-secondary">{label}</span>
     </div>
   );
 }

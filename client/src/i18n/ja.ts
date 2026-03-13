@@ -238,6 +238,7 @@ export const ja = {
   "home.home": "ホーム",
 
   // Navigation
+  "nav.home": "ホーム",
   "nav.insights": "分析",
 
   // Insights page
