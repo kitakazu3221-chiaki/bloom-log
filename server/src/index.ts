@@ -313,37 +313,44 @@ app.post("/api/stripe/webhook", express.raw({ type: "application/json" }), async
     return;
   }
 
-  const store = readUsers();
+  try {
+    const store = readUsers();
 
-  switch (event.type) {
-    case "customer.subscription.created":
-    case "customer.subscription.updated": {
-      const sub = event.data.object as Stripe.Subscription;
-      const user = store.users.find((u) => u.stripeCustomerId === sub.customer);
-      if (user) {
-        user.subscriptionId = sub.id;
-        user.subscriptionStatus = sub.status === "active" ? "active"
-          : sub.status === "past_due" ? "past_due"
-          : sub.status === "canceled" ? "canceled"
-          : "none";
-        user.currentPeriodEnd = new Date(sub.current_period_end * 1000).toISOString();
-        writeUsers(store);
-        console.log(`[stripe] Subscription ${sub.status} for user ${user.username}`);
+    switch (event.type) {
+      case "customer.subscription.created":
+      case "customer.subscription.updated": {
+        const sub = event.data.object as Stripe.Subscription;
+        const user = store.users.find((u) => u.stripeCustomerId === sub.customer);
+        if (user) {
+          user.subscriptionId = sub.id;
+          user.subscriptionStatus = sub.status === "active" ? "active"
+            : sub.status === "past_due" ? "past_due"
+            : sub.status === "canceled" ? "canceled"
+            : "none";
+          const periodEnd = typeof sub.current_period_end === "number"
+            ? new Date(sub.current_period_end * 1000)
+            : new Date(sub.current_period_end);
+          user.currentPeriodEnd = isNaN(periodEnd.getTime()) ? undefined : periodEnd.toISOString();
+          writeUsers(store);
+          console.log(`[stripe] Subscription ${sub.status} for user ${user.username}`);
+        }
+        break;
       }
-      break;
-    }
-    case "customer.subscription.deleted": {
-      const sub = event.data.object as Stripe.Subscription;
-      const user = store.users.find((u) => u.stripeCustomerId === sub.customer);
-      if (user) {
-        user.subscriptionStatus = "canceled";
-        user.subscriptionId = undefined;
-        user.currentPeriodEnd = undefined;
-        writeUsers(store);
-        console.log(`[stripe] Subscription canceled for user ${user.username}`);
+      case "customer.subscription.deleted": {
+        const sub = event.data.object as Stripe.Subscription;
+        const user = store.users.find((u) => u.stripeCustomerId === sub.customer);
+        if (user) {
+          user.subscriptionStatus = "canceled";
+          user.subscriptionId = undefined;
+          user.currentPeriodEnd = undefined;
+          writeUsers(store);
+          console.log(`[stripe] Subscription canceled for user ${user.username}`);
+        }
+        break;
       }
-      break;
     }
+  } catch (err) {
+    console.error("[stripe] Webhook processing error:", err);
   }
 
   res.json({ received: true });
