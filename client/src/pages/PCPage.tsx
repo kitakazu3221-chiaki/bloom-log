@@ -145,7 +145,7 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
   const handleCancelSave = useCallback(() => { setPendingPhoto(null); setSaveError(null); }, []);
 
   return (
-    <div className="min-h-screen bg-page flex flex-col">
+    <div className="min-h-screen bg-page flex flex-col overflow-x-hidden">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-header backdrop-blur-sm border-b border-theme">
         <div className="flex items-center justify-between px-4 md:px-6 py-3">

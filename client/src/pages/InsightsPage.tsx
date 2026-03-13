@@ -262,7 +262,7 @@ export function InsightsPage({
 
   return (
     <div
-      className="min-h-screen bg-page flex flex-col"
+      className="min-h-screen bg-page flex flex-col overflow-x-hidden"
       style={{ fontFamily: "'Kosugi Maru', sans-serif" }}
     >
       {/* Header */}
