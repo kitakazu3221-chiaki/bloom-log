@@ -321,7 +321,7 @@ interface HistoryPageProps {
   region: "jp" | "global";
 }
 
-export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, createdAt, storageMode, region }: HistoryPageProps) {
+export function HistoryPage({ username: _username, onLogout, subscription, trialDaysLeft, createdAt, storageMode, region }: HistoryPageProps) {
   const { t, locale } = useI18n();
   const areaLabels = useAreaLabels();
   const storage = useStorage(storageMode);
@@ -406,20 +406,27 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
     <div className="min-h-screen bg-page flex flex-col overflow-x-hidden">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-header backdrop-blur-sm border-b border-theme">
-        <div className="flex items-center justify-between px-4 md:px-6 py-3">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between px-4 md:px-6 py-2">
+          <div className="flex items-center gap-1.5 shrink-0">
             <span className="text-lg">🌱</span>
-            <h1 className="text-lg font-bold text-theme-primary tracking-tight">{t["history.title"]}</h1>
+            <h1 className="text-base font-bold text-theme-primary tracking-tight whitespace-nowrap">{t["history.title"]}</h1>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg px-2 py-1">
-              {locale === "ja" ? `${dayCount}${t["pc.dayCount"]}` : `Day ${dayCount}`}
-            </span>
+          <div className="flex items-center gap-1.5">
+            {subscription === "trialing" && (
+              <span className="text-[10px] text-amber-600 whitespace-nowrap">
+                {locale === "ja"
+                  ? `${trialDaysLeft}${t["trial.days"]}`
+                  : `${trialDaysLeft}d left`}
+              </span>
+            )}
+            <button onClick={onLogout} className="text-[10px] text-theme-muted hover:text-theme-secondary transition-colors whitespace-nowrap">
+              {t["common.logout"]}
+            </button>
             <ThemeToggle />
             <LanguageSelect />
           </div>
         </div>
-        <div className="flex items-center gap-1 px-4 md:px-6 pb-2 overflow-x-auto">
+        <div className="flex items-center gap-1 px-4 md:px-6 pb-2">
           <a href="/" className="text-xs font-medium text-theme-secondary bg-secondary hover:bg-[var(--border)] border border-theme rounded-lg px-2.5 py-1.5 transition-colors whitespace-nowrap">
             {t["home.home"]}
           </a>
@@ -429,17 +436,9 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
           <a href="/insights" className="text-xs font-medium text-theme-secondary bg-secondary hover:bg-[var(--border)] border border-theme rounded-lg px-2.5 py-1.5 transition-colors whitespace-nowrap">
             {t["nav.insights"]}
           </a>
-          {subscription === "trialing" && (
-            <span className="text-xs text-amber-600 whitespace-nowrap ml-1">
-              {locale === "ja"
-                ? `${t["trial.remaining"]} ${trialDaysLeft}${t["trial.days"]}`
-                : `Trial: ${trialDaysLeft} ${t["trial.days"]}`}
-            </span>
-          )}
-          <span className="text-xs text-theme-muted whitespace-nowrap ml-auto">{username}</span>
-          <button onClick={onLogout} className="text-xs text-theme-muted hover:text-theme-secondary transition-colors whitespace-nowrap">
-            {t["common.logout"]}
-          </button>
+          <span className="text-xs font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg px-2 py-1 ml-auto whitespace-nowrap">
+            {locale === "ja" ? `${dayCount}${t["pc.dayCount"]}` : `Day ${dayCount}`}
+          </span>
         </div>
       </header>
 
