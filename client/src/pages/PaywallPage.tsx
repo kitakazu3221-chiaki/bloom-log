@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useI18n } from "../hooks/useI18n";
+import { AdBanner } from "../components/AdBanner";
 
 interface PaywallPageProps {
   username: string;
   onLogout: () => void;
+  region: "jp" | "global";
 }
 
-export function PaywallPage({ username, onLogout }: PaywallPageProps) {
+export function PaywallPage({ username, onLogout, region }: PaywallPageProps) {
   const { t, locale } = useI18n();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -139,6 +141,11 @@ export function PaywallPage({ username, onLogout }: PaywallPageProps) {
         <p className="text-center text-sm text-theme-muted mt-6">
           Bloom Log &middot; {t["paywall.tagline"]}
         </p>
+
+        {/* Ad Banner */}
+        <div className="mt-6">
+          <AdBanner region={region} subscription="expired" />
+        </div>
       </div>
     </div>
   );

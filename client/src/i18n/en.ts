@@ -273,6 +273,13 @@ export const en: Record<keyof typeof ja, string> = {
   "insights.factorAlcohol": "Alcohol",
   "insights.factorMassage": "Scalp Massage",
 
+  // Ads
+  "ad.label": "Ad",
+  "ad.disclosure": "This page contains affiliate links.",
+  "ad.hideAds": "To remove ads,",
+  "ad.upgrade": "upgrade your plan",
+  "ad.learnMore": "Learn more",
+
   // Landing footer
   "landing.legal": "Legal Notice",
 };

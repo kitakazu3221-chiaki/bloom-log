@@ -3,6 +3,7 @@ import { useI18n } from "../hooks/useI18n";
 import { useStorage } from "../hooks/useStorage";
 import { LanguageSelect } from "../components/LanguageSelect";
 import { ThemeToggle } from "../components/ThemeToggle";
+import { AdBanner } from "../components/AdBanner";
 import type { ScalpArea, PhotoRecord } from "../types";
 
 const AREAS: ScalpArea[] = ["top", "front", "side"];
@@ -61,6 +62,7 @@ interface HomePageProps {
   trialDaysLeft: number;
   createdAt: string;
   storageMode: "cloud" | "local" | "filesystem";
+  region: "jp" | "global";
 }
 
 export function HomePage({
@@ -70,6 +72,7 @@ export function HomePage({
   trialDaysLeft,
   createdAt,
   storageMode,
+  region,
 }: HomePageProps) {
   const { t, locale } = useI18n();
   const storage = useStorage(storageMode);
@@ -281,10 +284,7 @@ export function HomePage({
                 {/* Streak */}
                 {streak > 0 && (
                   <div className="bg-surface rounded-2xl border border-theme-light shadow-theme p-5 lg:p-6 flex flex-col items-center justify-center text-center">
-                    <span className="text-3xl lg:text-4xl mb-1">🔥</span>
-                    <span className="text-theme-primary font-bold text-lg lg:text-xl">
-                      {streak}
-                    </span>
+                    <span className="text-theme-primary font-bold text-3xl lg:text-4xl mb-1">{streak}</span>
                     <span className="text-sm text-theme-muted">
                       {locale === "ja" ? "日連続" : "day streak"}
                     </span>
@@ -394,8 +394,8 @@ export function HomePage({
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-theme-faint text-4xl">
-                            📷
+                          <div className="w-full h-full flex items-center justify-center text-theme-faint text-sm">
+                            {locale === "ja" ? "未撮影" : "No photo"}
                           </div>
                         )}
                       </div>
@@ -409,6 +409,11 @@ export function HomePage({
             </div>
           </div>
         )}
+
+        {/* Ad Banner */}
+        <div className="mt-6 lg:mt-8">
+          <AdBanner region={region} subscription={subscription} />
+        </div>
       </main>
     </div>
   );

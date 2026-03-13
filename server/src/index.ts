@@ -10,6 +10,7 @@ import { readFile, writeFile, mkdir, unlink } from "fs/promises";
 import { resolve, dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid";
+import geoip from "geoip-lite";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = resolve(__dirname, "../data");
@@ -26,9 +27,9 @@ const TRIAL_DAYS = 14;
 
 // ── Stripe ──────────────────────────────────────────────────────────────────
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
-  apiVersion: "2025-02-24.acacia",
-});
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2025-02-24.acacia" })
+  : (null as unknown as Stripe);
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET ?? "";
 const STRIPE_PRICE_ID_JPY = process.env.STRIPE_PRICE_ID_JPY ?? process.env.STRIPE_PRICE_ID ?? "";
 const STRIPE_PRICE_ID_USD = process.env.STRIPE_PRICE_ID_USD ?? process.env.STRIPE_PRICE_ID ?? "";
@@ -363,7 +364,10 @@ app.get("/api/auth/me", (req, res) => {
   const trialDaysLeft = Math.max(0, Math.ceil(
     (new Date(user.trialEndsAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
   ));
-  res.json({ username: payload.username, subscription, trialDaysLeft, createdAt: user.createdAt, storageMode: user.storageMode ?? "cloud" });
+  const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.ip || "";
+  const geo = geoip.lookup(ip);
+  const region = geo?.country === "JP" ? "jp" : "global";
+  res.json({ username: payload.username, subscription, trialDaysLeft, createdAt: user.createdAt, storageMode: user.storageMode ?? "cloud", region });
 });
 
 // ── Signaling routes ──────────────────────────────────────────────────────────

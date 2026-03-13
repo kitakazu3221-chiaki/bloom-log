@@ -3,6 +3,7 @@ import { useStorage } from "../hooks/useStorage";
 import { useI18n } from "../hooks/useI18n";
 import { LanguageSelect } from "../components/LanguageSelect";
 import { ThemeToggle } from "../components/ThemeToggle";
+import { AdBanner } from "../components/AdBanner";
 
 import { type ScalpArea, type PhotoRecord } from "../types";
 
@@ -317,9 +318,10 @@ interface HistoryPageProps {
   trialDaysLeft: number;
   createdAt: string;
   storageMode: "cloud" | "local" | "filesystem";
+  region: "jp" | "global";
 }
 
-export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, createdAt, storageMode }: HistoryPageProps) {
+export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, createdAt, storageMode, region }: HistoryPageProps) {
   const { t, locale } = useI18n();
   const areaLabels = useAreaLabels();
   const storage = useStorage(storageMode);
@@ -763,6 +765,11 @@ export function HistoryPage({ username, onLogout, subscription, trialDaysLeft, c
             )}
           </>
         )}
+
+        {/* Ad Banner */}
+        <div className="mt-6 lg:mt-8 px-4 lg:px-8">
+          <AdBanner region={region} subscription={subscription} />
+        </div>
       </main>
 
       {/* Lightbox */}

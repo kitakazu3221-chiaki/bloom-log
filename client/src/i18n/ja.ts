@@ -271,6 +271,13 @@ export const ja = {
   "insights.factorAlcohol": "飲酒",
   "insights.factorMassage": "頭皮マッサージ",
 
+  // Ads
+  "ad.label": "広告",
+  "ad.disclosure": "※アフィリエイト広告を含みます",
+  "ad.hideAds": "広告を非表示にするには",
+  "ad.upgrade": "プランをアップグレード",
+  "ad.learnMore": "詳しく見る",
+
   // Landing footer
   "landing.legal": "特定商取引法に基づく表記",
 };

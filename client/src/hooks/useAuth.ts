@@ -7,6 +7,7 @@ export interface AuthUser {
   trialDaysLeft: number;
   createdAt: string;
   storageMode: "cloud" | "local" | "filesystem";
+  region: "jp" | "global";
 }
 
 interface UseAuthReturn {

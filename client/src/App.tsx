@@ -82,6 +82,7 @@ function AuthGate({ pathname }: { pathname: string }) {
       <PaywallPage
         username={user.username}
         onLogout={logout}
+        region={user.region}
       />
     );
   }
@@ -95,6 +96,7 @@ function AuthGate({ pathname }: { pathname: string }) {
         trialDaysLeft={user.trialDaysLeft}
         createdAt={user.createdAt}
         storageMode={user.storageMode}
+        region={user.region}
       />
     ) : pathname === "/insights" ? (
       <InsightsPage
@@ -104,6 +106,7 @@ function AuthGate({ pathname }: { pathname: string }) {
         trialDaysLeft={user.trialDaysLeft}
         createdAt={user.createdAt}
         storageMode={user.storageMode}
+        region={user.region}
       />
     ) : pathname === "/capture" ? (
       <PCPage
@@ -131,6 +134,7 @@ function AuthGate({ pathname }: { pathname: string }) {
         trialDaysLeft={user.trialDaysLeft}
         createdAt={user.createdAt}
         storageMode={user.storageMode}
+        region={user.region}
       />
     );
 

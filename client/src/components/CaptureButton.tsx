@@ -59,7 +59,7 @@ export function CaptureButton({
               {countdown}
             </span>
           ) : (
-            <span className="text-white text-2xl">📷</span>
+            <span className="text-white text-2xl font-bold">●</span>
           )}
         </span>
       </button>

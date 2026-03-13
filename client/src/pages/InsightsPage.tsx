@@ -3,6 +3,7 @@ import { useI18n } from "../hooks/useI18n";
 import { useStorage, type StorageMode } from "../hooks/useStorage";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { LanguageSelect } from "../components/LanguageSelect";
+import { AdBanner } from "../components/AdBanner";
 import {
   aggregateDailyData,
   computeCorrelations,
@@ -18,6 +19,7 @@ interface InsightsPageProps {
   trialDaysLeft: number;
   createdAt: string;
   storageMode: StorageMode;
+  region: "jp" | "global";
 }
 
 const MIN_DAYS = 14;
@@ -205,6 +207,7 @@ export function InsightsPage({
   trialDaysLeft,
   createdAt,
   storageMode,
+  region,
 }: InsightsPageProps) {
   const { t, locale } = useI18n();
   const storage = useStorage(storageMode);
@@ -470,6 +473,11 @@ export function InsightsPage({
             </div>
           </>
         )}
+
+        {/* Ad Banner */}
+        <div className="mt-6 lg:mt-8">
+          <AdBanner region={region} subscription={subscription} />
+        </div>
       </main>
     </div>
   );
