@@ -200,26 +200,26 @@ export function HomePage({
             {/* Left Column */}
             <div className="space-y-5 lg:space-y-6">
               {/* Today's Status Card */}
-              <div className="bg-surface rounded-2xl border border-theme-light shadow-theme p-6 lg:p-8">
-                <div className="flex items-center justify-between mb-6">
-                  <p className="text-theme-primary font-bold text-xl lg:text-2xl">
+              <div className="bg-surface rounded-2xl border border-theme-light shadow-theme p-4 md:p-6 lg:p-8">
+                <div className="flex items-start justify-between mb-4 md:mb-6 gap-2">
+                  <p className="text-theme-primary font-bold text-base md:text-xl lg:text-2xl min-w-0">
                     {username}
                     {t["home.greeting"]}
                   </p>
-                  <span className="text-base lg:text-lg text-theme-muted">
+                  <span className="text-xs md:text-base lg:text-lg text-theme-muted whitespace-nowrap shrink-0">
                     {todayFormatted}
                   </span>
                 </div>
                 <p className="text-base lg:text-lg font-bold text-theme-secondary mb-5">
                   {t["home.todayStatus"]}
                 </p>
-                <div className="flex items-center gap-6 lg:gap-8 mb-5">
+                <div className="flex items-center gap-3 md:gap-6 lg:gap-8 mb-5 flex-wrap">
                   {AREAS.map((area) => {
                     const done = todayAreas.has(area);
                     return (
-                      <div key={area} className="flex items-center gap-3">
+                      <div key={area} className="flex items-center gap-2 md:gap-3">
                         <span
-                          className={`w-10 h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center text-base lg:text-lg ${
+                          className={`w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center text-sm md:text-base lg:text-lg ${
                             done
                               ? "bg-emerald-500 text-white"
                               : "bg-secondary text-theme-faint border border-theme"
@@ -228,7 +228,7 @@ export function HomePage({
                           {done ? "✓" : ""}
                         </span>
                         <span
-                          className={`text-base lg:text-lg ${done ? "text-theme-primary" : "text-theme-muted"}`}
+                          className={`text-sm md:text-base lg:text-lg ${done ? "text-theme-primary" : "text-theme-muted"}`}
                         >
                           {areaLabels[area]}
                         </span>
@@ -262,11 +262,11 @@ export function HomePage({
               </a>
 
               {/* Streak + Stats in a row */}
-              <div className="grid grid-cols-4 gap-4 lg:gap-5">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-5">
                 {/* Streak */}
                 {streak > 0 && (
-                  <div className="bg-surface rounded-2xl border border-theme-light shadow-theme p-5 lg:p-6 flex flex-col items-center justify-center text-center">
-                    <span className="text-theme-primary font-bold text-3xl lg:text-4xl mb-1">{streak}</span>
+                  <div className="bg-surface rounded-2xl border border-theme-light shadow-theme p-3 md:p-5 lg:p-6 flex flex-col items-center justify-center text-center">
+                    <span className="text-theme-primary font-bold text-2xl md:text-3xl lg:text-4xl mb-1">{streak}</span>
                     <span className="text-sm text-theme-muted">
                       {locale === "ja" ? "日連続" : "day streak"}
                     </span>
@@ -295,13 +295,13 @@ export function HomePage({
                 ].map((stat) => (
                   <div
                     key={stat.label}
-                    className="bg-surface rounded-2xl border border-theme-light shadow-theme p-5 lg:p-6 text-center flex flex-col items-center justify-center"
+                    className="bg-surface rounded-2xl border border-theme-light shadow-theme p-3 md:p-5 lg:p-6 text-center flex flex-col items-center justify-center min-w-0"
                   >
-                    <p className="text-sm lg:text-base text-theme-muted mb-1">{stat.label}</p>
+                    <p className="text-xs md:text-sm lg:text-base text-theme-muted mb-1 truncate w-full">{stat.label}</p>
                     {stat.value && (
-                      <p className="text-3xl lg:text-4xl font-bold text-theme-primary">
+                      <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-theme-primary">
                         {stat.value}
-                        <span className="text-base lg:text-lg text-theme-muted ml-0.5">
+                        <span className="text-sm md:text-base lg:text-lg text-theme-muted ml-0.5">
                           {stat.unit}
                         </span>
                       </p>
@@ -314,8 +314,8 @@ export function HomePage({
             {/* Right Column */}
             <div className="space-y-5 lg:space-y-6">
               {/* Weekly View */}
-              <div className="bg-surface rounded-2xl border border-theme-light shadow-theme p-6 lg:p-8">
-                <p className="text-base lg:text-lg font-bold text-theme-secondary mb-6">
+              <div className="bg-surface rounded-2xl border border-theme-light shadow-theme p-4 md:p-6 lg:p-8">
+                <p className="text-sm md:text-base lg:text-lg font-bold text-theme-secondary mb-4 md:mb-6">
                   {t["home.weekView"]}
                 </p>
                 <div className="flex items-center justify-between">
@@ -324,10 +324,10 @@ export function HomePage({
                     return (
                       <div
                         key={day.dateStr}
-                        className="flex flex-col items-center gap-2.5"
+                        className="flex flex-col items-center gap-1.5 md:gap-2.5"
                       >
                         <span
-                          className={`w-12 h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center text-sm lg:text-base font-bold ${
+                          className={`w-9 h-9 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center text-xs md:text-sm lg:text-base font-bold ${
                             hasRecord
                               ? "bg-emerald-500 text-white"
                               : day.isToday
@@ -338,7 +338,7 @@ export function HomePage({
                           {hasRecord ? "✓" : ""}
                         </span>
                         <span
-                          className={`text-sm lg:text-base ${day.isToday ? "text-emerald-600 font-bold" : "text-theme-muted"}`}
+                          className={`text-xs md:text-sm lg:text-base ${day.isToday ? "text-emerald-600 font-bold" : "text-theme-muted"}`}
                         >
                           {day.dayLabel}
                         </span>
@@ -349,19 +349,19 @@ export function HomePage({
               </div>
 
               {/* Latest Photos */}
-              <div className="bg-surface rounded-2xl border border-theme-light shadow-theme p-6 lg:p-8">
-                <div className="flex items-center justify-between mb-6">
-                  <p className="text-base lg:text-lg font-bold text-theme-secondary">
+              <div className="bg-surface rounded-2xl border border-theme-light shadow-theme p-4 md:p-6 lg:p-8">
+                <div className="flex items-center justify-between mb-4 md:mb-6">
+                  <p className="text-sm md:text-base lg:text-lg font-bold text-theme-secondary">
                     {t["home.latestPhotos"]}
                   </p>
                   <a
                     href="/history"
-                    className="text-base lg:text-lg text-emerald-600 hover:text-emerald-500 font-medium transition-colors"
+                    className="text-sm md:text-base lg:text-lg text-emerald-600 hover:text-emerald-500 font-medium transition-colors"
                   >
                     {t["home.viewHistory"]} →
                   </a>
                 </div>
-                <div className="grid grid-cols-3 gap-4 lg:gap-6">
+                <div className="grid grid-cols-3 gap-3 lg:gap-6">
                   {AREAS.map((area) => (
                     <a
                       key={area}
