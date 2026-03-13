@@ -314,14 +314,13 @@ function CompareSlider({ beforeUrl, afterUrl }: { beforeUrl: string; afterUrl: s
 interface HistoryPageProps {
   username: string;
   onLogout: () => void;
-  subscription: "trialing" | "active";
-  trialDaysLeft: number;
+  subscription: "free" | "active";
   createdAt: string;
   storageMode: "cloud" | "local" | "filesystem";
   region: "jp" | "global";
 }
 
-export function HistoryPage({ username: _username, onLogout, subscription, trialDaysLeft, createdAt, storageMode, region }: HistoryPageProps) {
+export function HistoryPage({ username: _username, onLogout, subscription, createdAt, storageMode, region }: HistoryPageProps) {
   const { t, locale } = useI18n();
   const areaLabels = useAreaLabels();
   const storage = useStorage(storageMode);
@@ -412,12 +411,10 @@ export function HistoryPage({ username: _username, onLogout, subscription, trial
             <h1 className="text-base font-bold text-theme-primary tracking-tight whitespace-nowrap">{t["history.title"]}</h1>
           </div>
           <div className="flex items-center gap-1.5">
-            {subscription === "trialing" && (
-              <span className="text-[10px] text-amber-600 whitespace-nowrap">
-                {locale === "ja"
-                  ? `${trialDaysLeft}${t["trial.days"]}`
-                  : `${trialDaysLeft}d left`}
-              </span>
+            {subscription === "free" && (
+              <a href="/upgrade" className="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded px-1.5 py-0.5 whitespace-nowrap hover:bg-emerald-100 transition-colors">
+                {t["premium.badge"]}
+              </a>
             )}
             <button onClick={onLogout} className="text-[10px] text-theme-muted hover:text-theme-secondary transition-colors whitespace-nowrap">
               {t["common.logout"]}
@@ -587,8 +584,25 @@ export function HistoryPage({ username: _username, onLogout, subscription, trial
                         {t["common.close"]}
                       </button>
                     </div>
-                    <CompareSlider beforeUrl={compareBeforeUrl} afterUrl={compareAfterUrl} />
-                    <p className="text-sm text-center text-theme-muted mt-2">{t["history.compareHint"]}</p>
+                    {subscription === "active" ? (
+                      <>
+                        <CompareSlider beforeUrl={compareBeforeUrl} afterUrl={compareAfterUrl} />
+                        <p className="text-sm text-center text-theme-muted mt-2">{t["history.compareHint"]}</p>
+                      </>
+                    ) : (
+                      <div className="relative min-h-[280px] rounded-xl overflow-hidden">
+                        <div className="absolute inset-0 bg-secondary" />
+                        <img src={compareBeforeUrl} alt="" className="absolute inset-0 w-full h-full object-cover blur-md opacity-40" />
+                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 z-10">
+                          <span className="text-3xl">🔒</span>
+                          <p className="text-base font-bold text-theme-primary">{t["premium.feature"]}</p>
+                          <p className="text-sm text-theme-muted text-center px-4">{t["premium.compareDesc"]}</p>
+                          <a href="/upgrade" className="mt-2 px-5 py-2.5 bg-emerald-600 text-white font-bold text-sm rounded-xl shadow-md hover:bg-emerald-500 transition-all active:scale-[0.98]">
+                            {t["premium.upgrade"]}
+                          </a>
+                        </div>
+                      </div>
+                    )}
                   </section>
                 )}
 

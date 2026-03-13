@@ -58,8 +58,7 @@ function getLast7Days(locale: string) {
 interface HomePageProps {
   username: string;
   onLogout: () => void;
-  subscription: "trialing" | "active";
-  trialDaysLeft: number;
+  subscription: "free" | "active";
   createdAt: string;
   storageMode: "cloud" | "local" | "filesystem";
   region: "jp" | "global";
@@ -69,7 +68,6 @@ export function HomePage({
   username,
   onLogout,
   subscription,
-  trialDaysLeft,
   createdAt,
   storageMode,
   region,
@@ -154,12 +152,10 @@ export function HomePage({
             </h1>
           </div>
           <div className="flex items-center gap-1.5">
-            {subscription === "trialing" && (
-              <span className="text-[10px] text-amber-600 whitespace-nowrap">
-                {locale === "ja"
-                  ? `${trialDaysLeft}${t["trial.days"]}`
-                  : `${trialDaysLeft}d left`}
-              </span>
+            {subscription === "free" && (
+              <a href="/upgrade" className="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded px-1.5 py-0.5 whitespace-nowrap hover:bg-emerald-100 transition-colors">
+                {t["premium.badge"]}
+              </a>
             )}
             <button onClick={onLogout} className="text-[10px] text-theme-muted hover:text-theme-secondary transition-colors whitespace-nowrap">
               {t["common.logout"]}

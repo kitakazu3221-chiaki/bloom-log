@@ -3,7 +3,7 @@ import { useI18n } from "./useI18n";
 
 export interface AuthUser {
   username: string;
-  subscription: "trialing" | "active" | "expired";
+  subscription: "free" | "active";
   trialDaysLeft: number;
   createdAt: string;
   storageMode: "cloud" | "local" | "filesystem";

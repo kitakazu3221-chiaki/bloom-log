@@ -38,7 +38,7 @@ export const ja = {
   "landing.strength5.title": "インストール不要",
   "landing.strength5.desc": "ブラウザだけで使える。ダウンロードなしですぐ開始",
   "landing.cta": "無料で始める",
-  "landing.ctaSub": "まずは無料トライアルからお試しください",
+  "landing.ctaSub": "基本機能は無料でご利用いただけます",
 
   // Auth page
   "auth.login": "ログイン",
@@ -133,16 +133,18 @@ export const ja = {
 
   // Paywall page
   "paywall.greeting": "さん",
-  "paywall.trialEnded": "無料トライアルが終了しました",
-  "paywall.subscriptionRequired": "引き続きご利用いただくにはサブスクリプションの登録が必要です",
+  "paywall.upgradeToPremium": "プレミアムにアップグレード",
+  "paywall.upgradeDesc": "全機能を使って、より効果的にケアを記録しましょう",
+  "paywall.premiumActive": "プレミアム会員",
+  "paywall.premiumActiveDesc": "全機能をご利用いただけます",
   "paywall.monthlyPlan": "月額プラン",
-  "paywall.price": "¥700",
+  "paywall.price": "¥500",
   "paywall.pricePeriod": "/月",
   "paywall.autoRenew": "毎月自動更新",
-  "paywall.feature1": "頭皮写真の撮影・記録（無制限）",
-  "paywall.feature2": "Before/After比較・タイムライン",
-  "paywall.feature3": "スマホカメラ連携（WebRTC）",
-  "paywall.subscribe": "サブスクリプションを開始",
+  "paywall.feature1": "Before/After比較機能",
+  "paywall.feature2": "相関分析・トレンド分析",
+  "paywall.feature3": "広告非表示",
+  "paywall.subscribe": "プレミアムを開始",
   "paywall.managePayment": "お支払い管理",
   "paywall.tagline": "頭皮ケア記録",
 
@@ -207,7 +209,7 @@ export const ja = {
   "legal.email": "連絡先",
   "legal.emailValue": "support@bloom-log.com",
   "legal.price": "販売価格",
-  "legal.priceValue": "月額700円（税込）",
+  "legal.priceValue": "月額500円（税込）",
   "legal.payment": "支払方法",
   "legal.paymentValue": "クレジットカード（Stripe決済）",
   "legal.delivery": "サービス提供時期",
@@ -271,6 +273,12 @@ export const ja = {
   "insights.factorDiet": "食事バランス",
   "insights.factorAlcohol": "飲酒",
   "insights.factorMassage": "頭皮マッサージ",
+
+  // Premium gate
+  "premium.feature": "プレミアム機能",
+  "premium.compareDesc": "Before/After比較を利用するにはプレミアムプランが必要です",
+  "premium.upgrade": "アップグレード",
+  "premium.badge": "Premium",
 
   // Ads
   "ad.label": "広告",

@@ -6,9 +6,10 @@ interface PaywallPageProps {
   username: string;
   onLogout: () => void;
   region: "jp" | "global";
+  subscription: "free" | "active";
 }
 
-export function PaywallPage({ username, onLogout, region }: PaywallPageProps) {
+export function PaywallPage({ username, onLogout, region, subscription }: PaywallPageProps) {
   const { t, locale } = useI18n();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -72,14 +73,25 @@ export function PaywallPage({ username, onLogout, region }: PaywallPageProps) {
 
           {/* Content */}
           <div className="px-6 pt-4 pb-6 space-y-4">
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 text-center">
-              <p className="text-base font-semibold text-amber-600 mb-1">
-                {t["paywall.trialEnded"]}
-              </p>
-              <p className="text-sm text-amber-500">
-                {t["paywall.subscriptionRequired"]}
-              </p>
-            </div>
+            {subscription === "active" ? (
+              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl px-5 py-4 text-center">
+                <p className="text-base font-semibold text-emerald-600 mb-1">
+                  {t["paywall.premiumActive"]}
+                </p>
+                <p className="text-sm text-emerald-500">
+                  {t["paywall.premiumActiveDesc"]}
+                </p>
+              </div>
+            ) : (
+              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl px-5 py-4 text-center">
+                <p className="text-base font-semibold text-emerald-600 mb-1">
+                  {t["paywall.upgradeToPremium"]}
+                </p>
+                <p className="text-sm text-emerald-500">
+                  {t["paywall.upgradeDesc"]}
+                </p>
+              </div>
+            )}
 
             <div className="bg-input border border-theme rounded-2xl px-5 py-4">
               <div className="flex items-baseline justify-between mb-2">
@@ -113,13 +125,15 @@ export function PaywallPage({ username, onLogout, region }: PaywallPageProps) {
               </div>
             )}
 
-            <button
-              onClick={handleSubscribe}
-              disabled={loading}
-              className="w-full py-3.5 rounded-xl bg-emerald-600 text-white font-bold text-base shadow-md shadow-emerald-600/20 hover:bg-emerald-500 disabled:opacity-60 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
-            >
-              {loading ? t["common.processing"] : t["paywall.subscribe"]}
-            </button>
+            {subscription !== "active" && (
+              <button
+                onClick={handleSubscribe}
+                disabled={loading}
+                className="w-full py-3.5 rounded-xl bg-emerald-600 text-white font-bold text-base shadow-md shadow-emerald-600/20 hover:bg-emerald-500 disabled:opacity-60 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
+              >
+                {loading ? t["common.processing"] : t["paywall.subscribe"]}
+              </button>
+            )}
 
             <div className="flex items-center justify-between">
               <button
@@ -128,6 +142,12 @@ export function PaywallPage({ username, onLogout, region }: PaywallPageProps) {
               >
                 {t["paywall.managePayment"]}
               </button>
+              <a
+                href="/"
+                className="text-sm text-theme-muted hover:text-theme-secondary transition-colors"
+              >
+                {t["nav.home"]}
+              </a>
               <button
                 onClick={onLogout}
                 className="text-sm text-theme-muted hover:text-theme-secondary transition-colors"
@@ -143,9 +163,11 @@ export function PaywallPage({ username, onLogout, region }: PaywallPageProps) {
         </p>
 
         {/* Ad Banner */}
-        <div className="mt-6">
-          <AdBanner region={region} subscription="expired" />
-        </div>
+        {subscription !== "active" && (
+          <div className="mt-6">
+            <AdBanner region={region} subscription={subscription} />
+          </div>
+        )}
       </div>
     </div>
   );

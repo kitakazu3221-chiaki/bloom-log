@@ -40,7 +40,7 @@ export const en: Record<keyof typeof ja, string> = {
   "landing.strength5.title": "No Install Required",
   "landing.strength5.desc": "Works in your browser. No downloads, no app store",
   "landing.cta": "Get Started Free",
-  "landing.ctaSub": "Start with a free trial today",
+  "landing.ctaSub": "Basic features are free to use",
 
   // Auth page
   "auth.login": "Login",
@@ -135,16 +135,18 @@ export const en: Record<keyof typeof ja, string> = {
 
   // Paywall page
   "paywall.greeting": "",
-  "paywall.trialEnded": "Your free trial has ended",
-  "paywall.subscriptionRequired": "A subscription is required to continue using the service",
+  "paywall.upgradeToPremium": "Upgrade to Premium",
+  "paywall.upgradeDesc": "Unlock all features for more effective tracking",
+  "paywall.premiumActive": "Premium Member",
+  "paywall.premiumActiveDesc": "You have access to all features",
   "paywall.monthlyPlan": "Monthly Plan",
-  "paywall.price": "$5",
+  "paywall.price": "$3",
   "paywall.pricePeriod": "/mo",
   "paywall.autoRenew": "Auto-renewed monthly",
-  "paywall.feature1": "Unlimited scalp photo capture & recording",
-  "paywall.feature2": "Before/After comparison & timeline",
-  "paywall.feature3": "Phone camera sync (WebRTC)",
-  "paywall.subscribe": "Start Subscription",
+  "paywall.feature1": "Before/After comparison",
+  "paywall.feature2": "Correlation & trend analysis",
+  "paywall.feature3": "Ad-free experience",
+  "paywall.subscribe": "Start Premium",
   "paywall.managePayment": "Manage Billing",
   "paywall.tagline": "Scalp Care Tracker",
 
@@ -209,7 +211,7 @@ export const en: Record<keyof typeof ja, string> = {
   "legal.email": "Contact",
   "legal.emailValue": "support@bloom-log.com",
   "legal.price": "Price",
-  "legal.priceValue": "$5/month (tax included)",
+  "legal.priceValue": "$3/month (tax included)",
   "legal.payment": "Payment Method",
   "legal.paymentValue": "Credit card (via Stripe)",
   "legal.delivery": "Service Availability",
@@ -273,6 +275,12 @@ export const en: Record<keyof typeof ja, string> = {
   "insights.factorDiet": "Diet",
   "insights.factorAlcohol": "Alcohol",
   "insights.factorMassage": "Scalp Massage",
+
+  // Premium gate
+  "premium.feature": "Premium Feature",
+  "premium.compareDesc": "Upgrade to Premium to unlock Before/After comparison",
+  "premium.upgrade": "Upgrade",
+  "premium.badge": "Premium",
 
   // Ads
   "ad.label": "Ad",

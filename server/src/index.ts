@@ -175,28 +175,9 @@ function requireAuth(
 
 // ── Subscription helpers ─────────────────────────────────────────────────────
 
-function getUserSubscriptionState(user: User): "trialing" | "active" | "expired" {
+function getUserSubscriptionState(user: User): "free" | "active" {
   if (user.subscriptionStatus === "active") return "active";
-  const trialEnd = new Date(user.trialEndsAt);
-  if (Date.now() < trialEnd.getTime()) return "trialing";
-  return "expired";
-}
-
-function requireSubscription(
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
-): void {
-  const { userId } = (req as AuthRequest).authUser;
-  const store = readUsers();
-  const user = store.users.find((u) => u.id === userId);
-  if (!user) { res.status(401).json({ error: "User not found" }); return; }
-  const state = getUserSubscriptionState(user);
-  if (state === "expired") {
-    res.status(403).json({ error: "subscription_required" });
-    return;
-  }
-  next();
+  return "free";
 }
 
 // ── Records helpers ───────────────────────────────────────────────────────────
@@ -425,9 +406,7 @@ app.get("/api/auth/me", (req, res) => {
   const user = store.users.find((u) => u.id === payload.userId);
   if (!user) { res.status(401).json({ error: "User not found" }); return; }
   const subscription = getUserSubscriptionState(user);
-  const trialDaysLeft = Math.max(0, Math.ceil(
-    (new Date(user.trialEndsAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-  ));
+  const trialDaysLeft = 0;
   const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.ip || "";
   const geo = geoip.lookup(ip);
   const region = geo?.country === "JP" ? "jp" : "global";
@@ -556,12 +535,9 @@ app.get("/api/subscription/status", requireAuth, (req, res) => {
   const user = store.users.find((u) => u.id === userId);
   if (!user) { res.status(404).json({ error: "User not found" }); return; }
   const state = getUserSubscriptionState(user);
-  const trialDaysLeft = Math.max(0, Math.ceil(
-    (new Date(user.trialEndsAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-  ));
   res.json({
     state,
-    trialDaysLeft,
+    trialDaysLeft: 0,
     subscriptionStatus: user.subscriptionStatus ?? "none",
     currentPeriodEnd: user.currentPeriodEnd ?? null,
   });
@@ -569,7 +545,7 @@ app.get("/api/subscription/status", requireAuth, (req, res) => {
 
 // ── Photo routes ──────────────────────────────────────────────────────────────
 
-app.post("/api/photos/upload", uploadLimiter, requireAuth, requireSubscription, async (req, res) => {
+app.post("/api/photos/upload", uploadLimiter, requireAuth, async (req, res) => {
   const { userId } = (req as AuthRequest).authUser;
   const { dataUrl, area, notes } = req.body as {
     dataUrl?: string; area?: ScalpArea; notes?: NoteData;
@@ -628,12 +604,12 @@ app.post("/api/photos/upload", uploadLimiter, requireAuth, requireSubscription, 
   }
 });
 
-app.get("/api/photos/records", requireAuth, requireSubscription, async (req, res) => {
+app.get("/api/photos/records", requireAuth, async (req, res) => {
   const { userId } = (req as AuthRequest).authUser;
   res.json({ records: await readRecords(userId) });
 });
 
-app.get("/api/photos/file/:area/:filename", requireAuth, requireSubscription, async (req, res) => {
+app.get("/api/photos/file/:area/:filename", requireAuth, async (req, res) => {
   const { userId } = (req as AuthRequest).authUser;
   const { area, filename } = req.params as { area: string; filename: string };
   // Validate area is one of allowed values
@@ -651,7 +627,7 @@ app.get("/api/photos/file/:area/:filename", requireAuth, requireSubscription, as
   } catch { res.status(404).end(); }
 });
 
-app.delete("/api/photos/:id", requireAuth, requireSubscription, async (req, res) => {
+app.delete("/api/photos/:id", requireAuth, async (req, res) => {
   const { userId } = (req as AuthRequest).authUser;
   const recordsFile = join(RECORDS_DIR, userId, "records.json");
   try {

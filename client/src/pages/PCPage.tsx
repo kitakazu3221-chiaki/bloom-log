@@ -32,14 +32,13 @@ type CameraMode = "phone" | "pc";
 interface PCPageProps {
   username: string;
   onLogout: () => void;
-  subscription: "trialing" | "active";
-  trialDaysLeft: number;
+  subscription: "free" | "active";
   createdAt: string;
   storageMode: "cloud" | "local" | "filesystem";
   onStorageModeChange: (mode: "cloud" | "local" | "filesystem") => void;
 }
 
-export function PCPage({ username: _username, onLogout, subscription, trialDaysLeft, createdAt, storageMode, onStorageModeChange }: PCPageProps) {
+export function PCPage({ username: _username, onLogout, subscription, createdAt, storageMode, onStorageModeChange }: PCPageProps) {
   const { t, locale } = useI18n();
   const [mobile] = useState(() => isMobile());
   const [cameraMode, setCameraMode] = useState<CameraMode>(mobile ? "pc" : "phone");
@@ -154,12 +153,10 @@ export function PCPage({ username: _username, onLogout, subscription, trialDaysL
             <h1 className="text-base font-bold text-theme-primary tracking-tight whitespace-nowrap">Bloom Log</h1>
           </div>
           <div className="flex items-center gap-1.5">
-            {subscription === "trialing" && (
-              <span className="text-[10px] text-amber-600 whitespace-nowrap">
-                {locale === "ja"
-                  ? `${trialDaysLeft}${t["trial.days"]}`
-                  : `${trialDaysLeft}d left`}
-              </span>
+            {subscription === "free" && (
+              <a href="/upgrade" className="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded px-1.5 py-0.5 whitespace-nowrap hover:bg-emerald-100 transition-colors">
+                {t["premium.badge"]}
+              </a>
             )}
             <button onClick={onLogout} className="text-[10px] text-theme-muted hover:text-theme-secondary transition-colors whitespace-nowrap">
               {t["common.logout"]}

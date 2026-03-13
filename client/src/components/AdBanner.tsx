@@ -4,7 +4,7 @@ import { JP_ADS, GLOBAL_ADS, type AdItem } from "../config/ads";
 
 interface AdBannerProps {
   region: "jp" | "global";
-  subscription: "trialing" | "active" | "expired";
+  subscription: "free" | "active";
 }
 
 export function AdBanner({ region, subscription }: AdBannerProps) {

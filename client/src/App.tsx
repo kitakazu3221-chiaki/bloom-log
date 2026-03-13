@@ -83,23 +83,19 @@ function AuthGate({ pathname }: { pathname: string }) {
     return <LandingPage />;
   }
 
-  if (user.subscription === "expired") {
-    return (
+  const mainPage =
+    pathname === "/upgrade" ? (
       <PaywallPage
         username={user.username}
         onLogout={logout}
         region={user.region}
+        subscription={user.subscription}
       />
-    );
-  }
-
-  const mainPage =
-    pathname === "/history" ? (
+    ) : pathname === "/history" ? (
       <HistoryPage
         username={user.username}
         onLogout={logout}
         subscription={user.subscription}
-        trialDaysLeft={user.trialDaysLeft}
         createdAt={user.createdAt}
         storageMode={user.storageMode}
         region={user.region}
@@ -109,7 +105,6 @@ function AuthGate({ pathname }: { pathname: string }) {
         username={user.username}
         onLogout={logout}
         subscription={user.subscription}
-        trialDaysLeft={user.trialDaysLeft}
         createdAt={user.createdAt}
         storageMode={user.storageMode}
         region={user.region}
@@ -119,7 +114,6 @@ function AuthGate({ pathname }: { pathname: string }) {
         username={user.username}
         onLogout={logout}
         subscription={user.subscription}
-        trialDaysLeft={user.trialDaysLeft}
         createdAt={user.createdAt}
         storageMode={user.storageMode}
         onStorageModeChange={async (mode) => {
@@ -137,7 +131,6 @@ function AuthGate({ pathname }: { pathname: string }) {
         username={user.username}
         onLogout={logout}
         subscription={user.subscription}
-        trialDaysLeft={user.trialDaysLeft}
         createdAt={user.createdAt}
         storageMode={user.storageMode}
         region={user.region}
