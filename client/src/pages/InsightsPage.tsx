@@ -49,7 +49,7 @@ function SimpleLineChart({
 
   const width = 400;
   const height = 140;
-  const padLeft = 40;
+  const padLeft = 50;
   const padRight = 16;
   const padTop = 16;
   const padBottom = 28;
@@ -106,7 +106,7 @@ function SimpleLineChart({
         {minY}
       </text>
       {yLabel && (
-        <text x={4} y={padTop + chartH / 2} textAnchor="start" fill="var(--text-muted)" fontSize="9" transform={`rotate(-90 4 ${padTop + chartH / 2})`}>
+        <text x={12} y={padTop + chartH / 2} textAnchor="middle" fill="var(--text-muted)" fontSize="9" transform={`rotate(-90 12 ${padTop + chartH / 2})`}>
           {yLabel}
         </text>
       )}
