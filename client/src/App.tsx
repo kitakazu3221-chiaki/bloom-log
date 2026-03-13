@@ -11,6 +11,7 @@ import { LandingPage } from "./pages/LandingPage";
 import { LegalPage } from "./pages/LegalPage";
 import { HomePage } from "./pages/HomePage";
 import { InsightsPage } from "./pages/InsightsPage";
+import { BlogListPage, BlogArticlePage } from "./pages/BlogPage";
 
 function App() {
   const url = new URL(window.location.href);
@@ -69,6 +70,11 @@ function AuthGate({ pathname }: { pathname: string }) {
   }
 
   if (pathname === "/legal") return <LegalPage />;
+  if (pathname === "/blog") return <BlogListPage />;
+  if (pathname.startsWith("/blog/")) {
+    const slug = pathname.replace("/blog/", "");
+    return <BlogArticlePage slug={slug} />;
+  }
 
   if (!user) {
     if (pathname === "/auth") {

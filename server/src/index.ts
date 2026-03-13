@@ -18,12 +18,17 @@ const USERS_FILE = resolve(DATA_DIR, "users.json");
 const PHOTOS_DIR = resolve(DATA_DIR, "photos");
 const RECORDS_DIR = resolve(DATA_DIR, "records");
 
-const JWT_SECRET =
-  process.env.JWT_SECRET ?? "bloom-log-dev-secret-change-in-production";
+const IS_PROD = process.env.NODE_ENV === "production";
+if (IS_PROD && !process.env.JWT_SECRET) {
+  console.error("FATAL: JWT_SECRET environment variable is required in production");
+  process.exit(1);
+}
+const JWT_SECRET = process.env.JWT_SECRET ?? crypto.randomUUID();
 const BCRYPT_ROUNDS = 10;
 const PORT = Number(process.env.PORT ?? 3001);
-const IS_PROD = process.env.NODE_ENV === "production";
 const TRIAL_DAYS = 14;
+const ALLOWED_ORIGINS = ["https://bloom-log.com"];
+if (!IS_PROD) ALLOWED_ORIGINS.push("http://localhost:5173", "http://localhost:3001");
 
 // ── Stripe ──────────────────────────────────────────────────────────────────
 
@@ -160,6 +165,10 @@ function requireAuth(
   if (!token) { res.status(401).json({ error: "Not authenticated" }); return; }
   const payload = verifyToken(token);
   if (!payload) { res.status(401).json({ error: "Invalid token" }); return; }
+  // Validate userId is a valid UUID format to prevent path injection
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(payload.userId)) {
+    res.status(401).json({ error: "Invalid token" }); return;
+  }
   (req as AuthRequest).authUser = payload;
   next();
 }
@@ -209,7 +218,20 @@ async function writeRecords(userId: string, records: PhotoRecord[]): Promise<voi
 
 // ── Signaling helpers ─────────────────────────────────────────────────────────
 
-const sessions = new Map<string, Session>();
+const SESSION_TTL_MS = 30 * 60 * 1000; // 30 minutes
+const sessions = new Map<string, Session & { createdAt: number }>();
+
+// Clean up expired sessions every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [id, session] of sessions) {
+    if (now - session.createdAt > SESSION_TTL_MS) {
+      if (session.pcSSE) session.pcSSE.end();
+      if (session.phoneSSE) session.phoneSSE.end();
+      sessions.delete(id);
+    }
+  }
+}, 5 * 60 * 1000);
 
 function sendSSE(res: express.Response, data: SignalMessage): void {
   res.write(`data: ${JSON.stringify(data)}\n\n`);
@@ -248,9 +270,50 @@ const uploadLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+const signalingLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 min
+  max: 30,
+  message: { error: "リクエストが多すぎます" },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // ── Express app ───────────────────────────────────────────────────────────────
 
 const app = express();
+
+// Trust first proxy (Caddy) for correct IP detection in rate limiting
+if (IS_PROD) app.set("trust proxy", 1);
+
+// Validate Origin header against whitelist
+function getSafeOrigin(req: express.Request): string {
+  const origin = req.headers.origin as string | undefined;
+  if (origin && ALLOWED_ORIGINS.includes(origin)) return origin;
+  return "https://bloom-log.com";
+}
+
+// ── CORS middleware ──────────────────────────────────────────────────────────
+app.use((req, res, next) => {
+  const origin = req.headers.origin as string | undefined;
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  }
+  if (req.method === "OPTIONS") { res.status(204).end(); return; }
+  next();
+});
+
+// ── Security headers ────────────────────────────────────────────────────────
+app.use((_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("X-XSS-Protection", "0");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.removeHeader("X-Powered-By");
+  next();
+});
 
 // ── Stripe webhook (must be before express.json) ─────────────────────────────
 
@@ -313,8 +376,9 @@ app.use(cookieParser());
 app.post("/api/auth/register", authLimiter, async (req, res) => {
   const { username, password } = req.body as { username?: string; password?: string };
   if (!username?.trim() || !password) { res.status(400).json({ error: "ユーザー名とパスワードを入力してください" }); return; }
-  if (username.length < 3) { res.status(400).json({ error: "ユーザー名は3文字以上にしてください" }); return; }
-  if (password.length < 8) { res.status(400).json({ error: "パスワードは8文字以上にしてください" }); return; }
+  if (username.length < 3 || username.length > 30) { res.status(400).json({ error: "ユーザー名は3〜30文字にしてください" }); return; }
+  if (!/^[a-zA-Z0-9_\-]+$/.test(username)) { res.status(400).json({ error: "ユーザー名は英数字・アンダースコア・ハイフンのみ使用できます" }); return; }
+  if (password.length < 8 || password.length > 128) { res.status(400).json({ error: "パスワードは8〜128文字にしてください" }); return; }
 
   const store = readUsers();
   if (store.users.some((u) => u.username === username)) {
@@ -372,14 +436,14 @@ app.get("/api/auth/me", (req, res) => {
 
 // ── Signaling routes ──────────────────────────────────────────────────────────
 
-app.post("/api/session/create", (_req, res) => {
+app.post("/api/session/create", signalingLimiter, requireAuth, (_req, res) => {
   const sessionId = uuidv4();
-  sessions.set(sessionId, { pcMessages: [], phoneMessages: [], pcSSE: null, phoneSSE: null });
+  sessions.set(sessionId, { pcMessages: [], phoneMessages: [], pcSSE: null, phoneSSE: null, createdAt: Date.now() });
   console.log(`[signal] Session created: ${sessionId}`);
   res.json({ sessionId });
 });
 
-app.post("/api/session/join", (req, res) => {
+app.post("/api/session/join", signalingLimiter, requireAuth, (req, res) => {
   const { sessionId } = req.body as { sessionId?: string };
   if (!sessionId) { res.status(400).json({ error: "Missing sessionId" }); return; }
   const session = sessions.get(sessionId);
@@ -389,7 +453,7 @@ app.post("/api/session/join", (req, res) => {
   res.json({ ok: true });
 });
 
-app.post("/api/session/signal", (req, res) => {
+app.post("/api/session/signal", signalingLimiter, requireAuth, (req, res) => {
   const { sessionId, role, message } = req.body as {
     sessionId?: string; role?: "pc" | "phone"; message?: SignalMessage;
   };
@@ -400,7 +464,7 @@ app.post("/api/session/signal", (req, res) => {
   res.json({ ok: true });
 });
 
-app.get("/api/session/events", (req, res) => {
+app.get("/api/session/events", requireAuth, (req, res) => {
   const { session: sessionId, role } = req.query as { session?: string; role?: "pc" | "phone" };
   if (!sessionId || !role) { res.status(400).end("Missing session or role"); return; }
   const session = sessions.get(sessionId);
@@ -454,8 +518,8 @@ app.post("/api/subscription/checkout", requireAuth, async (req, res) => {
       customer: customerId,
       mode: "subscription",
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${req.headers.origin ?? "https://bloom-log.com"}/?checkout=success`,
-      cancel_url: `${req.headers.origin ?? "https://bloom-log.com"}/?checkout=cancel`,
+      success_url: `${getSafeOrigin(req)}/?checkout=success`,
+      cancel_url: `${getSafeOrigin(req)}/?checkout=cancel`,
     });
 
     res.json({ url: session.url });
@@ -477,7 +541,7 @@ app.post("/api/subscription/portal", requireAuth, async (req, res) => {
   try {
     const session = await stripe.billingPortal.sessions.create({
       customer: user.stripeCustomerId,
-      return_url: `${req.headers.origin ?? "https://bloom-log.com"}/`,
+      return_url: `${getSafeOrigin(req)}/`,
     });
     res.json({ url: session.url });
   } catch (err) {
@@ -511,10 +575,35 @@ app.post("/api/photos/upload", uploadLimiter, requireAuth, requireSubscription, 
     dataUrl?: string; area?: ScalpArea; notes?: NoteData;
   };
   if (!dataUrl || !area) { res.status(400).json({ error: "Missing fields" }); return; }
+  // Validate area is an allowed value
+  if (!["top", "front", "side"].includes(area)) { res.status(400).json({ error: "Invalid area" }); return; }
+
+  // Sanitize notes data
+  const sanitizedNotes: NoteData = {};
+  if (notes && typeof notes === "object") {
+    if (typeof notes.shampoo === "string") sanitizedNotes.shampoo = notes.shampoo.slice(0, 200);
+    if (typeof notes.treatment === "string") sanitizedNotes.treatment = notes.treatment.slice(0, 200);
+    if (typeof notes.sleep === "number" && notes.sleep >= 0 && notes.sleep <= 24) sanitizedNotes.sleep = notes.sleep;
+    if (typeof notes.stress === "number" && notes.stress >= 1 && notes.stress <= 5) sanitizedNotes.stress = notes.stress;
+    if (typeof notes.exercise === "boolean") sanitizedNotes.exercise = notes.exercise;
+    if (typeof notes.exerciseType === "string") sanitizedNotes.exerciseType = notes.exerciseType.slice(0, 200);
+    if (typeof notes.diet === "number" && notes.diet >= 1 && notes.diet <= 5) sanitizedNotes.diet = notes.diet;
+    if (typeof notes.alcohol === "boolean") sanitizedNotes.alcohol = notes.alcohol;
+    if (typeof notes.supplements === "string") sanitizedNotes.supplements = notes.supplements.slice(0, 200);
+    if (typeof notes.scalpMassage === "boolean") sanitizedNotes.scalpMassage = notes.scalpMassage;
+  }
 
   try {
     const base64 = dataUrl.split(",")[1];
     if (!base64) { res.status(400).json({ error: "Invalid dataUrl" }); return; }
+
+    const buf = Buffer.from(base64, "base64");
+    // Validate file size (max 5MB after decode)
+    if (buf.length > 5 * 1024 * 1024) { res.status(400).json({ error: "File too large" }); return; }
+    // Validate JPEG/PNG magic bytes
+    const isJpeg = buf[0] === 0xFF && buf[1] === 0xD8 && buf[2] === 0xFF;
+    const isPng = buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4E && buf[3] === 0x47;
+    if (!isJpeg && !isPng) { res.status(400).json({ error: "Invalid image format" }); return; }
 
     const now = new Date();
     const datePart = now.toISOString().slice(0, 10);
@@ -523,10 +612,10 @@ app.post("/api/photos/upload", uploadLimiter, requireAuth, requireSubscription, 
 
     const areaDir = join(PHOTOS_DIR, userId, area);
     await mkdir(areaDir, { recursive: true });
-    await writeFile(join(areaDir, filename), Buffer.from(base64, "base64"));
+    await writeFile(join(areaDir, filename), buf);
 
     const record: PhotoRecord = {
-      id: crypto.randomUUID(), date: datePart, area, filename, notes: notes ?? {},
+      id: crypto.randomUUID(), date: datePart, area, filename, notes: sanitizedNotes,
     };
     const records = await readRecords(userId);
     records.push(record);
@@ -547,9 +636,15 @@ app.get("/api/photos/records", requireAuth, requireSubscription, async (req, res
 app.get("/api/photos/file/:area/:filename", requireAuth, requireSubscription, async (req, res) => {
   const { userId } = (req as AuthRequest).authUser;
   const { area, filename } = req.params as { area: string; filename: string };
-  if (filename.includes("..") || area.includes("..")) { res.status(400).end(); return; }
+  // Validate area is one of allowed values
+  if (!["top", "front", "side"].includes(area)) { res.status(400).end(); return; }
+  // Validate filename: only allow safe characters (date_area.jpg pattern)
+  if (!/^[\w\-]+\.jpg$/.test(filename)) { res.status(400).end(); return; }
+  // Resolve and verify the path stays within PHOTOS_DIR
+  const filePath = resolve(PHOTOS_DIR, userId, area, filename);
+  if (!filePath.startsWith(resolve(PHOTOS_DIR, userId) + "/")) { res.status(400).end(); return; }
   try {
-    const data = await readFile(join(PHOTOS_DIR, userId, area, filename));
+    const data = await readFile(filePath);
     res.setHeader("Content-Type", "image/jpeg");
     res.setHeader("Cache-Control", "private, max-age=86400");
     res.end(data);

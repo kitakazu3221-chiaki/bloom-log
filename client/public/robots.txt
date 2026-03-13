@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /capture
+Disallow: /phone
+Disallow: /history
+Disallow: /insights
+
+Sitemap: https://bloom-log.com/sitemap.xml
