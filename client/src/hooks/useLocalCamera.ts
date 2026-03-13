@@ -5,7 +5,7 @@ interface UseLocalCameraReturn {
   error: string | null;
 }
 
-export function useLocalCamera(enabled: boolean): UseLocalCameraReturn {
+export function useLocalCamera(enabled: boolean, facingMode?: "user" | "environment"): UseLocalCameraReturn {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,8 +21,12 @@ export function useLocalCamera(enabled: boolean): UseLocalCameraReturn {
 
     let active = true;
 
+    const videoConstraints: MediaTrackConstraints = facingMode
+      ? { facingMode }
+      : { facingMode: "user" };
+
     navigator.mediaDevices
-      .getUserMedia({ video: true, audio: false })
+      .getUserMedia({ video: videoConstraints, audio: false })
       .then((s) => {
         if (active) {
           setStream(s);

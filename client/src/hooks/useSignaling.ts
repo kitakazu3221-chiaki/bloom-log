@@ -5,6 +5,7 @@ interface UseSignalingOptions {
   role: "pc" | "phone";
   sessionId?: string;
   onSignal: (msg: SignalingMessage) => void;
+  enabled?: boolean;
 }
 
 interface UseSignalingReturn {
@@ -18,6 +19,7 @@ export function useSignaling({
   role,
   sessionId: joinSessionId,
   onSignal,
+  enabled = true,
 }: UseSignalingOptions): UseSignalingReturn {
   const [connectionState, setConnectionState] =
     useState<WSConnectionState>("connecting");
@@ -42,6 +44,7 @@ export function useSignaling({
   );
 
   useEffect(() => {
+    if (!enabled) return;
     let cancelled = false;
     let eventSource: EventSource | null = null;
 
@@ -129,7 +132,7 @@ export function useSignaling({
       eventSource?.close();
       sessionIdRef.current = null;
     };
-  }, [role, joinSessionId]);
+  }, [role, joinSessionId, enabled]);
 
   return { connectionState, sessionId, peerJoined, sendSignal };
 }

@@ -18,6 +18,7 @@ import { PhotoSaveDialog } from "../components/PhotoSaveDialog";
 import { PreviousPhotoOverlay } from "../components/PreviousPhotoOverlay";
 import { LanguageSelect } from "../components/LanguageSelect";
 import { ThemeToggle } from "../components/ThemeToggle";
+import { isMobile } from "../utils/isMobile";
 
 import {
   type ScalpArea,
@@ -40,7 +41,8 @@ interface PCPageProps {
 
 export function PCPage({ username, onLogout, subscription, trialDaysLeft, createdAt, storageMode, onStorageModeChange }: PCPageProps) {
   const { t, locale } = useI18n();
-  const [cameraMode, setCameraMode] = useState<CameraMode>("phone");
+  const [mobile] = useState(() => isMobile());
+  const [cameraMode, setCameraMode] = useState<CameraMode>(mobile ? "pc" : "phone");
   const [selectedArea, setSelectedArea] = useState<ScalpArea>("top");
   const [pendingPhoto, setPendingPhoto] = useState<CapturedPhoto | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -59,14 +61,14 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
     rtcHandleSignalRef.current(msg);
   }, []);
 
-  const ws = useSignaling({ role: "pc", onSignal });
+  const ws = useSignaling({ role: "pc", onSignal, enabled: !mobile });
   const rtc = useWebRTC({
     role: "pc",
     peerJoined: ws.peerJoined,
     sendSignal: ws.sendSignal,
   });
   const storage = useStorage(storageMode);
-  const localCamera = useLocalCamera(cameraMode === "pc");
+  const localCamera = useLocalCamera(cameraMode === "pc", mobile ? "user" : undefined);
 
   rtcHandleSignalRef.current = rtc.handleSignal;
 
@@ -169,15 +171,17 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
           <a href="/insights" className="text-xs font-medium text-theme-secondary bg-secondary hover:bg-[var(--border)] border border-theme rounded-lg px-2.5 py-1.5 transition-colors whitespace-nowrap">
             {t["nav.insights"]}
           </a>
-          <button
-            onClick={() => setShowStorageConfirm(true)}
-            className="text-xs text-theme-muted flex items-center gap-1 hover:text-theme-secondary transition-colors whitespace-nowrap"
-            title={t["pc.storageSwitchTitle"]}
-          >
-            <span className={`w-1.5 h-1.5 rounded-full inline-block ${storageMode === "cloud" ? "bg-emerald-500" : storageMode === "filesystem" ? "bg-sky-500" : "bg-amber-500"}`} />
-            {storageMode === "cloud" ? t["pc.cloudStorage"] : storageMode === "filesystem" ? t["pc.filesystemStorage"] : t["pc.localStorage"]}
-          </button>
-          {cameraMode === "phone" && (
+          {!mobile && (
+            <button
+              onClick={() => setShowStorageConfirm(true)}
+              className="text-xs text-theme-muted flex items-center gap-1 hover:text-theme-secondary transition-colors whitespace-nowrap"
+              title={t["pc.storageSwitchTitle"]}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full inline-block ${storageMode === "cloud" ? "bg-emerald-500" : storageMode === "filesystem" ? "bg-sky-500" : "bg-amber-500"}`} />
+              {storageMode === "cloud" ? t["pc.cloudStorage"] : storageMode === "filesystem" ? t["pc.filesystemStorage"] : t["pc.localStorage"]}
+            </button>
+          )}
+          {!mobile && cameraMode === "phone" && (
             <ConnectionStatus wsState={ws.connectionState} rtcState={rtc.connectionState} peerJoined={ws.peerJoined} />
           )}
           {subscription === "trialing" && (
@@ -194,30 +198,32 @@ export function PCPage({ username, onLogout, subscription, trialDaysLeft, create
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col items-center gap-5 p-6">
-        {/* Camera mode toggle */}
-        <div className="flex items-center gap-1.5 bg-secondary border border-theme rounded-2xl p-1.5 text-base">
-          <button
-            onClick={() => setCameraMode("phone")}
-            className={`px-5 py-3 rounded-xl font-bold transition-all ${
-              cameraMode === "phone"
-                ? "bg-emerald-600 text-white shadow-md shadow-emerald-200"
-                : "text-theme-muted hover:text-theme-secondary hover:bg-surface"
-            }`}
-          >
-            {t["pc.phoneCamera"]}
-          </button>
-          <button
-            onClick={() => setCameraMode("pc")}
-            className={`px-5 py-3 rounded-xl font-bold transition-all ${
-              cameraMode === "pc"
-                ? "bg-emerald-600 text-white shadow-md shadow-emerald-200"
-                : "text-theme-muted hover:text-theme-secondary hover:bg-surface"
-            }`}
-          >
-            {t["pc.pcCamera"]}
-          </button>
-        </div>
+      <main className="flex-1 flex flex-col items-center gap-5 p-4 md:p-6">
+        {/* Camera mode toggle - PC only */}
+        {!mobile && (
+          <div className="flex items-center gap-1.5 bg-secondary border border-theme rounded-2xl p-1.5 text-base">
+            <button
+              onClick={() => setCameraMode("phone")}
+              className={`px-5 py-3 rounded-xl font-bold transition-all ${
+                cameraMode === "phone"
+                  ? "bg-emerald-600 text-white shadow-md shadow-emerald-200"
+                  : "text-theme-muted hover:text-theme-secondary hover:bg-surface"
+              }`}
+            >
+              {t["pc.phoneCamera"]}
+            </button>
+            <button
+              onClick={() => setCameraMode("pc")}
+              className={`px-5 py-3 rounded-xl font-bold transition-all ${
+                cameraMode === "pc"
+                  ? "bg-emerald-600 text-white shadow-md shadow-emerald-200"
+                  : "text-theme-muted hover:text-theme-secondary hover:bg-surface"
+              }`}
+            >
+              {t["pc.pcCamera"]}
+            </button>
+          </div>
+        )}
 
         {/* Video area */}
         <div className="relative w-full max-w-2xl aspect-video bg-gray-900 rounded-2xl overflow-hidden shadow-lg ring-1 ring-theme">
