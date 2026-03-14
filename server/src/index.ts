@@ -11,6 +11,7 @@ import { resolve, dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid";
 import geoip from "geoip-lite";
+import { OAuth2Client } from "google-auth-library";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = resolve(__dirname, "../data");
@@ -28,6 +29,8 @@ const BCRYPT_ROUNDS = 10;
 const PORT = Number(process.env.PORT ?? 3001);
 const TRIAL_DAYS = 14;
 const ALLOWED_ORIGINS = ["https://bloom-log.com"];
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID ?? "";
+const googleClient = GOOGLE_CLIENT_ID ? new OAuth2Client(GOOGLE_CLIENT_ID) : null;
 if (!IS_PROD) ALLOWED_ORIGINS.push("http://localhost:5173", "http://localhost:3001");
 
 // ── Stripe ──────────────────────────────────────────────────────────────────
@@ -67,7 +70,9 @@ if (!existsSync(USERS_FILE)) {
 interface User {
   id: string;
   username: string;
-  passwordHash: string;
+  passwordHash?: string;
+  googleId?: string;
+  email?: string;
   createdAt: string;
   trialEndsAt: string;
   stripeCustomerId?: string;
@@ -392,11 +397,45 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
   if (!username || !password) { res.status(400).json({ error: "ユーザー名とパスワードを入力してください" }); return; }
   const store = readUsers();
   const user = store.users.find((u) => u.username === username);
-  if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+  if (!user || !user.passwordHash || !(await bcrypt.compare(password, user.passwordHash))) {
     res.status(401).json({ error: "ユーザー名またはパスワードが正しくありません" }); return;
   }
   setCookieToken(res, user.id, user.username);
   res.json({ username: user.username });
+});
+
+app.post("/api/auth/google", authLimiter, async (req, res) => {
+  const { credential } = req.body as { credential?: string };
+  if (!credential || !googleClient) { res.status(400).json({ error: "Google login not available" }); return; }
+  try {
+    const ticket = await googleClient.verifyIdToken({ idToken: credential, audience: GOOGLE_CLIENT_ID });
+    const payload = ticket.getPayload();
+    if (!payload?.sub) { res.status(400).json({ error: "Invalid Google token" }); return; }
+    const { sub: googleId, email, name } = payload;
+    const store = readUsers();
+    let user = store.users.find((u) => u.googleId === googleId);
+    if (!user) {
+      // Generate username from email or name
+      const base = (email?.split("@")[0] ?? name ?? "user").replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 20);
+      let username = base;
+      if (store.users.some((u) => u.username === username)) {
+        username = `${base}_${crypto.randomUUID().slice(0, 4)}`;
+      }
+      const now = new Date();
+      const trialEnd = new Date(now.getTime() + TRIAL_DAYS * 24 * 60 * 60 * 1000);
+      user = {
+        id: crypto.randomUUID(), username, googleId, email,
+        createdAt: now.toISOString(), trialEndsAt: trialEnd.toISOString(),
+        subscriptionStatus: "none",
+      };
+      store.users.push(user);
+      writeUsers(store);
+    }
+    setCookieToken(res, user.id, user.username);
+    res.json({ username: user.username });
+  } catch {
+    res.status(401).json({ error: "Google認証に失敗しました" });
+  }
 });
 
 app.post("/api/auth/logout", (_req, res) => {

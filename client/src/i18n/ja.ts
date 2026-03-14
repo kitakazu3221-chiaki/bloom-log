@@ -52,6 +52,7 @@ export const ja = {
   "auth.submitCreate": "アカウントを作成",
   "auth.loginFailed": "ログインに失敗しました",
   "auth.registerFailed": "登録に失敗しました",
+  "auth.or": "または",
 
   // PC page
   "pc.history": "履歴",

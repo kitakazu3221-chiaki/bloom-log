@@ -15,6 +15,7 @@ interface UseAuthReturn {
   loading: boolean;
   login: (username: string, password: string) => Promise<void>;
   register: (username: string, password: string) => Promise<void>;
+  googleLogin: (credential: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -72,6 +73,19 @@ export function useAuth(): UseAuthReturn {
     setUser(me);
   }, [fetchMe, t]);
 
+  const googleLogin = useCallback(async (credential: string) => {
+    const r = await fetch("/api/auth/google", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ credential }),
+      credentials: "include",
+    });
+    const data = (await r.json()) as { error?: string };
+    if (!r.ok) throw new Error(data.error ?? t["auth.loginFailed"]);
+    const me = await fetchMe();
+    setUser(me);
+  }, [fetchMe, t]);
+
   const logout = useCallback(async () => {
     await fetch("/api/auth/logout", {
       method: "POST",
@@ -80,5 +94,5 @@ export function useAuth(): UseAuthReturn {
     setUser(null);
   }, []);
 
-  return { user, loading, login, register, logout, refreshUser };
+  return { user, loading, login, register, googleLogin, logout, refreshUser };
 }

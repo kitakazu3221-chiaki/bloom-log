@@ -1,19 +1,43 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useI18n } from "../hooks/useI18n";
 
 interface AuthPageProps {
   onLogin: (username: string, password: string) => Promise<void>;
   onRegister: (username: string, password: string) => Promise<void>;
+  onGoogleLogin: (credential: string) => Promise<void>;
 }
 
-export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
-  const { t } = useI18n();
+export function AuthPage({ onLogin, onRegister, onGoogleLogin }: AuthPageProps) {
+  const { t, locale } = useI18n();
   const [tab, setTab] = useState<"login" | "register">("login");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const googleBtnRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined;
+    if (!clientId || !window.google?.accounts?.id || !googleBtnRef.current) return;
+    window.google.accounts.id.initialize({
+      client_id: clientId,
+      callback: async (response: { credential: string }) => {
+        setSubmitting(true);
+        setError(null);
+        try {
+          await onGoogleLogin(response.credential);
+        } catch (err) {
+          setError(err instanceof Error ? err.message : t["common.error"]);
+          setSubmitting(false);
+        }
+      },
+    });
+    window.google.accounts.id.renderButton(googleBtnRef.current, {
+      theme: "outline", size: "large", width: 320, text: "signin_with",
+      shape: "pill", locale: locale === "ja" ? "ja" : "en",
+    });
+  }, [onGoogleLogin, t, locale]);
 
   const handleTabChange = (next: "login" | "register") => {
     setTab(next);
@@ -154,6 +178,14 @@ export function AuthPage({ onLogin, onRegister }: AuthPageProps) {
                 ? t["auth.login"]
                 : t["auth.submitCreate"]}
             </button>
+
+            {/* Divider + Google Sign-In */}
+            <div className="flex items-center gap-3 my-1">
+              <div className="flex-1 h-px bg-theme-light" />
+              <span className="text-sm text-theme-muted">{t["auth.or"]}</span>
+              <div className="flex-1 h-px bg-theme-light" />
+            </div>
+            <div ref={googleBtnRef} className="flex justify-center" />
           </form>
         </div>
 

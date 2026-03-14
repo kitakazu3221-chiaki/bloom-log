@@ -32,7 +32,7 @@ function App() {
 }
 
 function AuthGate({ pathname }: { pathname: string }) {
-  const { user, loading, login, register, logout, refreshUser } = useAuth();
+  const { user, loading, login, register, googleLogin, logout, refreshUser } = useAuth();
   const { t } = useI18n();
   const [toast, setToast] = useState<string | null>(null);
 
@@ -78,7 +78,7 @@ function AuthGate({ pathname }: { pathname: string }) {
 
   if (!user) {
     if (pathname === "/auth") {
-      return <AuthPage onLogin={login} onRegister={handleRegister} />;
+      return <AuthPage onLogin={login} onRegister={handleRegister} onGoogleLogin={googleLogin} />;
     }
     return <LandingPage />;
   }
