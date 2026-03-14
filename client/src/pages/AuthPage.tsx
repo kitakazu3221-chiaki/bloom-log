@@ -19,24 +19,41 @@ export function AuthPage({ onLogin, onRegister, onGoogleLogin }: AuthPageProps) 
 
   useEffect(() => {
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined;
-    if (!clientId || !window.google?.accounts?.id || !googleBtnRef.current) return;
-    window.google.accounts.id.initialize({
-      client_id: clientId,
-      callback: async (response: { credential: string }) => {
-        setSubmitting(true);
-        setError(null);
-        try {
-          await onGoogleLogin(response.credential);
-        } catch (err) {
-          setError(err instanceof Error ? err.message : t["common.error"]);
-          setSubmitting(false);
+    if (!clientId || !googleBtnRef.current) return;
+
+    const initGoogle = () => {
+      if (!window.google?.accounts?.id || !googleBtnRef.current) return;
+      window.google.accounts.id.initialize({
+        client_id: clientId,
+        callback: async (response: { credential: string }) => {
+          setSubmitting(true);
+          setError(null);
+          try {
+            await onGoogleLogin(response.credential);
+          } catch (err) {
+            setError(err instanceof Error ? err.message : t["common.error"]);
+            setSubmitting(false);
+          }
+        },
+      });
+      window.google.accounts.id.renderButton(googleBtnRef.current!, {
+        theme: "outline", size: "large", width: 320, text: "signin_with",
+        shape: "pill", locale: locale === "ja" ? "ja" : "en",
+      });
+    };
+
+    if (window.google?.accounts?.id) {
+      initGoogle();
+    } else {
+      // GIS script may still be loading (async defer)
+      const interval = setInterval(() => {
+        if (window.google?.accounts?.id) {
+          clearInterval(interval);
+          initGoogle();
         }
-      },
-    });
-    window.google.accounts.id.renderButton(googleBtnRef.current, {
-      theme: "outline", size: "large", width: 320, text: "signin_with",
-      shape: "pill", locale: locale === "ja" ? "ja" : "en",
-    });
+      }, 200);
+      return () => clearInterval(interval);
+    }
   }, [onGoogleLogin, t, locale]);
 
   const handleTabChange = (next: "login" | "register") => {
@@ -187,6 +204,13 @@ export function AuthPage({ onLogin, onRegister, onGoogleLogin }: AuthPageProps) 
             </div>
             <div ref={googleBtnRef} className="flex justify-center" />
           </form>
+        </div>
+
+        {/* Back to landing */}
+        <div className="text-center mt-4">
+          <a href="/landing" className="text-sm text-theme-muted hover:text-theme-secondary transition-colors">
+            {t["auth.backToTop"]}
+          </a>
         </div>
 
       </div>

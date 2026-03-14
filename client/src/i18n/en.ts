@@ -55,6 +55,7 @@ export const en: Record<keyof typeof ja, string> = {
   "auth.loginFailed": "Login failed",
   "auth.registerFailed": "Registration failed",
   "auth.or": "or",
+  "auth.backToTop": "Back to top page",
 
   // PC page
   "pc.history": "History",

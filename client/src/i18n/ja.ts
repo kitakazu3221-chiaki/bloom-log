@@ -53,6 +53,7 @@ export const ja = {
   "auth.loginFailed": "ログインに失敗しました",
   "auth.registerFailed": "登録に失敗しました",
   "auth.or": "または",
+  "auth.backToTop": "トップページに戻る",
 
   // PC page
   "pc.history": "履歴",
